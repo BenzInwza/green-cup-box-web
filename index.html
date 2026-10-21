@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -7,857 +6,251 @@
   <meta name="theme-color" content="#16834a">
   <title>Green Cup Box | ลดโลกร้อน</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
   <style>
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: system-ui, sans-serif;
-      background: #f1f8f2;
-      color: #203b2b;
-    }
-
-    header {
-      background: #16834a;
-      color: white;
-      padding: 16px;
-    }
-
-    .header-inner {
-      max-width: 760px;
-      margin: auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-    }
-
-    h1 { font-size: 23px; margin: 0; }
-    h2 { font-size: 20px; margin-top: 0; }
-    label { display: block; margin: 12px 0 6px; }
-
-    .menu-wrap { position: relative; }
-
-    .menu-toggle {
-      background: #ffffff20;
-      border: 1px solid #ffffff80;
-      border-radius: 10px;
-      padding: 10px 13px;
-      font-size: 23px;
-      color: white;
-    }
-
-    .menu-panel {
-      position: absolute;
-      right: 0;
-      top: 52px;
-      width: 230px;
-      padding: 8px;
-      border-radius: 12px;
-      background: white;
-      box-shadow: 0 8px 25px #0002;
-      z-index: 5;
-    }
-
-    .menu-item {
-      display: block;
-      width: 100%;
-      padding: 12px;
-      border: 0;
-      border-radius: 8px;
-      text-align: left;
-      background: white;
-      color: #203b2b;
-    }
-
-    .menu-item:hover { background: #eaf6ed; }
-
-    main {
-      max-width: 760px;
-      margin: auto;
-      padding: 14px;
-    }
-
-    .card {
-      background: white;
-      border-radius: 15px;
-      padding: 18px;
-      margin-bottom: 15px;
-      box-shadow: 0 3px 12px #0000000d;
-      scroll-margin-top: 12px;
-    }
-
-    input {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #cbd9ce;
-      border-radius: 9px;
-      font-size: 16px;
-    }
-
-    button {
-      cursor: pointer;
-      border: 0;
-      border-radius: 9px;
-      padding: 11px 14px;
-      background: #16834a;
-      color: white;
-      font-size: 15px;
-      font-weight: 650;
-    }
-
-    button:disabled {
-      opacity: .55;
-      cursor: not-allowed;
-    }
-
-    .secondary {
-      background: #e5f3e8;
-      color: #176638;
-    }
-
-    .danger { background: #b93838; color: white; }
-
-    .row {
-      display: flex;
-      gap: 8px;
-      margin-top: 12px;
-    }
-
-    .row button { flex: 1; }
-    .full { width: 100%; margin-top: 12px; }
-    .hidden { display: none !important; }
-
-    .muted {
-      color: #68776c;
-      font-size: 14px;
-    }
-
-    .message {
-      margin-top: 10px;
-      font-size: 14px;
-      overflow-wrap: anywhere;
-    }
-
-    .success { color: #14763d; }
-    .error { color: #b42323; }
-
-    .points {
-      text-align: center;
-      background: #e7f6e9;
-      padding: 18px;
-      border-radius: 12px;
-    }
-
-    .points strong {
-      display: block;
-      font-size: 34px;
-      color: #16834a;
-    }
-
-    .reward {
-      border: 1px solid #e0e9e1;
-      border-radius: 12px;
-      padding: 14px;
-      margin-top: 12px;
-      overflow-wrap: anywhere;
-    }
-
-    .reward h3 { margin: 0 0 8px; }
-    .reward p { margin: 8px 0; }
-    .reward button { width: 100%; }
-
-    .stock {
-      background: #f0f8f1;
-      color: #176638;
-      padding: 9px 11px;
-      border-radius: 8px;
-      font-weight: 650;
-    }
-
-    .stock.out {
-      background: #fff0f0;
-      color: #b42323;
-    }
-
-    footer {
-      text-align: center;
-      padding: 20px;
-      color: #68776c;
-    }
+    *{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;background:#f1f8f2;color:#203b2b}
+    header{background:#16834a;color:white;padding:16px}.header-inner{max-width:760px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:12px}
+    h1{font-size:23px;margin:0} h2{font-size:20px;margin-top:0} label{display:block;margin:12px 0 6px}
+    .menu-wrap{position:relative}.menu-toggle{background:#ffffff20;border:1px solid #ffffff80;border-radius:10px;padding:10px 13px;font-size:23px;color:white}
+    .menu-panel{position:absolute;right:0;top:52px;width:230px;padding:8px;border-radius:12px;background:white;box-shadow:0 8px 25px #0002;z-index:5}
+    .menu-item{display:block;width:100%;padding:12px;border:0;border-radius:8px;text-align:left;background:white;color:#203b2b}.menu-item:hover{background:#eaf6ed}
+    main{max-width:760px;margin:auto;padding:14px}.card{background:white;border-radius:15px;padding:18px;margin-bottom:15px;box-shadow:0 3px 12px #0000000d;scroll-margin-top:12px}
+    input,select{width:100%;padding:12px;border:1px solid #cbd9ce;border-radius:9px;font-size:16px;background:white}
+    button{cursor:pointer;border:0;border-radius:9px;padding:11px 14px;background:#16834a;color:white;font-size:15px;font-weight:650}
+    button:disabled{opacity:.55;cursor:not-allowed}.secondary{background:#e5f3e8;color:#176638}.danger{background:#b93838;color:white}
+    .row{display:flex;gap:8px;margin-top:12px}.row button{flex:1}.full{width:100%;margin-top:12px}.hidden{display:none!important}
+    .muted{color:#68776c;font-size:14px}.message{margin-top:10px;font-size:14px;overflow-wrap:anywhere}.success{color:#14763d}.error{color:#b42323}
+    .points{text-align:center;background:#e7f6e9;padding:18px;border-radius:12px}.points strong{display:block;font-size:34px;color:#16834a}
+    .reward,.checkin{border:1px solid #e0e9e1;border-radius:12px;padding:14px;margin-top:12px;overflow-wrap:anywhere}.reward h3,.checkin h3{margin:0 0 8px}.reward p,.checkin p{margin:8px 0}.reward button{width:100%}
+    .stock{background:#f0f8f1;color:#176638;padding:9px 11px;border-radius:8px;font-weight:650}.stock.out{background:#fff0f0;color:#b42323}
+    .photo-preview{display:block;width:100%;max-height:340px;object-fit:contain;border-radius:10px;margin-top:10px;background:#f3f6f3}
+    .status{display:inline-block;padding:5px 9px;border-radius:999px;background:#fff3cd;color:#785800;font-size:13px;font-weight:700}
+    .status.approved{background:#e0f6e7;color:#176638}.status.rejected{background:#ffe5e5;color:#a31f1f}
+    footer{text-align:center;padding:20px;color:#68776c}
   </style>
 </head>
-
 <body>
-<header>
-  <div class="header-inner">
-    <div>
-      <h1>🌱 Green Cup Box</h1>
-      <small>พกแก้ว พกกล่อง ลดขยะ รับคะแนน</small>
-    </div>
-
-    <div class="menu-wrap">
-      <button id="menuToggle" class="menu-toggle"
-        aria-expanded="false" aria-controls="mainMenu">☰</button>
-
-      <nav id="mainMenu" class="menu-panel hidden">
-        <button class="menu-item" data-target="memberCard">👤 สมาชิก / ตั้งชื่อ</button>
-        <button class="menu-item" data-target="memberCountCard">👥 จำนวนสมาชิก</button>
-        <button class="menu-item" data-target="pointsCard">⭐ คะแนนสะสม</button>
-        <button class="menu-item" data-target="rewardsCard">🎁 ของรางวัล</button>
-        <button class="menu-item" data-target="historyCard">📜 ประวัติการแลก</button>
-        <button id="logoutBtn" class="menu-item danger hidden">🚪 ออกจากระบบ</button>
-      </nav>
-    </div>
-  </div>
-</header>
-
+<header><div class="header-inner"><div><h1>🌱 Green Cup Box</h1><small>พกแก้ว พกกล่อง ลดขยะ รับคะแนน</small></div>
+<div class="menu-wrap"><button id="menuToggle" class="menu-toggle" aria-expanded="false" aria-controls="mainMenu">☰</button>
+<nav id="mainMenu" class="menu-panel hidden">
+<button class="menu-item" data-target="memberCard">👤 สมาชิก / ตั้งชื่อ</button>
+<button class="menu-item" data-target="memberCountCard">👥 จำนวนสมาชิก</button>
+<button class="menu-item" data-target="pointsCard">⭐ คะแนนสะสม</button>
+<button class="menu-item" data-target="checkinCard">📸 ส่งรูปเช็กอิน</button>
+<button class="menu-item" data-target="rewardsCard">🎁 ของรางวัล</button>
+<button class="menu-item" data-target="historyCard">📜 ประวัติการแลก</button>
+<button id="logoutBtn" class="menu-item danger hidden">🚪 ออกจากระบบ</button>
+</nav></div></div></header>
 <main>
-  <section class="card" id="memberCard">
-    <h2>👤 สมาชิก</h2>
+<section class="card" id="memberCard"><h2>👤 สมาชิก</h2>
+<div id="authArea"><label for="email">อีเมล</label><input id="email" type="email" autocomplete="email" placeholder="กรอกอีเมล">
+<label for="password">รหัสผ่าน</label><input id="password" type="password" autocomplete="current-password" placeholder="กรอกรหัสผ่าน">
+<div class="row"><button id="loginBtn">เข้าสู่ระบบ</button><button id="signupBtn" class="secondary">สมัครสมาชิก</button></div></div>
+<div id="memberArea" class="hidden"><p>ยินดีต้อนรับ <strong id="memberName">สมาชิก</strong></p><p class="muted" id="memberEmail"></p>
+<label for="displayName">ตั้งชื่อสมาชิก (ตั้งได้ครั้งเดียว)</label><input id="displayName" maxlength="40" placeholder="พิมพ์ชื่อที่ต้องการ">
+<button id="saveNameBtn" class="full">💾 บันทึกชื่อ</button><p id="nameMessage" class="message"></p></div>
+<p id="authMessage" class="message" aria-live="polite"></p></section>
+<section class="card" id="memberCountCard"><h2>👥 สมาชิก Green Cup Box</h2><div class="points"><span>จำนวนบัญชีสมาชิกทั้งหมด</span><strong id="memberCount">—</strong><span>บัญชี</span></div><p id="memberCountMessage" class="message muted">กำลังโหลดจำนวนสมาชิก...</p></section>
+<section class="card" id="pointsCard"><h2>⭐ คะแนนสะสมของคุณ</h2><div class="points"><span>คะแนนปัจจุบัน</span><strong id="pointsValue">—</strong><span>คะแนน</span></div><p id="pointsMessage" class="message muted">เข้าสู่ระบบเพื่อดูคะแนน</p><button id="refreshBtn" class="secondary full">🔄 รีเฟรชข้อมูล</button></section>
 
-    <div id="authArea">
-      <label for="email">อีเมล</label>
-      <input id="email" type="email" autocomplete="email"
-        placeholder="กรอกอีเมล">
+<section class="card" id="checkinCard">
+<h2>📸 พกแก้ว พกกล่อง รับคะแนน</h2>
+<p>ส่งรูปได้วันละ <b>1 รูปต่อบัญชี</b> ตามเวลาไทย ให้นายแอดมินตรวจจากรูปจริง</p>
+<ul><li>มีแก้วอย่างเดียว = 1 คะแนน</li><li>มีกล่องข้าวอย่างเดียว = 1 คะแนน</li><li>มีทั้งแก้วและกล่องข้าว = 2 คะแนน</li></ul>
+<label for="checkinPhoto">เลือกรูปแก้วหรือกล่องข้าว (หรือทั้งคู่)</label>
+<input id="checkinPhoto" type="file" accept="image/*" capture="environment">
+<img id="photoPreview" class="photo-preview hidden" alt="ตัวอย่างรูปที่เลือก">
+<button id="submitCheckinBtn" class="full">📤 ส่งรูปให้แอดมินตรวจ</button>
+<p id="checkinMessage" class="message" aria-live="polite"></p>
+<h3>ประวัติเช็กอินของฉัน</h3><div id="myCheckins">เข้าสู่ระบบเพื่อดูประวัติเช็กอิน</div>
+<button id="checkinRefreshBtn" class="secondary full">🔄 รีเฟรชเช็กอิน</button>
+</section>
 
-      <label for="password">รหัสผ่าน</label>
-      <input id="password" type="password"
-        autocomplete="current-password" placeholder="กรอกรหัสผ่าน">
+<section class="card hidden" id="adminCard"><h2>🛡️ แผงตรวจรูปแอดมิน</h2><p class="muted">ตรวจดูรูป แล้วเลือกให้คะแนนตามสิ่งที่เห็นจริง รายการหนึ่งตรวจได้ครั้งเดียว</p><button id="adminRefreshBtn" class="secondary full">🔄 โหลดรายการรอตรวจ</button><p id="adminMessage" class="message"></p><div id="adminCheckins">กำลังตรวจสอบสิทธิ์...</div></section>
 
-      <div class="row">
-        <button id="loginBtn">เข้าสู่ระบบ</button>
-        <button id="signupBtn" class="secondary">สมัครสมาชิก</button>
-      </div>
-    </div>
-
-    <div id="memberArea" class="hidden">
-      <p>ยินดีต้อนรับ <strong id="memberName">สมาชิก</strong></p>
-      <p class="muted" id="memberEmail"></p>
-
-      <label for="displayName">ตั้งชื่อสมาชิก (ตั้งได้ครั้งเดียว)</label>
-      <input id="displayName" maxlength="40"
-        placeholder="พิมพ์ชื่อที่ต้องการ">
-
-      <button id="saveNameBtn" class="full">💾 บันทึกชื่อ</button>
-      <p id="nameMessage" class="message"></p>
-    </div>
-
-    <p id="authMessage" class="message" aria-live="polite"></p>
-  </section>
-
-  <section class="card" id="memberCountCard">
-    <h2>👥 สมาชิก Green Cup Box</h2>
-    <div class="points">
-      <span>จำนวนบัญชีสมาชิกทั้งหมด</span>
-      <strong id="memberCount">—</strong>
-      <span>บัญชี</span>
-    </div>
-    <p id="memberCountMessage" class="message muted">
-      กำลังโหลดจำนวนสมาชิก...
-    </p>
-  </section>
-
-  <section class="card" id="pointsCard">
-    <h2>⭐ คะแนนสะสมของคุณ</h2>
-    <div class="points">
-      <span>คะแนนปัจจุบัน</span>
-      <strong id="pointsValue">—</strong>
-      <span>คะแนน</span>
-    </div>
-    <p id="pointsMessage" class="message muted">
-      เข้าสู่ระบบเพื่อดูคะแนน
-    </p>
-    <button id="refreshBtn" class="secondary full">
-      🔄 รีเฟรชข้อมูล
-    </button>
-  </section>
-
-  <section class="card" id="rewardsCard">
-    <h2>🎁 ของรางวัล</h2>
-    <p class="muted">ตรวจสอบคะแนนและจำนวนของรางวัลก่อนแลก</p>
-    <div id="rewardsList">กำลังโหลด...</div>
-    <p id="rewardsMessage" class="message"></p>
-  </section>
-
-  <section class="card" id="historyCard">
-    <h2>📜 ประวัติการแลก</h2>
-    <div id="historyList">เข้าสู่ระบบเพื่อดูประวัติ</div>
-    <button id="historyRefreshBtn" class="secondary full">
-      🔄 รีเฟรชประวัติ
-    </button>
-  </section>
-</main>
-
-<footer>🌍 Green Cup Box — เริ่มต้นรักษ์โลกได้จากตัวเรา</footer>
+<section class="card" id="rewardsCard"><h2>🎁 ของรางวัล</h2><p class="muted">ตรวจสอบคะแนนและจำนวนของรางวัลก่อนแลก</p><div id="rewardsList">กำลังโหลด...</div><p id="rewardsMessage" class="message"></p></section>
+<section class="card" id="historyCard"><h2>📜 ประวัติการแลก</h2><div id="historyList">เข้าสู่ระบบเพื่อดูประวัติ</div><button id="historyRefreshBtn" class="secondary full">🔄 รีเฟรชประวัติ</button></section>
+</main><footer>🌍 Green Cup Box — เริ่มต้นรักษ์โลกได้จากตัวเรา</footer>
 
 <script>
 const SUPABASE_URL = "https://sjlmwicteshsabzlkvab.supabase.co";
 const SUPABASE_KEY = "sb_publishable_tqvsVPcYKq-QC6LtA3oVeg_NsR7wchz";
-
-const db = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
-
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const $ = id => document.getElementById(id);
+let currentUser = null, busy = false, selectedPhoto = null;
 
-let currentUser = null;
-let busy = false;
+function msg(id,text,type=""){ $(id).textContent=text||""; $(id).className="message "+type; }
+function toggleMenu(force){const open=typeof force==="boolean"?force:$("mainMenu").classList.contains("hidden");$("mainMenu").classList.toggle("hidden",!open);$("menuToggle").setAttribute("aria-expanded",String(open));}
+$("menuToggle").addEventListener("click",e=>{e.stopPropagation();toggleMenu();});
+$("mainMenu").addEventListener("click",e=>e.stopPropagation());
+document.addEventListener("click",()=>toggleMenu(false));
+document.addEventListener("keydown",e=>{if(e.key==="Escape")toggleMenu(false);});
+document.querySelectorAll("[data-target]").forEach(b=>b.addEventListener("click",()=>{toggleMenu(false);$(b.dataset.target).scrollIntoView({behavior:"smooth"});}));
+function updateMenu(){$("logoutBtn").classList.toggle("hidden",!currentUser);}
 
-function msg(id, text, type = "") {
-  $(id).textContent = text || "";
-  $(id).className = "message " + type;
+async function getProfile(){
+ if(!currentUser)return null;
+ let {data,error}=await db.from("profiles").select("id,role,points,display_name,name_locked").eq("id",currentUser.id).maybeSingle();
+ if(error)throw error;
+ if(!data){
+  const {error:ie}=await db.from("profiles").insert({id:currentUser.id,role:"member",points:0,display_name:"",name_locked:false});
+  if(ie)throw ie;
+  ({data,error}=await db.from("profiles").select("id,role,points,display_name,name_locked").eq("id",currentUser.id).maybeSingle());
+  if(error)throw error;
+ }
+ return data;
+}
+async function loadMember(){
+ const {data,error}=await db.auth.getUser();if(error)throw error;currentUser=data.user;updateMenu();
+ $("authArea").classList.toggle("hidden",!!currentUser);$("memberArea").classList.toggle("hidden",!currentUser);
+ if(!currentUser){$("pointsValue").textContent="—";$("pointsMessage").textContent="เข้าสู่ระบบเพื่อดูคะแนน";$("memberName").textContent="สมาชิก";$("memberEmail").textContent="";$("displayName").value="";$("displayName").disabled=false;$("saveNameBtn").disabled=false;msg("nameMessage","");$("adminCard").classList.add("hidden");$("myCheckins").textContent="เข้าสู่ระบบเพื่อดูประวัติเช็กอิน";return;}
+ $("memberEmail").textContent=currentUser.email||"";
+ const p=await getProfile();const name=p.display_name||"";$("memberName").textContent=name||"ยังไม่ได้ตั้งชื่อ";$("displayName").value=name;
+ $("pointsValue").textContent=Number(p.points||0).toLocaleString("th-TH");$("pointsMessage").textContent="อัปเดตคะแนนเรียบร้อย";
+ const locked=p.name_locked===true;$("displayName").disabled=locked;$("saveNameBtn").disabled=locked;
+ msg("nameMessage",locked?"🔒 ตั้งชื่อแล้ว ไม่สามารถเปลี่ยนได้อีก":"คุณสามารถตั้งชื่อได้หนึ่งครั้ง");
+ $("adminCard").classList.toggle("hidden",p.role!=="admin");
+}
+async function signUp(){
+ const email=$("email").value.trim(),password=$("password").value;
+ if(!email||!password)return msg("authMessage","กรอกอีเมลและรหัสผ่านก่อน","error");
+ if(password.length<6)return msg("authMessage","รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร","error");
+ $("signupBtn").disabled=true;
+ try{const {data,error}=await db.auth.signUp({email,password});if(error)throw error;if(data.session){await refreshAll();msg("authMessage","สมัครสมาชิกสำเร็จ","success");}else msg("authMessage","สมัครแล้ว โปรดตรวจสอบอีเมลเพื่อยืนยันบัญชี","success");}
+ catch(e){msg("authMessage",e.message,"error");}finally{$("signupBtn").disabled=false;}
+}
+async function signIn(){
+ const email=$("email").value.trim(),password=$("password").value;if(!email||!password)return msg("authMessage","กรอกอีเมลและรหัสผ่านก่อน","error");
+ $("loginBtn").disabled=true;try{const {error}=await db.auth.signInWithPassword({email,password});if(error)throw error;await refreshAll();msg("authMessage","เข้าสู่ระบบสำเร็จ","success");}
+ catch(e){msg("authMessage",e.message,"error");}finally{$("loginBtn").disabled=false;}
+}
+async function saveName(){
+ if(!currentUser)return msg("nameMessage","กรุณาเข้าสู่ระบบก่อน","error");
+ const name=$("displayName").value.trim();if(!name)return msg("nameMessage","กรุณาพิมพ์ชื่อก่อนบันทึก","error");if(name.length>40)return msg("nameMessage","ชื่อต้องไม่เกิน 40 ตัวอักษร","error");
+ $("saveNameBtn").disabled=true;
+ try{const p=await getProfile();if(p.name_locked===true){$("displayName").disabled=true;msg("nameMessage","ชื่อนี้ถูกล็อกแล้ว ไม่สามารถเปลี่ยนได้","error");return;}
+ const {data,error}=await db.from("profiles").update({display_name:name,name_locked:true}).eq("id",currentUser.id).eq("name_locked",false).select("id");if(error)throw error;if(!data?.length)throw new Error("ตั้งชื่อไม่ได้ อาจมีการตั้งชื่อไปแล้ว กรุณารีเฟรชหน้าเว็บ");
+ $("memberName").textContent=name;$("displayName").value=name;$("displayName").disabled=true;msg("nameMessage","🔒 บันทึกชื่อสำเร็จ ตั้งชื่อได้ครั้งเดียว","success");
+ }catch(e){msg("nameMessage","บันทึกชื่อไม่สำเร็จ: "+e.message,"error");$("saveNameBtn").disabled=false;}
+}
+async function signOut(){if(!confirm("ต้องการออกจากระบบหรือไม่?"))return;try{const {error}=await db.auth.signOut();if(error)throw error;currentUser=null;await refreshAll();toggleMenu(false);msg("authMessage","ออกจากระบบแล้ว","success");}catch(e){msg("authMessage",e.message,"error");}}
+async function loadMemberCount(){
+ $("memberCount").textContent="…";$("memberCountMessage").textContent="กำลังโหลดจำนวนสมาชิก...";
+ try{const {data,error}=await db.rpc("get_member_count");if(error)throw error;const n=Number(data);if(!Number.isFinite(n))throw new Error("รูปแบบจำนวนสมาชิกไม่ถูกต้อง");$("memberCount").textContent=n.toLocaleString("th-TH");$("memberCountMessage").textContent="อัปเดตจำนวนสมาชิกแล้ว";}
+ catch(e){$("memberCount").textContent="—";$("memberCountMessage").textContent="โหลดจำนวนสมาชิกไม่สำเร็จ: "+e.message;}
+}
+function nameOf(r){return r.name||r.title||r.reward_name||r.label||"ของรางวัล";}
+function costOf(r){for(const k of ["cost","points_cost","point_cost","points_required","required_points"])if(r[k]!=null)return Number(r[k]);return null;}
+function quantityOf(r){for(const k of ["stock","quantity","remaining","stock_quantity","available_quantity","qty"])if(r[k]!==undefined&&r[k]!==null&&r[k]!==""){const v=Number(r[k]);return Number.isFinite(v)?v:null;}return null;}
+async function loadRewards(){
+ $("rewardsList").textContent="กำลังโหลดของรางวัล...";
+ try{const {data,error}=await db.from("rewards").select("*").order("id");if(error)throw error;$("rewardsList").replaceChildren();if(!data?.length){$("rewardsList").textContent="ยังไม่มีของรางวัล";return;}
+ data.forEach(r=>{const c=document.createElement("div");c.className="reward";const h=document.createElement("h3");h.textContent="🎁 "+nameOf(r);c.appendChild(h);
+ const d=document.createElement("p");d.textContent=r.description||r.detail||"";c.appendChild(d);const cost=costOf(r),pr=document.createElement("p");pr.className="muted";pr.textContent=cost===null||!Number.isFinite(cost)?"ไม่พบราคาคะแนน":"⭐ ใช้ "+cost.toLocaleString("th-TH")+" คะแนน";c.appendChild(pr);
+ const q=quantityOf(r),st=document.createElement("p");st.className=q!==null&&q<=0?"stock out":q===null?"muted":"stock";st.textContent=q===null?"📦 ยังอ่านจำนวนของรางวัลไม่ได้":q<=0?"📦 ของรางวัลหมด":"📦 คงเหลือ "+q.toLocaleString("th-TH")+" ชิ้น";c.appendChild(st);
+ const b=document.createElement("button");b.textContent=q!==null&&q<=0?"ของรางวัลหมด":"แลกของรางวัล";b.disabled=!currentUser||(q!==null&&q<=0);b.addEventListener("click",()=>redeem(r.id,b));c.appendChild(b);$("rewardsList").appendChild(c);});
+ }catch(e){$("rewardsList").textContent="โหลดของรางวัลไม่สำเร็จ: "+e.message;}
+}
+async function redeem(id,button){
+ if(!currentUser)return msg("rewardsMessage","กรุณาเข้าสู่ระบบก่อน","error");if(busy)return;if(!confirm("ยืนยันการแลกของรางวัลหรือไม่?"))return;
+ busy=true;button.disabled=true;try{const {data,error}=await db.rpc("redeem_reward",{p_reward_id:id});if(error)throw error;const r=Array.isArray(data)?data[0]:data;if(r?.success===false)throw new Error(r.message||"แลกรางวัลไม่สำเร็จ");if(r?.error)throw new Error(r.error);msg("rewardsMessage",r?.message||"แลกรางวัลสำเร็จ","success");await refreshAll();}
+ catch(e){msg("rewardsMessage","แลกไม่สำเร็จ: "+e.message,"error");await loadRewards();}finally{busy=false;}
+}
+async function loadHistory(){
+ const list=$("historyList");list.replaceChildren();if(!currentUser){list.textContent="เข้าสู่ระบบเพื่อดูประวัติการแลก";return;}list.textContent="กำลังโหลดประวัติ...";
+ try{const {data,error}=await db.from("redemptions").select("id,user_id,reward_id,cost,code,created_at").eq("user_id",currentUser.id).order("created_at",{ascending:false});if(error)throw error;if(!data?.length){list.textContent="ยังไม่มีประวัติการแลก";return;}
+ const {data:rw,error:re}=await db.from("rewards").select("*");if(re)throw re;const map=new Map((rw||[]).map(r=>[String(r.id),nameOf(r)]));list.replaceChildren();
+ data.forEach(it=>{const c=document.createElement("div");c.className="reward";const h=document.createElement("h3");h.textContent="🎁 "+(map.get(String(it.reward_id))||"ของรางวัล #"+it.reward_id);c.appendChild(h);
+ const p=document.createElement("p");p.className="muted";p.textContent="⭐ ใช้คะแนน: "+Number(it.cost).toLocaleString("th-TH")+" คะแนน";c.appendChild(p);
+ const d=document.createElement("p");d.className="muted";const dt=new Date(it.created_at);d.textContent="📅 "+(Number.isNaN(dt.getTime())?"-":dt.toLocaleString("th-TH",{dateStyle:"medium",timeStyle:"short"}));c.appendChild(d);
+ if(it.code){const code=document.createElement("p");code.textContent="🧾 รหัสการแลก: "+it.code;c.appendChild(code);}list.appendChild(c);});
+ }catch(e){list.textContent="โหลดประวัติไม่สำเร็จ: "+e.message;}
 }
 
-function toggleMenu(force) {
-  const open = typeof force === "boolean"
-    ? force
-    : $("mainMenu").classList.contains("hidden");
-
-  $("mainMenu").classList.toggle("hidden", !open);
-  $("menuToggle").setAttribute("aria-expanded", String(open));
-}
-
-$("menuToggle").addEventListener("click", e => {
-  e.stopPropagation();
-  toggleMenu();
+/* เลือกรูปและแสดงตัวอย่าง */
+$("checkinPhoto").addEventListener("change",()=>{
+ const f=$("checkinPhoto").files?.[0];selectedPhoto=f||null;
+ if(!f){$("photoPreview").classList.add("hidden");$("photoPreview").removeAttribute("src");return;}
+ if(!f.type.startsWith("image/")){selectedPhoto=null;$("checkinPhoto").value="";return msg("checkinMessage","กรุณาเลือกไฟล์รูปภาพ","error");}
+ if(f.size>8*1024*1024){selectedPhoto=null;$("checkinPhoto").value="";return msg("checkinMessage","รูปต้องมีขนาดไม่เกิน 8 MB","error");}
+ $("photoPreview").src=URL.createObjectURL(f);$("photoPreview").classList.remove("hidden");msg("checkinMessage","");
 });
-
-$("mainMenu").addEventListener("click", e => e.stopPropagation());
-
-document.addEventListener("click", () => toggleMenu(false));
-
-document.addEventListener("keydown", e => {
-  if (e.key === "Escape") toggleMenu(false);
-});
-
-document.querySelectorAll("[data-target]").forEach(button => {
-  button.addEventListener("click", () => {
-    toggleMenu(false);
-    $(button.dataset.target).scrollIntoView({ behavior: "smooth" });
-  });
-});
-
-function updateMenu() {
-  $("logoutBtn").classList.toggle("hidden", !currentUser);
+async function loadMyCheckins(){
+ const box=$("myCheckins");box.replaceChildren();if(!currentUser){box.textContent="เข้าสู่ระบบเพื่อดูประวัติเช็กอิน";return;}
+ box.textContent="กำลังโหลด...";
+ try{
+  const {data,error}=await db.from("checkins").select("id,checkin_type,photo_path,status,points_awarded,created_at,review_note").eq("user_id",currentUser.id).order("created_at",{ascending:false}).limit(30);
+  if(error)throw error;if(!data?.length){box.textContent="ยังไม่มีรายการเช็กอิน";return;}box.replaceChildren();
+  for(const item of data){
+   const c=document.createElement("div");c.className="checkin";const h=document.createElement("h3");h.textContent="📸 เช็กอิน #"+item.id;c.appendChild(h);
+   const s=document.createElement("span");s.className="status "+(item.status==="approved"?"approved":item.status==="rejected"?"rejected":"");s.textContent=item.status==="approved"?"อนุมัติแล้ว":item.status==="rejected"?"ปฏิเสธ":"รอตรวจ";c.appendChild(s);
+   const p=document.createElement("p");p.textContent="คะแนนที่ได้รับ: "+Number(item.points_awarded||0)+" คะแนน";c.appendChild(p);
+   const dt=new Date(item.created_at);const d=document.createElement("p");d.className="muted";d.textContent=Number.isNaN(dt.getTime())?"":dt.toLocaleString("th-TH",{dateStyle:"medium",timeStyle:"short"});c.appendChild(d);
+   if(item.review_note){const n=document.createElement("p");n.textContent="หมายเหตุ: "+item.review_note;c.appendChild(n);}
+   if(item.photo_path){const {data:signed,error:se}=await db.storage.from("checkin-photos").createSignedUrl(item.photo_path,3600);if(!se&&signed?.signedUrl){const im=document.createElement("img");im.className="photo-preview";im.src=signed.signedUrl;im.alt="รูปเช็กอิน";c.appendChild(im);}}
+   box.appendChild(c);
+  }
+ }catch(e){box.textContent="โหลดประวัติเช็กอินไม่สำเร็จ: "+e.message;}
 }
-
-/* อ่านข้อมูลสมาชิก */
-async function getProfile() {
-  if (!currentUser) return null;
-
-  let { data, error } = await db.from("profiles")
-    .select("id, role, points, display_name, name_locked")
-    .eq("id", currentUser.id)
-    .maybeSingle();
-
-  if (error) throw error;
-
-  if (!data) {
-    const { error: insertError } = await db.from("profiles").insert({
-      id: currentUser.id,
-      role: "member",
-      points: 0,
-      display_name: "",
-      name_locked: false
-    });
-
-    if (insertError) throw insertError;
-
-    ({ data, error } = await db.from("profiles")
-      .select("id, role, points, display_name, name_locked")
-      .eq("id", currentUser.id)
-      .maybeSingle());
-
-    if (error) throw error;
-  }
-
-  return data;
+async function submitCheckin(){
+ if(!currentUser)return msg("checkinMessage","กรุณาเข้าสู่ระบบก่อนส่งรูป","error");
+ if(busy)return;if(!selectedPhoto)return msg("checkinMessage","เลือกรูปก่อนส่งนะ","error");
+ if(!confirm("ยืนยันส่งรูปนี้ให้แอดมินตรวจหรือไม่? ส่งได้วันละ 1 รูปเท่านั้น"))return;
+ busy=true;$("submitCheckinBtn").disabled=true;
+ try{
+  const ext=(selectedPhoto.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"")||"jpg";
+  const path=currentUser.id+"/"+Date.now()+"-"+Math.random().toString(36).slice(2,9)+"."+ext;
+  const {error:upErr}=await db.storage.from("checkin-photos").upload(path,selectedPhoto,{contentType:selectedPhoto.type||"image/jpeg",upsert:false});
+  if(upErr)throw upErr;
+  const {data,error}=await db.rpc("submit_checkin",{p_checkin_type:"photo",p_photo_path:path});
+  if(error){await db.storage.from("checkin-photos").remove([path]);throw error;}
+  const result=Array.isArray(data)?data[0]:data;if(result?.success===false)throw new Error(result.message||"ส่งรูปไม่สำเร็จ");
+  msg("checkinMessage","ส่งรูปสำเร็จ! รอแอดมินตรวจรูปก่อนรับคะแนน","success");$("checkinPhoto").value="";selectedPhoto=null;$("photoPreview").classList.add("hidden");$("photoPreview").removeAttribute("src");await loadMyCheckins();
+ }catch(e){msg("checkinMessage","ส่งรูปไม่สำเร็จ: "+e.message,"error");}
+ finally{busy=false;$("submitCheckinBtn").disabled=false;}
 }
-
-/* แสดงข้อมูลสมาชิกและคะแนน */
-async function loadMember() {
-  const { data, error } = await db.auth.getUser();
-  if (error) throw error;
-
-  currentUser = data.user;
-  updateMenu();
-
-  $("authArea").classList.toggle("hidden", Boolean(currentUser));
-  $("memberArea").classList.toggle("hidden", !currentUser);
-
-  if (!currentUser) {
-    $("pointsValue").textContent = "—";
-    $("pointsMessage").textContent = "เข้าสู่ระบบเพื่อดูคะแนน";
-    $("memberName").textContent = "สมาชิก";
-    $("memberEmail").textContent = "";
-    $("displayName").value = "";
-    $("displayName").disabled = false;
-    $("saveNameBtn").disabled = false;
-    msg("nameMessage", "");
-    return;
+async function loadAdminCheckins(){
+ const box=$("adminCheckins");box.replaceChildren();if(!currentUser){box.textContent="กรุณาเข้าสู่ระบบด้วยบัญชีแอดมิน";return;}
+ try{
+  const p=await getProfile();if(p.role!=="admin"){$("adminCard").classList.add("hidden");return;}
+  const {data,error}=await db.from("checkins").select("id,user_id,display_name,checkin_type,photo_path,status,created_at").eq("status","pending").order("created_at",{ascending:true}).limit(100);
+  if(error)throw error;if(!data?.length){box.textContent="ไม่มีรายการรอตรวจ";return;}
+  for(const item of data){
+   const c=document.createElement("div");c.className="checkin";const h=document.createElement("h3");h.textContent="รายการ #"+item.id+" — "+(item.display_name||"สมาชิก");c.appendChild(h);
+   const uid=document.createElement("p");uid.className="muted";uid.textContent="สมาชิก: "+item.user_id;c.appendChild(uid);
+   const dt=new Date(item.created_at);const d=document.createElement("p");d.className="muted";d.textContent=Number.isNaN(dt.getTime())?"":dt.toLocaleString("th-TH",{dateStyle:"medium",timeStyle:"short"});c.appendChild(d);
+   const {data:signed,error:se}=await db.storage.from("checkin-photos").createSignedUrl(item.photo_path,3600);
+   if(!se&&signed?.signedUrl){const im=document.createElement("img");im.className="photo-preview";im.src=signed.signedUrl;im.alt="รูปที่สมาชิกส่ง";c.appendChild(im);}else{const er=document.createElement("p");er.className="error";er.textContent="เปิดรูปไม่ได้: "+(se?.message||"ไม่พบรูป");c.appendChild(er);}
+   const note=document.createElement("input");note.placeholder="หมายเหตุ (ถ้ามี)";note.maxLength=200;note.setAttribute("aria-label","หมายเหตุรายการ "+item.id);c.appendChild(note);
+   const row=document.createElement("div");row.className="row";
+   const cup=document.createElement("button");cup.textContent="แก้ว +1";cup.addEventListener("click",()=>reviewCheckin(item.id,"approved",1,note.value,c));row.appendChild(cup);
+   const boxBtn=document.createElement("button");boxBtn.textContent="กล่อง +1";boxBtn.className="secondary";boxBtn.addEventListener("click",()=>reviewCheckin(item.id,"approved",1,note.value,c));row.appendChild(boxBtn);
+   c.appendChild(row);
+   const row2=document.createElement("div");row2.className="row";
+   const both=document.createElement("button");both.textContent="มีทั้งคู่ +2";both.addEventListener("click",()=>reviewCheckin(item.id,"approved",2,note.value,c));row2.appendChild(both);
+   const reject=document.createElement("button");reject.textContent="ปฏิเสธ";reject.className="danger";reject.addEventListener("click",()=>reviewCheckin(item.id,"rejected",0,note.value,c));row2.appendChild(reject);
+   c.appendChild(row2);box.appendChild(c);
   }
-
-  $("memberEmail").textContent = currentUser.email || "";
-
-  const profile = await getProfile();
-  const name = profile.display_name || "";
-
-  $("memberName").textContent = name || "ยังไม่ได้ตั้งชื่อ";
-  $("displayName").value = name;
-
-  $("pointsValue").textContent =
-    Number(profile.points || 0).toLocaleString("th-TH");
-
-  $("pointsMessage").textContent = "อัปเดตคะแนนเรียบร้อย";
-
-  const locked = profile.name_locked === true;
-  $("displayName").disabled = locked;
-  $("saveNameBtn").disabled = locked;
-
-  msg(
-    "nameMessage",
-    locked
-      ? "🔒 ตั้งชื่อแล้ว ไม่สามารถเปลี่ยนได้อีก"
-      : "คุณสามารถตั้งชื่อได้หนึ่งครั้ง"
-  );
+ }catch(e){box.textContent="โหลดรายการแอดมินไม่สำเร็จ: "+e.message;}
 }
-
-/* สมัครสมาชิก */
-async function signUp() {
-  const email = $("email").value.trim();
-  const password = $("password").value;
-
-  if (!email || !password) {
-    return msg("authMessage", "กรอกอีเมลและรหัสผ่านก่อน", "error");
-  }
-
-  if (password.length < 6) {
-    return msg("authMessage", "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร", "error");
-  }
-
-  $("signupBtn").disabled = true;
-
-  try {
-    const { data, error } = await db.auth.signUp({ email, password });
-    if (error) throw error;
-
-    if (data.session) {
-      await refreshAll();
-      msg("authMessage", "สมัครสมาชิกสำเร็จ", "success");
-    } else {
-      msg(
-        "authMessage",
-        "สมัครแล้ว โปรดตรวจสอบอีเมลเพื่อยืนยันบัญชี",
-        "success"
-      );
-    }
-  } catch (e) {
-    msg("authMessage", e.message, "error");
-  } finally {
-    $("signupBtn").disabled = false;
-  }
+async function reviewCheckin(id,decision,points,note,card){
+ if(!confirm(decision==="rejected"?"ยืนยันปฏิเสธรูปนี้หรือไม่?":"ยืนยันให้ "+points+" คะแนนหรือไม่?"))return;
+ card.querySelectorAll("button").forEach(b=>b.disabled=true);
+ try{
+  const {data,error}=await db.rpc("review_checkin",{p_checkin_id:id,p_decision:decision,p_points:points,p_note:note||null});if(error)throw error;
+  const r=Array.isArray(data)?data[0]:data;if(r?.success===false)throw new Error(r.message||"ตรวจรูปไม่สำเร็จ");
+  msg("adminMessage",decision==="rejected"?"ปฏิเสธรูปแล้ว":"อนุมัติแล้ว เพิ่ม "+points+" คะแนน","success");
+  await Promise.all([loadAdminCheckins(),loadMyCheckins(),loadMember()]);
+ }catch(e){msg("adminMessage","ตรวจรูปไม่สำเร็จ: "+e.message,"error");card.querySelectorAll("button").forEach(b=>b.disabled=false);}
 }
-
-/* เข้าสู่ระบบ */
-async function signIn() {
-  const email = $("email").value.trim();
-  const password = $("password").value;
-
-  if (!email || !password) {
-    return msg("authMessage", "กรอกอีเมลและรหัสผ่านก่อน", "error");
-  }
-
-  $("loginBtn").disabled = true;
-
-  try {
-    const { error } = await db.auth.signInWithPassword({
-      email,
-      password
-    });
-
-    if (error) throw error;
-
-    await refreshAll();
-    msg("authMessage", "เข้าสู่ระบบสำเร็จ", "success");
-  } catch (e) {
-    msg("authMessage", e.message, "error");
-  } finally {
-    $("loginBtn").disabled = false;
-  }
+async function refreshAll(){
+ const results=await Promise.allSettled([loadMember(),loadRewards(),loadHistory(),loadMemberCount(),loadMyCheckins()]);
+ const failed=results.find(r=>r.status==="rejected");if(failed){console.error("refreshAll",failed.reason);msg("authMessage","ข้อมูลบางส่วนโหลดไม่สำเร็จ กรุณาลองรีเฟรช","error");}
+ if(currentUser){const p=await getProfile().catch(()=>null);if(p?.role==="admin")await loadAdminCheckins();}
 }
-
-/* ตั้งชื่อครั้งเดียว */
-async function saveName() {
-  if (!currentUser) {
-    return msg("nameMessage", "กรุณาเข้าสู่ระบบก่อน", "error");
-  }
-
-  const name = $("displayName").value.trim();
-
-  if (!name) {
-    return msg("nameMessage", "กรุณาพิมพ์ชื่อก่อนบันทึก", "error");
-  }
-
-  if (name.length > 40) {
-    return msg("nameMessage", "ชื่อต้องไม่เกิน 40 ตัวอักษร", "error");
-  }
-
-  $("saveNameBtn").disabled = true;
-
-  try {
-    const profile = await getProfile();
-
-    if (profile.name_locked === true) {
-      $("displayName").disabled = true;
-      msg("nameMessage", "ชื่อนี้ถูกล็อกแล้ว ไม่สามารถเปลี่ยนได้", "error");
-      return;
-    }
-
-    const { data, error } = await db.from("profiles")
-      .update({
-        display_name: name,
-        name_locked: true
-      })
-      .eq("id", currentUser.id)
-      .eq("name_locked", false)
-      .select("id");
-
-    if (error) throw error;
-
-    if (!data || data.length === 0) {
-      throw new Error(
-        "ตั้งชื่อไม่ได้ อาจมีการตั้งชื่อไปแล้ว กรุณารีเฟรชหน้าเว็บ"
-      );
-    }
-
-    $("memberName").textContent = name;
-    $("displayName").value = name;
-    $("displayName").disabled = true;
-
-    msg("nameMessage", "🔒 บันทึกชื่อสำเร็จ ตั้งชื่อได้ครั้งเดียว", "success");
-  } catch (e) {
-    msg("nameMessage", "บันทึกชื่อไม่สำเร็จ: " + e.message, "error");
-    $("saveNameBtn").disabled = false;
-  }
-}
-
-/* ออกจากระบบ */
-async function signOut() {
-  if (!confirm("ต้องการออกจากระบบหรือไม่?")) return;
-
-  try {
-    const { error } = await db.auth.signOut();
-    if (error) throw error;
-
-    currentUser = null;
-    await refreshAll();
-    toggleMenu(false);
-
-    msg("authMessage", "ออกจากระบบแล้ว", "success");
-  } catch (e) {
-    msg("authMessage", e.message, "error");
-  }
-}
-
-/* จำนวนสมาชิกทั้งหมดจากฟังก์ชัน SQL ที่สร้างไว้ */
-async function loadMemberCount() {
-  $("memberCount").textContent = "…";
-  $("memberCountMessage").textContent = "กำลังโหลดจำนวนสมาชิก...";
-
-  try {
-    const { data, error } = await db.rpc("get_member_count");
-    if (error) throw error;
-
-    const count = Number(data);
-
-    if (!Number.isFinite(count)) {
-      throw new Error("รูปแบบจำนวนสมาชิกไม่ถูกต้อง");
-    }
-
-    $("memberCount").textContent = count.toLocaleString("th-TH");
-    $("memberCountMessage").textContent = "อัปเดตจำนวนสมาชิกแล้ว";
-  } catch (e) {
-    $("memberCount").textContent = "—";
-    $("memberCountMessage").textContent =
-      "โหลดจำนวนสมาชิกไม่สำเร็จ: " + e.message;
-    console.error("loadMemberCount:", e);
-  }
-}
-
-/* อ่านชื่อและคะแนนที่ใช้แลกรางวัล */
-function nameOf(r) {
-  return r.name || r.title || r.reward_name || r.label || "ของรางวัล";
-}
-
-function costOf(r) {
-  for (const key of [
-    "cost",
-    "points_cost",
-    "point_cost",
-    "points_required",
-    "required_points"
-  ]) {
-    if (r[key] != null) return Number(r[key]);
-  }
-  return null;
-}
-
-/* อ่านจำนวนคงเหลือจากคอลัมน์ที่พบบ่อย */
-function quantityOf(r) {
-  for (const key of [
-    "stock",
-    "quantity",
-    "remaining",
-    "stock_quantity",
-    "available_quantity",
-    "qty"
-  ]) {
-    if (r[key] !== undefined && r[key] !== null && r[key] !== "") {
-      const value = Number(r[key]);
-      return Number.isFinite(value) ? value : null;
-    }
-  }
-  return null;
-}
-
-/* แสดงรายการของรางวัล */
-async function loadRewards() {
-  $("rewardsList").textContent = "กำลังโหลดของรางวัล...";
-
-  try {
-    const { data, error } = await db
-      .from("rewards")
-      .select("*")
-      .order("id");
-
-    if (error) throw error;
-
-    $("rewardsList").replaceChildren();
-
-    if (!data || data.length === 0) {
-      $("rewardsList").textContent = "ยังไม่มีของรางวัล";
-      return;
-    }
-
-    data.forEach(r => {
-      const card = document.createElement("div");
-      card.className = "reward";
-
-      const title = document.createElement("h3");
-      title.textContent = "🎁 " + nameOf(r);
-      card.appendChild(title);
-
-      const description = document.createElement("p");
-      description.textContent = r.description || r.detail || "";
-      card.appendChild(description);
-
-      const cost = costOf(r);
-      const price = document.createElement("p");
-      price.className = "muted";
-      price.textContent =
-        cost === null || !Number.isFinite(cost)
-          ? "ไม่พบราคาคะแนน"
-          : "⭐ ใช้ " + cost.toLocaleString("th-TH") + " คะแนน";
-      card.appendChild(price);
-
-      const quantity = quantityOf(r);
-      const stock = document.createElement("p");
-
-      if (quantity === null) {
-        stock.className = "muted";
-        stock.textContent = "📦 ยังอ่านจำนวนของรางวัลไม่ได้";
-      } else if (quantity <= 0) {
-        stock.className = "stock out";
-        stock.textContent = "📦 ของรางวัลหมด";
-      } else {
-        stock.className = "stock";
-        stock.textContent =
-          "📦 คงเหลือ " + quantity.toLocaleString("th-TH") + " ชิ้น";
-      }
-
-      card.appendChild(stock);
-
-      const button = document.createElement("button");
-      button.textContent =
-        quantity !== null && quantity <= 0
-          ? "ของรางวัลหมด"
-          : "แลกของรางวัล";
-
-      button.disabled =
-        !currentUser || (quantity !== null && quantity <= 0);
-
-      button.addEventListener("click", () => redeem(r.id, button));
-      card.appendChild(button);
-
-      $("rewardsList").appendChild(card);
-    });
-  } catch (e) {
-    $("rewardsList").textContent =
-      "โหลดของรางวัลไม่สำเร็จ: " + e.message;
-  }
-}
-
-/* แลกรางวัลผ่าน Supabase RPC */
-async function redeem(id, button) {
-  if (!currentUser) {
-    return msg("rewardsMessage", "กรุณาเข้าสู่ระบบก่อน", "error");
-  }
-
-  if (busy) return;
-  if (!confirm("ยืนยันการแลกของรางวัลหรือไม่?")) return;
-
-  busy = true;
-  button.disabled = true;
-
-  try {
-    const { data, error } = await db.rpc("redeem_reward", {
-      p_reward_id: id
-    });
-
-    if (error) throw error;
-
-    const result = Array.isArray(data) ? data[0] : data;
-
-    if (result?.success === false) {
-      throw new Error(result.message || "แลกรางวัลไม่สำเร็จ");
-    }
-
-    if (result?.error) {
-      throw new Error(result.error);
-    }
-
-    msg(
-      "rewardsMessage",
-      result?.message || "ส่งคำขอแลกรางวัลแล้ว",
-      "success"
-    );
-
-    await refreshAll();
-  } catch (e) {
-    msg("rewardsMessage", "แลกไม่สำเร็จ: " + e.message, "error");
-    await loadRewards();
-  } finally {
-    busy = false;
-  }
-}
-
-/* ประวัติการแลกของสมาชิกที่เข้าสู่ระบบอยู่ */
-async function loadHistory() {
-  const list = $("historyList");
-  list.replaceChildren();
-
-  if (!currentUser) {
-    list.textContent = "เข้าสู่ระบบเพื่อดูประวัติการแลก";
-    return;
-  }
-
-  list.textContent = "กำลังโหลดประวัติ...";
-
-  try {
-    const { data, error } = await db.from("redemptions")
-      .select("id, user_id, reward_id, cost, code, created_at")
-      .eq("user_id", currentUser.id)
-      .order("created_at", { ascending: false });
-
-    if (error) throw error;
-
-    if (!data || data.length === 0) {
-      list.textContent = "ยังไม่มีประวัติการแลก";
-      return;
-    }
-
-    const { data: rewards, error: rewardError } = await db
-      .from("rewards")
-      .select("*");
-
-    if (rewardError) throw rewardError;
-
-    const rewardMap = new Map(
-      (rewards || []).map(r => [String(r.id), nameOf(r)])
-    );
-
-    list.replaceChildren();
-
-    data.forEach(item => {
-      const card = document.createElement("div");
-      card.className = "reward";
-
-      const title = document.createElement("h3");
-      title.textContent =
-        "🎁 " +
-        (rewardMap.get(String(item.reward_id)) ||
-          "ของรางวัล #" + item.reward_id);
-      card.appendChild(title);
-
-      const cost = document.createElement("p");
-      cost.className = "muted";
-      cost.textContent =
-        "⭐ ใช้คะแนน: " +
-        Number(item.cost).toLocaleString("th-TH") +
-        " คะแนน";
-      card.appendChild(cost);
-
-      const date = document.createElement("p");
-      date.className = "muted";
-      const parsed = new Date(item.created_at);
-
-      date.textContent = "📅 " +
-        (Number.isNaN(parsed.getTime())
-          ? "-"
-          : parsed.toLocaleString("th-TH", {
-              dateStyle: "medium",
-              timeStyle: "short"
-            }));
-      card.appendChild(date);
-
-      if (item.code) {
-        const code = document.createElement("p");
-        code.textContent = "🧾 รหัสการแลก: " + item.code;
-        card.appendChild(code);
-      }
-
-      list.appendChild(card);
-    });
-  } catch (e) {
-    list.textContent = "โหลดประวัติไม่สำเร็จ: " + e.message;
-  }
-}
-
-/* รีเฟรชแต่ละส่วนแยกกัน ป้องกันส่วนหนึ่งเสียแล้วส่วนอื่นไม่โหลด */
-async function refreshAll() {
-  const results = await Promise.allSettled([
-    loadMember(),
-    loadRewards(),
-    loadHistory(),
-    loadMemberCount()
-  ]);
-
-  const failed = results.find(result => result.status === "rejected");
-
-  if (failed) {
-    console.error("refreshAll:", failed.reason);
-    msg("authMessage", "ข้อมูลบางส่วนโหลดไม่สำเร็จ กรุณาลองรีเฟรช", "error");
-  }
-}
-
-$("loginBtn").addEventListener("click", signIn);
-$("signupBtn").addEventListener("click", signUp);
-$("saveNameBtn").addEventListener("click", saveName);
-$("logoutBtn").addEventListener("click", signOut);
-$("refreshBtn").addEventListener("click", refreshAll);
-$("historyRefreshBtn").addEventListener("click", loadHistory);
-
-db.auth.onAuthStateChange(event => {
-  if (event === "SIGNED_OUT") {
-    currentUser = null;
-    updateMenu();
-    $("historyList").textContent = "เข้าสู่ระบบเพื่อดูประวัติการแลก";
-  }
-});
-
+$("loginBtn").addEventListener("click",signIn);$("signupBtn").addEventListener("click",signUp);$("saveNameBtn").addEventListener("click",saveName);$("logoutBtn").addEventListener("click",signOut);
+$("refreshBtn").addEventListener("click",refreshAll);$("historyRefreshBtn").addEventListener("click",loadHistory);
+$("submitCheckinBtn").addEventListener("click",submitCheckin);$("checkinRefreshBtn").addEventListener("click",loadMyCheckins);$("adminRefreshBtn").addEventListener("click",loadAdminCheckins);
+db.auth.onAuthStateChange(event=>{if(event==="SIGNED_OUT"){currentUser=null;updateMenu();$("historyList").textContent="เข้าสู่ระบบเพื่อดูประวัติการแลก";$("myCheckins").textContent="เข้าสู่ระบบเพื่อดูประวัติเช็กอิน";$("adminCard").classList.add("hidden");}});
 refreshAll();
 </script>
 </body>
