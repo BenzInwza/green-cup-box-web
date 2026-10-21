@@ -26,6 +26,7 @@
     .status{display:inline-block;padding:5px 9px;border-radius:999px;background:#fff3cd;color:#785800;font-size:13px;font-weight:700}
     .status.approved{background:#e0f6e7;color:#176638}.status.rejected{background:#ffe5e5;color:#a31f1f}
     footer{text-align:center;padding:20px;color:#68776c}
+    .admin-member{border:1px solid #e0e9e1;border-radius:12px;padding:12px;margin-top:10px;overflow-wrap:anywhere}.admin-member .row{align-items:center}.admin-member .role{font-size:13px;color:#68776c}
   </style>
 </head>
 <body>
@@ -66,6 +67,8 @@
 </section>
 
 <section class="card hidden" id="adminCard"><h2>🛡️ แผงตรวจรูปแอดมิน</h2><p class="muted">ตรวจดูรูป แล้วเลือกให้คะแนนตามสิ่งที่เห็นจริง รายการหนึ่งตรวจได้ครั้งเดียว</p><button id="adminRefreshBtn" class="secondary full">🔄 โหลดรายการรอตรวจ</button><p id="adminMessage" class="message"></p><div id="adminCheckins">กำลังตรวจสอบสิทธิ์...</div></section>
+
+<section class="card hidden" id="adminMembersCard"><h2>👥 จัดการสิทธิ์แอดมิน</h2><p class="muted">ค้นหาสมาชิกจากชื่อ แล้วกดเพิ่มหรือลดสิทธิ์ได้ เฉพาะแอดมินเท่านั้นที่ใช้ส่วนนี้ได้</p><input id="adminMemberSearch" placeholder="ค้นหาชื่อสมาชิก" aria-label="ค้นหาชื่อสมาชิก"><button id="adminMembersRefreshBtn" class="secondary full">🔄 โหลดรายชื่อสมาชิก</button><p id="adminMembersMessage" class="message"></p><div id="adminMembersList">กดโหลดรายชื่อสมาชิก</div></section>
 
 <section class="card" id="rewardsCard"><h2>🎁 ของรางวัล</h2><p class="muted">ตรวจสอบคะแนนและจำนวนของรางวัลก่อนแลก</p><div id="rewardsList">กำลังโหลด...</div><p id="rewardsMessage" class="message"></p></section>
 <section class="card" id="historyCard"><h2>📜 ประวัติการแลก</h2><div id="historyList">เข้าสู่ระบบเพื่อดูประวัติ</div><button id="historyRefreshBtn" class="secondary full">🔄 รีเฟรชประวัติ</button></section>
@@ -109,6 +112,7 @@ async function loadMember(){
  const locked=p.name_locked===true;$("displayName").disabled=locked;$("saveNameBtn").disabled=locked;
  msg("nameMessage",locked?"🔒 ตั้งชื่อแล้ว ไม่สามารถเปลี่ยนได้อีก":"คุณสามารถตั้งชื่อได้หนึ่งครั้ง");
  $("adminCard").classList.toggle("hidden",p.role!=="admin");
+ $("adminMembersCard").classList.toggle("hidden",p.role!=="admin");
 }
 async function signUp(){
  const email=$("email").value.trim(),password=$("password").value;
@@ -242,15 +246,43 @@ async function reviewCheckin(id,decision,points,note,card){
   await Promise.all([loadAdminCheckins(),loadMyCheckins(),loadMember()]);
  }catch(e){msg("adminMessage","ตรวจรูปไม่สำเร็จ: "+e.message,"error");card.querySelectorAll("button").forEach(b=>b.disabled=false);}
 }
+async function loadAdminMembers(){
+ const list=$("adminMembersList");list.replaceChildren();
+ if(!currentUser){list.textContent="กรุณาเข้าสู่ระบบด้วยบัญชีแอดมิน";return;}
+ try{
+  const p=await getProfile();if(p.role!=="admin"){$("adminMembersCard").classList.add("hidden");return;}
+  const {data,error}=await db.rpc("admin_list_members");if(error)throw error;
+  const q=$("adminMemberSearch").value.trim().toLocaleLowerCase();
+  const rows=(data||[]).filter(m=>!q||(m.display_name||"").toLocaleLowerCase().includes(q)||m.id.toLowerCase().includes(q));
+  if(!rows.length){list.textContent="ไม่พบสมาชิกที่ตรงกับคำค้น";return;}
+  for(const m of rows){
+   const card=document.createElement("div");card.className="admin-member";
+   const name=document.createElement("strong");name.textContent=m.display_name||"ยังไม่ตั้งชื่อ";card.appendChild(name);
+   const role=document.createElement("p");role.className="role";role.textContent="สิทธิ์: "+(m.role==="admin"?"แอดมิน":"สมาชิก");card.appendChild(role);
+   const id=document.createElement("p");id.className="muted";id.textContent="รหัสบัญชี: "+m.id;card.appendChild(id);
+   const btn=document.createElement("button");btn.className=m.role==="admin"?"danger":"";btn.textContent=m.role==="admin"?"ลดสิทธิ์เป็นสมาชิก":"ตั้งเป็นแอดมิน";
+   btn.disabled=m.id===currentUser.id&&m.role==="admin";
+   btn.addEventListener("click",async()=>{
+    const makeAdmin=m.role!=="admin";
+    if(!confirm((makeAdmin?"ตั้ง "+(m.display_name||"บัญชีนี้")+" เป็นแอดมิน":"ลดสิทธิ์ "+(m.display_name||"บัญชีนี้")+" เป็นสมาชิก")+" ใช่ไหม?"))return;
+    btn.disabled=true;
+    try{const {data,error}=await db.rpc("admin_manage_member",{p_user_id:m.id,p_make_admin:makeAdmin});if(error)throw error;
+     if(data&&data.success===false)throw new Error(data.message||"เปลี่ยนสิทธิ์ไม่สำเร็จ");
+     msg("adminMembersMessage",makeAdmin?"เพิ่มสิทธิ์แอดมินแล้ว":"ลดสิทธิ์แอดมินแล้ว","success");await loadAdminMembers();
+    }catch(e){msg("adminMembersMessage","เปลี่ยนสิทธิ์ไม่สำเร็จ: "+e.message,"error");btn.disabled=false;}
+   });card.appendChild(btn);list.appendChild(card);
+  }
+ }catch(e){list.textContent="โหลดรายชื่อไม่สำเร็จ: "+e.message;msg("adminMembersMessage","ตรวจสอบว่าได้รัน SQL สำหรับระบบจัดการแอดมินแล้ว","error");}
+}
 async function refreshAll(){
  const results=await Promise.allSettled([loadMember(),loadRewards(),loadHistory(),loadMemberCount(),loadMyCheckins()]);
  const failed=results.find(r=>r.status==="rejected");if(failed){console.error("refreshAll",failed.reason);msg("authMessage","ข้อมูลบางส่วนโหลดไม่สำเร็จ กรุณาลองรีเฟรช","error");}
- if(currentUser){const p=await getProfile().catch(()=>null);if(p?.role==="admin")await loadAdminCheckins();}
+ if(currentUser){const p=await getProfile().catch(()=>null);if(p?.role==="admin"){await loadAdminCheckins();await loadAdminMembers();}}
 }
 $("loginBtn").addEventListener("click",signIn);$("signupBtn").addEventListener("click",signUp);$("saveNameBtn").addEventListener("click",saveName);$("logoutBtn").addEventListener("click",signOut);
 $("refreshBtn").addEventListener("click",refreshAll);$("historyRefreshBtn").addEventListener("click",loadHistory);
-$("submitCheckinBtn").addEventListener("click",submitCheckin);$("checkinRefreshBtn").addEventListener("click",loadMyCheckins);$("adminRefreshBtn").addEventListener("click",loadAdminCheckins);
-db.auth.onAuthStateChange(event=>{if(event==="SIGNED_OUT"){currentUser=null;updateMenu();$("historyList").textContent="เข้าสู่ระบบเพื่อดูประวัติการแลก";$("myCheckins").textContent="เข้าสู่ระบบเพื่อดูประวัติเช็กอิน";$("adminCard").classList.add("hidden");}});
+$("submitCheckinBtn").addEventListener("click",submitCheckin);$("checkinRefreshBtn").addEventListener("click",loadMyCheckins);$("adminRefreshBtn").addEventListener("click",loadAdminCheckins);$("adminMembersRefreshBtn").addEventListener("click",loadAdminMembers);$("adminMemberSearch").addEventListener("input",loadAdminMembers);
+db.auth.onAuthStateChange(event=>{if(event==="SIGNED_OUT"){currentUser=null;updateMenu();$("historyList").textContent="เข้าสู่ระบบเพื่อดูประวัติการแลก";$("myCheckins").textContent="เข้าสู่ระบบเพื่อดูประวัติเช็กอิน";$("adminCard").classList.add("hidden");$("adminMembersCard").classList.add("hidden");}});
 refreshAll();
 </script>
 </body>
