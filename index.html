@@ -7,6 +7,7 @@
   <meta name="theme-color" content="#16834a">
   <title>Green Cup Box | ลดโลกร้อน</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
     * { box-sizing: border-box; }
 
@@ -33,6 +34,8 @@
     }
 
     h1 { font-size: 23px; margin: 0; }
+    h2 { font-size: 20px; margin-top: 0; }
+    label { display: block; margin: 12px 0 6px; }
 
     .menu-wrap { position: relative; }
 
@@ -85,10 +88,6 @@
       scroll-margin-top: 12px;
     }
 
-    h2 { font-size: 20px; margin-top: 0; }
-
-    label { display: block; margin: 12px 0 6px; }
-
     input {
       width: 100%;
       padding: 12px;
@@ -118,7 +117,7 @@
       color: #176638;
     }
 
-    .danger { background: #b93838; }
+    .danger { background: #b93838; color: white; }
 
     .row {
       display: flex;
@@ -127,9 +126,7 @@
     }
 
     .row button { flex: 1; }
-
     .full { width: 100%; margin-top: 12px; }
-
     .hidden { display: none !important; }
 
     .muted {
@@ -206,6 +203,7 @@
 
       <nav id="mainMenu" class="menu-panel hidden">
         <button class="menu-item" data-target="memberCard">👤 สมาชิก / ตั้งชื่อ</button>
+        <button class="menu-item" data-target="memberCountCard">👥 จำนวนสมาชิก</button>
         <button class="menu-item" data-target="pointsCard">⭐ คะแนนสะสม</button>
         <button class="menu-item" data-target="rewardsCard">🎁 ของรางวัล</button>
         <button class="menu-item" data-target="historyCard">📜 ประวัติการแลก</button>
@@ -249,19 +247,28 @@
     <p id="authMessage" class="message" aria-live="polite"></p>
   </section>
 
+  <section class="card" id="memberCountCard">
+    <h2>👥 สมาชิก Green Cup Box</h2>
+    <div class="points">
+      <span>จำนวนบัญชีสมาชิกทั้งหมด</span>
+      <strong id="memberCount">—</strong>
+      <span>บัญชี</span>
+    </div>
+    <p id="memberCountMessage" class="message muted">
+      กำลังโหลดจำนวนสมาชิก...
+    </p>
+  </section>
+
   <section class="card" id="pointsCard">
     <h2>⭐ คะแนนสะสมของคุณ</h2>
-
     <div class="points">
       <span>คะแนนปัจจุบัน</span>
       <strong id="pointsValue">—</strong>
       <span>คะแนน</span>
     </div>
-
     <p id="pointsMessage" class="message muted">
       เข้าสู่ระบบเพื่อดูคะแนน
     </p>
-
     <button id="refreshBtn" class="secondary full">
       🔄 รีเฟรชข้อมูล
     </button>
@@ -337,6 +344,7 @@ function updateMenu() {
   $("logoutBtn").classList.toggle("hidden", !currentUser);
 }
 
+/* อ่านข้อมูลสมาชิก */
 async function getProfile() {
   if (!currentUser) return null;
 
@@ -369,6 +377,7 @@ async function getProfile() {
   return data;
 }
 
+/* แสดงข้อมูลสมาชิกและคะแนน */
 async function loadMember() {
   const { data, error } = await db.auth.getUser();
   if (error) throw error;
@@ -387,7 +396,6 @@ async function loadMember() {
     $("displayName").value = "";
     $("displayName").disabled = false;
     $("saveNameBtn").disabled = false;
-
     msg("nameMessage", "");
     return;
   }
@@ -417,6 +425,7 @@ async function loadMember() {
   );
 }
 
+/* สมัครสมาชิก */
 async function signUp() {
   const email = $("email").value.trim();
   const password = $("password").value;
@@ -428,6 +437,8 @@ async function signUp() {
   if (password.length < 6) {
     return msg("authMessage", "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร", "error");
   }
+
+  $("signupBtn").disabled = true;
 
   try {
     const { data, error } = await db.auth.signUp({ email, password });
@@ -445,9 +456,12 @@ async function signUp() {
     }
   } catch (e) {
     msg("authMessage", e.message, "error");
+  } finally {
+    $("signupBtn").disabled = false;
   }
 }
 
+/* เข้าสู่ระบบ */
 async function signIn() {
   const email = $("email").value.trim();
   const password = $("password").value;
@@ -455,6 +469,8 @@ async function signIn() {
   if (!email || !password) {
     return msg("authMessage", "กรอกอีเมลและรหัสผ่านก่อน", "error");
   }
+
+  $("loginBtn").disabled = true;
 
   try {
     const { error } = await db.auth.signInWithPassword({
@@ -468,9 +484,12 @@ async function signIn() {
     msg("authMessage", "เข้าสู่ระบบสำเร็จ", "success");
   } catch (e) {
     msg("authMessage", e.message, "error");
+  } finally {
+    $("loginBtn").disabled = false;
   }
 }
 
+/* ตั้งชื่อครั้งเดียว */
 async function saveName() {
   if (!currentUser) {
     return msg("nameMessage", "กรุณาเข้าสู่ระบบก่อน", "error");
@@ -498,7 +517,10 @@ async function saveName() {
     }
 
     const { data, error } = await db.from("profiles")
-      .update({ display_name: name, name_locked: true })
+      .update({
+        display_name: name,
+        name_locked: true
+      })
       .eq("id", currentUser.id)
       .eq("name_locked", false)
       .select("id");
@@ -506,7 +528,9 @@ async function saveName() {
     if (error) throw error;
 
     if (!data || data.length === 0) {
-      throw new Error("ตั้งชื่อไม่ได้ อาจมีการตั้งชื่อไปแล้ว กรุณารีเฟรชหน้าเว็บ");
+      throw new Error(
+        "ตั้งชื่อไม่ได้ อาจมีการตั้งชื่อไปแล้ว กรุณารีเฟรชหน้าเว็บ"
+      );
     }
 
     $("memberName").textContent = name;
@@ -520,6 +544,7 @@ async function saveName() {
   }
 }
 
+/* ออกจากระบบ */
 async function signOut() {
   if (!confirm("ต้องการออกจากระบบหรือไม่?")) return;
 
@@ -537,6 +562,32 @@ async function signOut() {
   }
 }
 
+/* จำนวนสมาชิกทั้งหมดจากฟังก์ชัน SQL ที่สร้างไว้ */
+async function loadMemberCount() {
+  $("memberCount").textContent = "…";
+  $("memberCountMessage").textContent = "กำลังโหลดจำนวนสมาชิก...";
+
+  try {
+    const { data, error } = await db.rpc("get_member_count");
+    if (error) throw error;
+
+    const count = Number(data);
+
+    if (!Number.isFinite(count)) {
+      throw new Error("รูปแบบจำนวนสมาชิกไม่ถูกต้อง");
+    }
+
+    $("memberCount").textContent = count.toLocaleString("th-TH");
+    $("memberCountMessage").textContent = "อัปเดตจำนวนสมาชิกแล้ว";
+  } catch (e) {
+    $("memberCount").textContent = "—";
+    $("memberCountMessage").textContent =
+      "โหลดจำนวนสมาชิกไม่สำเร็จ: " + e.message;
+    console.error("loadMemberCount:", e);
+  }
+}
+
+/* อ่านชื่อและคะแนนที่ใช้แลกรางวัล */
 function nameOf(r) {
   return r.name || r.title || r.reward_name || r.label || "ของรางวัล";
 }
@@ -551,14 +602,10 @@ function costOf(r) {
   ]) {
     if (r[key] != null) return Number(r[key]);
   }
-
   return null;
 }
 
-/*
-  อ่านจำนวนจากชื่อคอลัมน์ที่พบบ่อย
-  ถ้าไม่ตรงกับฐานข้อมูล จะไม่แต่งจำนวนขึ้นมาเอง
-*/
+/* อ่านจำนวนคงเหลือจากคอลัมน์ที่พบบ่อย */
 function quantityOf(r) {
   for (const key of [
     "stock",
@@ -573,10 +620,10 @@ function quantityOf(r) {
       return Number.isFinite(value) ? value : null;
     }
   }
-
   return null;
 }
 
+/* แสดงรายการของรางวัล */
 async function loadRewards() {
   $("rewardsList").textContent = "กำลังโหลดของรางวัล...";
 
@@ -610,12 +657,10 @@ async function loadRewards() {
       const cost = costOf(r);
       const price = document.createElement("p");
       price.className = "muted";
-
       price.textContent =
         cost === null || !Number.isFinite(cost)
           ? "ไม่พบราคาคะแนน"
           : "⭐ ใช้ " + cost.toLocaleString("th-TH") + " คะแนน";
-
       card.appendChild(price);
 
       const quantity = quantityOf(r);
@@ -636,20 +681,17 @@ async function loadRewards() {
       card.appendChild(stock);
 
       const button = document.createElement("button");
-
-      if (quantity !== null && quantity <= 0) {
-        button.textContent = "ของรางวัลหมด";
-      } else {
-        button.textContent = "แลกของรางวัล";
-      }
+      button.textContent =
+        quantity !== null && quantity <= 0
+          ? "ของรางวัลหมด"
+          : "แลกของรางวัล";
 
       button.disabled =
-        !currentUser ||
-        (quantity !== null && quantity <= 0);
+        !currentUser || (quantity !== null && quantity <= 0);
 
       button.addEventListener("click", () => redeem(r.id, button));
-
       card.appendChild(button);
+
       $("rewardsList").appendChild(card);
     });
   } catch (e) {
@@ -658,13 +700,13 @@ async function loadRewards() {
   }
 }
 
+/* แลกรางวัลผ่าน Supabase RPC */
 async function redeem(id, button) {
   if (!currentUser) {
     return msg("rewardsMessage", "กรุณาเข้าสู่ระบบก่อน", "error");
   }
 
   if (busy) return;
-
   if (!confirm("ยืนยันการแลกของรางวัลหรือไม่?")) return;
 
   busy = true;
@@ -702,6 +744,7 @@ async function redeem(id, button) {
   }
 }
 
+/* ประวัติการแลกของสมาชิกที่เข้าสู่ระบบอยู่ */
 async function loadHistory() {
   const list = $("historyList");
   list.replaceChildren();
@@ -747,7 +790,6 @@ async function loadHistory() {
         "🎁 " +
         (rewardMap.get(String(item.reward_id)) ||
           "ของรางวัล #" + item.reward_id);
-
       card.appendChild(title);
 
       const cost = document.createElement("p");
@@ -756,12 +798,10 @@ async function loadHistory() {
         "⭐ ใช้คะแนน: " +
         Number(item.cost).toLocaleString("th-TH") +
         " คะแนน";
-
       card.appendChild(cost);
 
       const date = document.createElement("p");
       date.className = "muted";
-
       const parsed = new Date(item.created_at);
 
       date.textContent = "📅 " +
@@ -771,7 +811,6 @@ async function loadHistory() {
               dateStyle: "medium",
               timeStyle: "short"
             }));
-
       card.appendChild(date);
 
       if (item.code) {
@@ -787,13 +826,20 @@ async function loadHistory() {
   }
 }
 
+/* รีเฟรชแต่ละส่วนแยกกัน ป้องกันส่วนหนึ่งเสียแล้วส่วนอื่นไม่โหลด */
 async function refreshAll() {
-  try {
-    await loadMember();
-    await loadRewards();
-    await loadHistory();
-  } catch (e) {
-    msg("authMessage", "โหลดข้อมูลไม่สำเร็จ: " + e.message, "error");
+  const results = await Promise.allSettled([
+    loadMember(),
+    loadRewards(),
+    loadHistory(),
+    loadMemberCount()
+  ]);
+
+  const failed = results.find(result => result.status === "rejected");
+
+  if (failed) {
+    console.error("refreshAll:", failed.reason);
+    msg("authMessage", "ข้อมูลบางส่วนโหลดไม่สำเร็จ กรุณาลองรีเฟรช", "error");
   }
 }
 
