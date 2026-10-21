@@ -53,6 +53,40 @@ button:disabled {opacity:.5;cursor:not-allowed}
 @media(min-width:650px) {
   .two-col {display:grid;grid-template-columns:1fr 1fr;gap:16px}
 }
+
+  
+/* ส่วนที่พับเก็บได้ */
+.collapsible-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.collapsible-heading::-webkit-details-marker {
+  display: none;
+}
+
+.collapsible-heading h2 {
+  margin: 0;
+}
+
+.collapse-icon {
+  font-size: 20px;
+  color: var(--green);
+  transition: transform .2s ease;
+}
+
+details[open] .collapse-icon {
+  transform: rotate(180deg);
+}
+
+.collapsible-content {
+  margin-top: 14px;
+}
+
 </style>
 </head>
 <body>
@@ -117,20 +151,42 @@ button:disabled {opacity:.5;cursor:not-allowed}
       <div id="pendingList">กำลังโหลดรายการ...</div>
     </section>
 
-    <section id="historySection" class="card">
-      <h2>🧾 ประวัติการตรวจรูป</h2>
-      <div id="historyList">กำลังโหลดประวัติ...</div>
-    </section>
+   
+<section id="historySection" class="card">
+  <details>
+    <summary style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px">
+      <h2 style="margin:0">🧾 ประวัติการตรวจรูป</h2>
+      <span>⌄</span>
+    </summary>
 
-    <section id="membersSection" class="card">
-      <h2>👥 สมาชิกและจัดการแอดมิน</h2>
+    <div style="margin-top:14px">
+      <div id="historyList">กำลังโหลดประวัติ...</div>
+    </div>
+  </details>
+</section>
+
+
+   
+<section id="membersSection" class="card">
+  <details>
+    <summary style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px">
+      <h2 style="margin:0">👥 สมาชิกและจัดการแอดมิน</h2>
+      <span>⌄</span>
+    </summary>
+
+    <div style="margin-top:14px">
       <p class="muted">
         Owner และ Super Admin สามารถเปลี่ยนสมาชิกเป็นแอดมินได้
-        การเพิ่มแอดมินเป็นการเปลี่ยนสิทธิ์บัญชีที่สมัครแล้ว ไม่ใช่สร้างบัญชีใหม่
+        การเพิ่มแอดมินเป็นการเปลี่ยนสิทธิ์บัญชีที่สมัครแล้ว
+        ไม่ใช่สร้างบัญชีใหม่
       </p>
+
       <button id="membersBtn">โหลดรายชื่อสมาชิก</button>
       <div id="membersList"></div>
-    </section>
+    </div>
+  </details>
+</section>
+
   </section>
 </main>
 
