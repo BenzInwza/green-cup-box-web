@@ -114,7 +114,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     // ใส่ค่าเดิมของโปรเจกต์ Supabase ที่ใช้งานอยู่
-    const SUPABASE_URL = "https://sjlmwicteshsabzlkvab.supabase.co/rest/v1/";
+    const SUPABASE_URL = "https://sjlmwicteshsabzlkvab.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_tqvsVPcYKq-QC6LtA3oVeg_NsR7wchz";
 
     const db = window.supabase.createClient(
