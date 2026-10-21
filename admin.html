@@ -27,6 +27,7 @@
     .status.approved{background:#e0f6e7;color:#176638}.status.rejected{background:#ffe5e5;color:#a31f1f}
     footer{text-align:center;padding:20px;color:#68776c}
     .admin-member{border:1px solid #e0e9e1;border-radius:12px;padding:12px;margin-top:10px;overflow-wrap:anywhere}.admin-member .row{align-items:center}.admin-member .role{font-size:13px;color:#68776c}
+    .stats-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}.stat{background:#eaf6ed;border-radius:12px;padding:14px;text-align:center}.stat strong{display:block;font-size:25px;color:#16834a}.history-item{border:1px solid #e0e9e1;border-radius:12px;padding:12px;margin-top:10px;overflow-wrap:anywhere}
 
     .page-links{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end;margin-left:auto}
     .page-link{display:inline-block;padding:9px 11px;border-radius:9px;border:1px solid #ffffff80;color:white;text-decoration:none;font-size:14px;font-weight:650}
@@ -50,7 +51,9 @@
 <button class="menu-item" data-target="rewardsCard">🎁 ของรางวัล</button>
 <button class="menu-item" data-target="historyCard">📜 ประวัติการแลก</button>
 <button class="menu-item" data-target="adminCard">🛡️ ตรวจรูป (แอดมิน)</button>
-<button class="menu-item" data-target="adminMembersCard">👥 จัดการแอดมิน</button>
+<button class="menu-item" data-target="adminMembersCard">👥 จัดการสมาชิกและแอดมิน</button>
+<button class="menu-item" data-target="adminStatsCard">📊 สรุปสถิติ</button>
+<button class="menu-item" data-target="adminHistoryCard">🧾 ประวัติการตรวจรูป</button>
 <button id="logoutBtn" class="menu-item danger hidden">🚪 ออกจากระบบ</button>
 </nav></div></div></header>
 <main>
@@ -80,7 +83,9 @@
 
 <section class="card hidden" id="adminCard"><h2>🛡️ แผงตรวจรูปแอดมิน</h2><p class="muted">ตรวจดูรูป แล้วเลือกให้คะแนนตามสิ่งที่เห็นจริง รายการหนึ่งตรวจได้ครั้งเดียว</p><button id="adminRefreshBtn" class="secondary full">🔄 โหลดรายการรอตรวจ</button><p id="adminMessage" class="message"></p><div id="adminCheckins">กำลังตรวจสอบสิทธิ์...</div></section>
 
-<section class="card hidden" id="adminMembersCard"><h2>👥 จัดการสิทธิ์แอดมิน</h2><p class="muted">ค้นหาสมาชิกจากชื่อ แล้วกดเพิ่มหรือลดสิทธิ์ได้ เฉพาะแอดมินเท่านั้นที่ใช้ส่วนนี้ได้</p><input id="adminMemberSearch" placeholder="ค้นหาชื่อสมาชิก" aria-label="ค้นหาชื่อสมาชิก"><button id="adminMembersRefreshBtn" class="secondary full">🔄 โหลดรายชื่อสมาชิก</button><p id="adminMembersMessage" class="message"></p><div id="adminMembersList">กดโหลดรายชื่อสมาชิก</div></section>
+<section class="card hidden" id="adminMembersCard"><h2>👥 จัดการสมาชิกและแอดมิน</h2><p class="muted">มีเจ้าของระบบเพียง 1 คน (หัวหน้าใหญ่สุด) เท่านั้นที่เปลี่ยนสิทธิ์แอดมินได้ แอดมินทั่วไปดูรายชื่อได้แต่ลดสิทธิ์กันเองไม่ได้</p><input id="adminMemberSearch" placeholder="ค้นหาชื่อหรือรหัสสมาชิก" aria-label="ค้นหาชื่อสมาชิก"><button id="adminMembersRefreshBtn" class="secondary full">🔄 โหลดรายชื่อสมาชิก</button><p id="adminMembersMessage" class="message"></p><div id="adminMembersList">กดโหลดรายชื่อสมาชิก</div></section>
+<section class="card hidden" id="adminStatsCard"><h2>📊 สรุปสถิติ Green Cup Box</h2><p class="muted">ข้อมูลจากฐานข้อมูลจริง</p><button id="adminStatsRefreshBtn" class="secondary full">🔄 รีเฟรชสถิติ</button><p id="adminStatsMessage" class="message"></p><div id="adminStatsList" class="stats-grid"><p>กำลังโหลด...</p></div></section>
+<section class="card hidden" id="adminHistoryCard"><h2>🧾 ประวัติการตรวจรูป</h2><p class="muted">รายการที่อนุมัติหรือปฏิเสธแล้ว พร้อมผู้ตรวจและหมายเหตุ</p><button id="adminHistoryRefreshBtn" class="secondary full">🔄 โหลดประวัติการตรวจ</button><p id="adminHistoryMessage" class="message"></p><div id="adminHistoryList">กำลังโหลด...</div></section>
 
 <section class="card" id="rewardsCard"><h2>🎁 ของรางวัล</h2><p class="muted">ตรวจสอบคะแนนและจำนวนของรางวัลก่อนแลก</p><div id="rewardsList">กำลังโหลด...</div><p id="rewardsMessage" class="message"></p></section>
 <section class="card" id="historyCard"><h2>📜 ประวัติการแลก</h2><div id="historyList">เข้าสู่ระบบเพื่อดูประวัติ</div><button id="historyRefreshBtn" class="secondary full">🔄 รีเฟรชประวัติ</button></section>
@@ -123,8 +128,11 @@ async function loadMember(){
  $("pointsValue").textContent=Number(p.points||0).toLocaleString("th-TH");$("pointsMessage").textContent="อัปเดตคะแนนเรียบร้อย";
  const locked=p.name_locked===true;$("displayName").disabled=locked;$("saveNameBtn").disabled=locked;
  msg("nameMessage",locked?"🔒 ตั้งชื่อแล้ว ไม่สามารถเปลี่ยนได้อีก":"คุณสามารถตั้งชื่อได้หนึ่งครั้ง");
- $("adminCard").classList.toggle("hidden",p.role!=="admin");
- $("adminMembersCard").classList.toggle("hidden",p.role!=="admin");
+ const privileged=p.role==="admin"||p.role==="owner";
+ $("adminCard").classList.toggle("hidden",!privileged);
+ $("adminMembersCard").classList.toggle("hidden",!privileged);
+ $("adminStatsCard").classList.toggle("hidden",!privileged);
+ $("adminHistoryCard").classList.toggle("hidden",!privileged);
 }
 async function signUp(){
  const email=$("email").value.trim(),password=$("password").value;
@@ -227,7 +235,7 @@ async function submitCheckin(){
 async function loadAdminCheckins(){
  const box=$("adminCheckins");box.replaceChildren();if(!currentUser){box.textContent="กรุณาเข้าสู่ระบบด้วยบัญชีแอดมิน";return;}
  try{
-  const p=await getProfile();if(p.role!=="admin"){$("adminCard").classList.add("hidden");return;}
+  const p=await getProfile();if(!["admin","owner"].includes(p.role)){$("adminCard").classList.add("hidden");return;}
   const {data,error}=await db.from("checkins").select("id,user_id,display_name,checkin_type,photo_path,status,created_at").eq("status","pending").order("created_at",{ascending:true}).limit(100);
   if(error)throw error;if(!data?.length){box.textContent="ไม่มีรายการรอตรวจ";return;}
   for(const item of data){
@@ -262,7 +270,7 @@ async function loadAdminMembers(){
  const list=$("adminMembersList");list.replaceChildren();
  if(!currentUser){list.textContent="กรุณาเข้าสู่ระบบด้วยบัญชีแอดมิน";return;}
  try{
-  const p=await getProfile();if(p.role!=="admin"){$("adminMembersCard").classList.add("hidden");return;}
+  const p=await getProfile();if(!["admin","owner"].includes(p.role)){$("adminMembersCard").classList.add("hidden");return;}
   const {data,error}=await db.rpc("admin_list_members");if(error)throw error;
   const q=$("adminMemberSearch").value.trim().toLocaleLowerCase();
   const rows=(data||[]).filter(m=>!q||(m.display_name||"").toLocaleLowerCase().includes(q)||m.id.toLowerCase().includes(q));
@@ -270,31 +278,63 @@ async function loadAdminMembers(){
   for(const m of rows){
    const card=document.createElement("div");card.className="admin-member";
    const name=document.createElement("strong");name.textContent=m.display_name||"ยังไม่ตั้งชื่อ";card.appendChild(name);
-   const role=document.createElement("p");role.className="role";role.textContent="สิทธิ์: "+(m.role==="admin"?"แอดมิน":"สมาชิก");card.appendChild(role);
+   const role=document.createElement("p");role.className="role";role.textContent="สิทธิ์: "+({owner:"เจ้าของระบบ / หัวหน้าใหญ่สุด",admin:"แอดมิน",member:"สมาชิก"}[m.role]||m.role);card.appendChild(role);
+   const points=document.createElement("p");points.className="muted";points.textContent="คะแนน: "+Number(m.points||0).toLocaleString("th-TH");card.appendChild(points);
    const id=document.createElement("p");id.className="muted";id.textContent="รหัสบัญชี: "+m.id;card.appendChild(id);
-   const btn=document.createElement("button");btn.className=m.role==="admin"?"danger":"";btn.textContent=m.role==="admin"?"ลดสิทธิ์เป็นสมาชิก":"ตั้งเป็นแอดมิน";
-   btn.disabled=m.id===currentUser.id&&m.role==="admin";
-   btn.addEventListener("click",async()=>{
-    const makeAdmin=m.role!=="admin";
-    if(!confirm((makeAdmin?"ตั้ง "+(m.display_name||"บัญชีนี้")+" เป็นแอดมิน":"ลดสิทธิ์ "+(m.display_name||"บัญชีนี้")+" เป็นสมาชิก")+" ใช่ไหม?"))return;
-    btn.disabled=true;
-    try{const {data,error}=await db.rpc("admin_manage_member",{p_user_id:m.id,p_make_admin:makeAdmin});if(error)throw error;
-     if(data&&data.success===false)throw new Error(data.message||"เปลี่ยนสิทธิ์ไม่สำเร็จ");
-     msg("adminMembersMessage",makeAdmin?"เพิ่มสิทธิ์แอดมินแล้ว":"ลดสิทธิ์แอดมินแล้ว","success");await loadAdminMembers();
-    }catch(e){msg("adminMembersMessage","เปลี่ยนสิทธิ์ไม่สำเร็จ: "+e.message,"error");btn.disabled=false;}
-   });card.appendChild(btn);list.appendChild(card);
+   if(p.role==="owner" && m.role!=="owner"){
+    const btn=document.createElement("button");btn.className=m.role==="admin"?"danger":"";btn.textContent=m.role==="admin"?"ลดสิทธิ์เป็นสมาชิก":"ตั้งเป็นแอดมิน";
+    btn.addEventListener("click",async()=>{
+     const makeAdmin=m.role!=="admin";
+     if(!confirm((makeAdmin?"ตั้ง "+(m.display_name||"บัญชีนี้")+" เป็นแอดมิน":"ลดสิทธิ์ "+(m.display_name||"บัญชีนี้")+" เป็นสมาชิก")+" ใช่ไหม?"))return;
+     btn.disabled=true;
+     try{const {data,error}=await db.rpc("admin_manage_member",{p_user_id:m.id,p_make_admin:makeAdmin});if(error)throw error;
+      if(data&&data.success===false)throw new Error(data.message||"เปลี่ยนสิทธิ์ไม่สำเร็จ");
+      msg("adminMembersMessage",makeAdmin?"เพิ่มสิทธิ์แอดมินแล้ว":"ลดสิทธิ์แอดมินแล้ว","success");await loadAdminMembers();
+     }catch(e){msg("adminMembersMessage","เปลี่ยนสิทธิ์ไม่สำเร็จ: "+e.message,"error");btn.disabled=false;}
+    });card.appendChild(btn);
+   } else if(p.role!=="owner" && m.role==="admin"){
+    const note=document.createElement("p");note.className="muted";note.textContent="แอดมินทั่วไปไม่มีสิทธิ์เปลี่ยนบทบาทของสมาชิกหรือแอดมิน";card.appendChild(note);
+   }
+   list.appendChild(card);
   }
- }catch(e){list.textContent="โหลดรายชื่อไม่สำเร็จ: "+e.message;msg("adminMembersMessage","ตรวจสอบว่าได้รัน SQL สำหรับระบบจัดการแอดมินแล้ว","error");}
+ }catch(e){list.textContent="โหลดรายชื่อไม่สำเร็จ: "+e.message;msg("adminMembersMessage","ตรวจสอบว่าได้รัน SQL ระบบเจ้าของระบบ/แอดมินแล้ว","error");}
+}
+async function loadAdminStats(){
+ const box=$("adminStatsList");box.replaceChildren();
+ try{
+  const {data,error}=await db.rpc("admin_get_stats");if(error)throw error;
+  const r=Array.isArray(data)?data[0]:data;if(!r)throw new Error("ไม่พบข้อมูลสถิติ");
+  const items=[["สมาชิกทั้งหมด",r.total_members],["แอดมิน",r.total_admins],["รูปทั้งหมด",r.total_checkins],["รอตรวจ",r.pending_checkins],["อนุมัติแล้ว",r.approved_checkins],["ปฏิเสธแล้ว",r.rejected_checkins],["คะแนนที่แจก",r.points_awarded]];
+  for(const [label,value] of items){const d=document.createElement("div");d.className="stat";const b=document.createElement("strong");b.textContent=Number(value||0).toLocaleString("th-TH");const t=document.createElement("span");t.textContent=label;d.append(b,t);box.appendChild(d);}
+  msg("adminStatsMessage","อัปเดตสถิติแล้ว","success");
+ }catch(e){box.textContent="โหลดสถิติไม่สำเร็จ: "+e.message;msg("adminStatsMessage","ต้องรัน SQL ระบบสถิติและประวัติการตรวจรูปก่อน","error");}
+}
+async function loadAdminHistory(){
+ const list=$("adminHistoryList");list.replaceChildren();
+ try{
+  const {data,error}=await db.rpc("admin_get_review_history",{p_limit:100});if(error)throw error;
+  if(!data?.length){list.textContent="ยังไม่มีประวัติการตรวจรูป";return;}
+  for(const item of data){
+   const c=document.createElement("div");c.className="history-item";
+   const h=document.createElement("strong");h.textContent="รายการ #"+item.checkin_id+" — "+(item.display_name||"สมาชิก");c.appendChild(h);
+   const st=document.createElement("p");st.textContent="ผลตรวจ: "+(item.status==="approved"?"อนุมัติ +"+Number(item.points_awarded||0)+" คะแนน":"ปฏิเสธ");c.appendChild(st);
+   const when=document.createElement("p");when.className="muted";when.textContent="เวลาตรวจ: "+(item.reviewed_at?new Date(item.reviewed_at).toLocaleString("th-TH",{dateStyle:"medium",timeStyle:"short"}):"ไม่ระบุ");c.appendChild(when);
+   const who=document.createElement("p");who.className="muted";who.textContent="ผู้ตรวจ: "+(item.reviewer_name||"ไม่พบชื่อแอดมิน");c.appendChild(who);
+   if(item.review_note){const n=document.createElement("p");n.textContent="หมายเหตุ: "+item.review_note;c.appendChild(n);}
+   list.appendChild(c);
+  }
+  msg("adminHistoryMessage","โหลดประวัติแล้ว","success");
+ }catch(e){list.textContent="โหลดประวัติไม่สำเร็จ: "+e.message;msg("adminHistoryMessage","ต้องรัน SQL ระบบสถิติและประวัติการตรวจรูปก่อน","error");}
 }
 async function refreshAll(){
  const results=await Promise.allSettled([loadMember(),loadRewards(),loadHistory(),loadMemberCount(),loadMyCheckins()]);
  const failed=results.find(r=>r.status==="rejected");if(failed){console.error("refreshAll",failed.reason);msg("authMessage","ข้อมูลบางส่วนโหลดไม่สำเร็จ กรุณาลองรีเฟรช","error");}
- if(currentUser){const p=await getProfile().catch(()=>null);if(p?.role==="admin"){await loadAdminCheckins();await loadAdminMembers();}}
+ if(currentUser){const p=await getProfile().catch(()=>null);if(p&&["admin","owner"].includes(p.role)){await Promise.all([loadAdminCheckins(),loadAdminMembers(),loadAdminStats(),loadAdminHistory()]);}}
 }
 $("loginBtn").addEventListener("click",signIn);$("signupBtn").addEventListener("click",signUp);$("saveNameBtn").addEventListener("click",saveName);$("logoutBtn").addEventListener("click",signOut);
 $("refreshBtn").addEventListener("click",refreshAll);$("historyRefreshBtn").addEventListener("click",loadHistory);
-$("submitCheckinBtn").addEventListener("click",submitCheckin);$("checkinRefreshBtn").addEventListener("click",loadMyCheckins);$("adminRefreshBtn").addEventListener("click",loadAdminCheckins);$("adminMembersRefreshBtn").addEventListener("click",loadAdminMembers);$("adminMemberSearch").addEventListener("input",loadAdminMembers);
-db.auth.onAuthStateChange(event=>{if(event==="SIGNED_OUT"){currentUser=null;updateMenu();$("historyList").textContent="เข้าสู่ระบบเพื่อดูประวัติการแลก";$("myCheckins").textContent="เข้าสู่ระบบเพื่อดูประวัติเช็กอิน";$("adminCard").classList.add("hidden");$("adminMembersCard").classList.add("hidden");}});
+$("submitCheckinBtn").addEventListener("click",submitCheckin);$("checkinRefreshBtn").addEventListener("click",loadMyCheckins);$("adminRefreshBtn").addEventListener("click",loadAdminCheckins);$("adminMembersRefreshBtn").addEventListener("click",loadAdminMembers);$("adminMemberSearch").addEventListener("input",loadAdminMembers);$("adminStatsRefreshBtn").addEventListener("click",loadAdminStats);$("adminHistoryRefreshBtn").addEventListener("click",loadAdminHistory);
+db.auth.onAuthStateChange(event=>{if(event==="SIGNED_OUT"){currentUser=null;updateMenu();$("historyList").textContent="เข้าสู่ระบบเพื่อดูประวัติการแลก";$("myCheckins").textContent="เข้าสู่ระบบเพื่อดูประวัติเช็กอิน";$("adminCard").classList.add("hidden");$("adminMembersCard").classList.add("hidden");$("adminStatsCard").classList.add("hidden");$("adminHistoryCard").classList.add("hidden");}});
 refreshAll();
 </script>
 </body>
