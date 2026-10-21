@@ -88,8 +88,8 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const SUPABASE_URL = "ใส่_PROJECT_URL";
-    const SUPABASE_ANON_KEY = "ใส่_PUBLISHABLE_KEY";
+    const SUPABASE_URL = "https://sjlmwicteshsabzlkvab.supabase.co/rest/v1/";
+    const SUPABASE_ANON_KEY = "sb_publishable_tqvsVPcYKq-QC6LtA3oVeg_NsR7wchz";
 
     async function loadRewards() {
       const status = document.getElementById("status");
