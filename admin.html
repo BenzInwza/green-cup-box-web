@@ -286,80 +286,131 @@ async function loadStats() {
   ).join("");
 }
 
+
+    
 async function loadPending() {
   const el = $("pendingList");
   el.textContent = "กำลังโหลดรายการ...";
 
-  const {data,error} = await db.from("checkins").select("*")
-    .eq("status","pending").order("created_at",{ascending:true});
+  const { data, error } = await db.from("checkins")
+    .select("*")
+    .eq("status", "pending")
+    .order("created_at", { ascending: true });
 
   if (error) {
     el.textContent = "โหลดรูปไม่สำเร็จ: " + error.message;
     return;
   }
+
   if (!data?.length) {
     el.textContent = "ไม่มีรูปที่รอตรวจในขณะนี้";
     return;
   }
 
   el.innerHTML = "";
+
   for (const item of data) {
     const box = document.createElement("div");
     box.className = "item";
+
     let photoURL = "";
 
     if (item.photo_path) {
-      const {data:signed,error:photoError} = await db.storage
-        .from("checkin-photos").createSignedUrl(item.photo_path,3600);
-      if (!photoError) photoURL = signed?.signedUrl || "";
+      const { data: signed, error: photoError } = await db.storage
+        .from("checkin-photos")
+        .createSignedUrl(item.photo_path, 3600);
+
+      if (!photoError) {
+        photoURL = signed?.signedUrl || "";
+      }
     }
 
     box.innerHTML = `
-      <h3>รายการเช็กอิน</h3>
+      <h3>📸 รายการเช็กอิน</h3>
       <div class="muted">รหัส: ${escapeHTML(item.id)}</div>
       <div class="muted">สมาชิก: ${escapeHTML(item.display_name || item.user_id)}</div>
-      <div class="muted">ประเภท: ${escapeHTML(item.checkin_type || "-")}</div>
+      <div class="muted">ประเภทที่ส่งมา: ${escapeHTML(item.checkin_type || "-")}</div>
       <div class="muted">ส่งเมื่อ: ${escapeHTML(dateText(item.created_at))}</div>
+
       ${photoURL
         ? `<a href="${escapeHTML(photoURL)}" target="_blank" rel="noopener">
              <img class="photo" src="${escapeHTML(photoURL)}" alt="รูปเช็กอิน">
            </a>`
         : "<p>เปิดรูปไม่ได้ ตรวจสอบ photo_path และสิทธิ์ Storage</p>"}
-      <label>หมายเหตุการตรวจ</label>
-      <textarea class="reviewNote" placeholder="ระบุเหตุผลหากปฏิเสธรูป"></textarea>
-      <div class="actions">
-        <button type="button" class="approveBtn">อนุมัติ +1 คะแนน</button>
-        <button type="button" class="rejectBtn danger">ปฏิเสธ</button>
-      </div>`;
 
-    box.querySelector(".approveBtn").addEventListener("click", async () => {
-      await reviewItem(item,"approved",box.querySelector(".reviewNote").value.trim(),box);
+      <label>หมายเหตุการตรวจ (ถ้ามี)</label>
+      <textarea class="reviewNote" placeholder="ใส่เหตุผลหากปฏิเสธ หรือหมายเหตุเพิ่มเติม"></textarea>
+
+      <h3>เลือกสิ่งของที่ตรวจพบ</h3>
+      <p class="muted">เลือกให้ตรงกับรูปก่อนอนุมัติคะแนน</p>
+
+      <div class="actions">
+        <button type="button" class="approveGlass">🥤 แก้ว +1 คะแนน</button>
+        <button type="button" class="approveBox">🍱 กล่องข้าว +1 คะแนน</button>
+      </div>
+
+      <button type="button" class="approveBoth">
+        🥤🍱 แก้วและกล่องข้าว +2 คะแนน
+      </button>
+
+      <button type="button" class="rejectBtn danger">
+        ปฏิเสธรูป
+      </button>
+    `;
+
+    const noteInput = box.querySelector(".reviewNote");
+
+    box.querySelector(".approveGlass").addEventListener("click", async () => {
+      await reviewItem(
+        item, "approved",
+        noteInput.value.trim() || "ตรวจพบ: แก้ว",
+        box, 1
+      );
     });
+
+    box.querySelector(".approveBox").addEventListener("click", async () => {
+      await reviewItem(
+        item, "approved",
+        noteInput.value.trim() || "ตรวจพบ: กล่องข้าว",
+        box, 1
+      );
+    });
+
+    box.querySelector(".approveBoth").addEventListener("click", async () => {
+      await reviewItem(
+        item, "approved",
+        noteInput.value.trim() || "ตรวจพบ: แก้วและกล่องข้าว",
+        box, 2
+      );
+    });
+
     box.querySelector(".rejectBtn").addEventListener("click", async () => {
-      const note = box.querySelector(".reviewNote").value.trim();
+      const note = noteInput.value.trim();
+
       if (!note) {
-        message("กรุณาใส่เหตุผลก่อนปฏิเสธรูป",true);
-        box.querySelector(".reviewNote").focus();
+        message("กรุณาใส่เหตุผลก่อนปฏิเสธรูป", true);
+        noteInput.focus();
         return;
       }
-      await reviewItem(item,"rejected",note,box);
+
+      await reviewItem(item, "rejected", note, box, 0);
     });
+
     el.appendChild(box);
   }
 }
 
-    
-async function reviewItem(item,status,note,box) {
+async function reviewItem(item, status, note, box, points = 1) {
   if (busy) return;
 
   if (!currentUser || !currentProfile ||
       !isAdmin(currentProfile.role)) {
-    message("ไม่มีสิทธิ์ตรวจรูป กรุณาเข้าสู่ระบบใหม่",true);
+    message("ไม่มีสิทธิ์ตรวจรูป กรุณาเข้าสู่ระบบใหม่", true);
     return;
   }
 
   if (status === "rejected" && !note) {
-    message("กรุณาระบุเหตุผลก่อนปฏิเสธรูป",true);
+    message("กรุณาระบุเหตุผลก่อนปฏิเสธรูป", true);
     return;
   }
 
@@ -369,20 +420,18 @@ async function reviewItem(item,status,note,box) {
   try {
     message("กำลังบันทึกผลตรวจรูป #" + item.id + "...");
 
-    const {data,error} = await db.rpc("review_checkin",{
-      p_checkin_id:item.id,
-      p_decision:status,
-      p_points:1,
-      p_note:note || null
+    const { data, error } = await db.rpc("review_checkin", {
+      p_checkin_id: item.id,
+      p_decision: status,
+      p_points: points,
+      p_note: note || null
     });
 
     if (error) throw error;
 
     if (!data || data.success !== true) {
       throw new Error(
-        typeof data === "string"
-          ? data
-          : JSON.stringify(data)
+        typeof data === "string" ? data : JSON.stringify(data)
       );
     }
 
@@ -393,19 +442,22 @@ async function reviewItem(item,status,note,box) {
     ]);
 
     message(status === "approved"
-      ? "อนุมัติรูป #" + item.id + " สำเร็จ เพิ่ม 1 คะแนนแล้ว"
+      ? "อนุมัติรูป #" + item.id +
+        " สำเร็จ เพิ่ม " + points + " คะแนนแล้ว"
       : "ปฏิเสธรูป #" + item.id + " สำเร็จ");
 
   } catch (e) {
-    message("บันทึกผลตรวจไม่สำเร็จ: " + e.message,true);
+    message("บันทึกผลตรวจไม่สำเร็จ: " + e.message, true);
     await loadPending();
 
   } finally {
     busy = false;
-    document.querySelectorAll(".approveBtn,.rejectBtn")
-      .forEach(b => b.disabled = false);
+    document.querySelectorAll(
+      ".approveGlass,.approveBox,.approveBoth,.rejectBtn"
+    ).forEach(b => b.disabled = false);
   }
 }
+
 
 async function loadHistory() {
   const el = $("historyList");
