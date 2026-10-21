@@ -103,9 +103,14 @@
       margin-bottom: 12px;
       background: #eaf7ee;
       white-space: pre-wrap;
+      overflow-wrap: anywhere;
     }
     @media (min-width: 650px) {
-      .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+      .two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
     }
   </style>
 </head>
@@ -116,14 +121,16 @@
 </header>
 
 <main>
-  <div id="message" class="hidden"></div>
+  <div id="message" class="hidden" role="status" aria-live="polite"></div>
 
   <section id="loginCard" class="card">
     <h2>เข้าสู่ระบบแอดมิน</h2>
     <p class="muted">เข้าสู่ระบบด้วยบัญชี Green Cup Box ที่ลงทะเบียนไว้แล้ว</p>
     <form id="loginForm">
-      <input id="email" type="email" placeholder="อีเมล" autocomplete="email" required>
-      <input id="password" type="password" placeholder="รหัสผ่าน" autocomplete="current-password" required>
+      <input id="email" type="email" placeholder="อีเมล"
+        autocomplete="email" required>
+      <input id="password" type="password" placeholder="รหัสผ่าน"
+        autocomplete="current-password" required>
       <button type="submit">เข้าสู่ระบบ</button>
     </form>
   </section>
@@ -144,12 +151,14 @@
         <div class="stat">ของรางวัล<strong>—</strong></div>
         <div class="stat">รายการแลกรางวัล<strong>—</strong></div>
       </div>
-      <p class="muted">สถิติจะแสดงได้เมื่อฟังก์ชัน SQL ที่เกี่ยวข้องมีอยู่ใน Supabase</p>
     </div>
 
     <div class="card">
       <h2>📸 รูปที่รอตรวจ</h2>
-      <p class="muted">ตรวจรูปก่อนให้คะแนน หากมีข้อสงสัยให้ปฏิเสธพร้อมระบุเหตุผล</p>
+      <p class="muted">
+        ตรวจรูปก่อนให้คะแนน หากปฏิเสธต้องระบุเหตุผล
+        การอนุมัติจะเพิ่ม 1 คะแนนต่อรายการ
+      </p>
       <div id="pendingList">กำลังโหลดรายการ...</div>
     </div>
 
@@ -160,7 +169,7 @@
 
     <div class="card">
       <h2>👥 สมาชิก</h2>
-      <p class="muted">ระบบจะแสดงรายชื่อได้เมื่อ RPC admin_list_members ตั้งค่าไว้ถูกต้อง</p>
+      <p class="muted">รายชื่อสมาชิกและคะแนนสะสม</p>
       <button id="membersBtn" class="secondary">โหลดรายชื่อสมาชิก</button>
       <div id="membersList"></div>
     </div>
@@ -168,14 +177,22 @@
 </main>
 
 <script>
+"use strict";
+
 const SUPABASE_URL = "https://sjlmwicteshsabzlkvab.supabase.co";
 const SUPABASE_KEY = "sb_publishable_tqvsVPcYKq-QC6LtA3oVeg_NsR7wchz";
-const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
 const $ = id => document.getElementById(id);
+
 let currentUser = null;
 let currentProfile = null;
 let busy = false;
+let sessionCheckRunning = false;
 
 function message(text, error = false) {
   const el = $("message");
@@ -184,28 +201,39 @@ function message(text, error = false) {
   el.style.background = error ? "#fdecec" : "#eaf7ee";
   el.style.color = error ? "#a32020" : "#203328";
 }
+
 function clearMessage() {
   $("message").classList.add("hidden");
 }
+
 function escapeHTML(value) {
   return String(value ?? "").replace(/[&<>"']/g, c => ({
-    "&":"&amp;", "<":"&lt;", ">":"&gt;",
-    '"':"&quot;", "'":"&#39;"
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
   }[c]));
 }
+
 function dateText(value) {
   if (!value) return "-";
   const d = new Date(value);
-  return Number.isNaN(d.getTime()) ? "-" : d.toLocaleString("th-TH");
+  return Number.isNaN(d.getTime())
+    ? "-"
+    : d.toLocaleString("th-TH");
 }
+
 function isAdmin(role) {
   return ["admin", "owner", "super_admin"].includes(role);
 }
+
 function statusText(status) {
   if (status === "approved") return "อนุมัติแล้ว";
   if (status === "rejected") return "ปฏิเสธแล้ว";
   return "รอตรวจ";
 }
+
 function statusClass(status) {
   if (status === "approved") return "approved";
   if (status === "rejected") return "rejected";
@@ -224,46 +252,61 @@ async function getProfile(userId) {
 }
 
 async function checkSession() {
-  clearMessage();
-  const { data, error } = await db.auth.getSession();
-  if (error) throw error;
+  if (sessionCheckRunning) return;
+  sessionCheckRunning = true;
 
-  currentUser = data.session?.user ?? null;
-
-  if (!currentUser) {
-    currentProfile = null;
-    $("loginCard").classList.remove("hidden");
-    $("dashboard").classList.add("hidden");
-    return;
-  }
-
-  let profile;
   try {
-    profile = await getProfile(currentUser.id);
-  } catch (e) {
-    await db.auth.signOut();
-    $("loginCard").classList.remove("hidden");
-    $("dashboard").classList.add("hidden");
-    message("อ่านข้อมูลโปรไฟล์ไม่สำเร็จ: " + e.message, true);
-    return;
+    const { data, error } = await db.auth.getSession();
+    if (error) throw error;
+
+    currentUser = data.session?.user ?? null;
+
+    if (!currentUser) {
+      currentProfile = null;
+      $("loginCard").classList.remove("hidden");
+      $("dashboard").classList.add("hidden");
+      return;
+    }
+
+    let profile;
+
+    try {
+      profile = await getProfile(currentUser.id);
+    } catch (e) {
+      await db.auth.signOut();
+      currentUser = null;
+      currentProfile = null;
+      $("loginCard").classList.remove("hidden");
+      $("dashboard").classList.add("hidden");
+      message("อ่านข้อมูลโปรไฟล์ไม่สำเร็จ: " + e.message, true);
+      return;
+    }
+
+    if (!isAdmin(profile.role)) {
+      await db.auth.signOut();
+      currentUser = null;
+      currentProfile = null;
+      $("loginCard").classList.remove("hidden");
+      $("dashboard").classList.add("hidden");
+      message(
+        "บัญชีนี้ไม่มีสิทธิ์แอดมิน กรุณาตรวจสอบ role ใน profiles",
+        true
+      );
+      return;
+    }
+
+    currentProfile = profile;
+    $("loginCard").classList.add("hidden");
+    $("dashboard").classList.remove("hidden");
+
+    $("accountInfo").textContent =
+      (profile.display_name || currentUser.email || "แอดมิน") +
+      " · สิทธิ์: " + profile.role;
+
+    await refreshAll();
+  } finally {
+    sessionCheckRunning = false;
   }
-
-  if (!isAdmin(profile.role)) {
-    await db.auth.signOut();
-    $("loginCard").classList.remove("hidden");
-    $("dashboard").classList.add("hidden");
-    message("บัญชีนี้ไม่มีสิทธิ์แอดมิน กรุณาให้ผู้ดูแลระบบตรวจสอบ role ใน profiles", true);
-    return;
-  }
-
-  currentProfile = profile;
-  $("loginCard").classList.add("hidden");
-  $("dashboard").classList.remove("hidden");
-  $("accountInfo").textContent =
-    (profile.display_name || currentUser.email || "แอดมิน") +
-    " · สิทธิ์: " + profile.role;
-
-  await refreshAll();
 }
 
 async function loadStats() {
@@ -271,12 +314,14 @@ async function loadStats() {
   const { data, error } = await db.rpc("admin_get_stats");
 
   if (error) {
-    el.innerHTML = '<div class="item">โหลดสถิติไม่สำเร็จ: ' +
+    el.innerHTML =
+      '<div class="item">โหลดสถิติไม่สำเร็จ: ' +
       escapeHTML(error.message) + '</div>';
     return;
   }
 
   const r = Array.isArray(data) ? (data[0] || {}) : (data || {});
+
   const fields = [
     ["สมาชิก", r.total_members],
     ["รูปเช็กอิน", r.total_checkins],
@@ -317,68 +362,145 @@ async function loadPending() {
     box.className = "item";
 
     let photoURL = "";
+
     if (item.photo_path) {
       const { data: signed, error: photoError } = await db.storage
         .from("checkin-photos")
         .createSignedUrl(item.photo_path, 3600);
 
-      if (!photoError) photoURL = signed?.signedUrl || "";
+      if (!photoError) {
+        photoURL = signed?.signedUrl || "";
+      }
     }
 
     box.innerHTML = `
       <h3>รายการเช็กอิน</h3>
       <div class="muted">รหัส: ${escapeHTML(item.id)}</div>
-      <div class="muted">สมาชิก: ${escapeHTML(item.user_id)}</div>
+      <div class="muted">สมาชิก: ${escapeHTML(item.display_name || item.user_id)}</div>
       <div class="muted">ประเภท: ${escapeHTML(item.checkin_type || "-")}</div>
       <div class="muted">ส่งเมื่อ: ${escapeHTML(dateText(item.created_at))}</div>
-      ${photoURL
-        ? `<a href="${escapeHTML(photoURL)}" target="_blank" rel="noopener">
-             <img class="photo" src="${escapeHTML(photoURL)}" alt="รูปเช็กอิน">
-           </a>`
-        : '<p>เปิดรูปไม่ได้ ตรวจสอบ photo_path และสิทธิ์ Storage</p>'}
+      ${
+        photoURL
+          ? `<a href="${escapeHTML(photoURL)}" target="_blank" rel="noopener">
+               <img class="photo" src="${escapeHTML(photoURL)}" alt="รูปเช็กอิน">
+             </a>`
+          : '<p>เปิดรูปไม่ได้ ตรวจสอบ photo_path และสิทธิ์ Storage</p>'
+      }
       <label>หมายเหตุการตรวจ</label>
-      <textarea class="reviewNote" placeholder="ระบุเหตุผล หากปฏิเสธรูป"></textarea>
+      <textarea class="reviewNote"
+        placeholder="ระบุเหตุผล หากปฏิเสธรูป"></textarea>
       <div class="actions">
-        <button class="approveBtn">อนุมัติ +1 คะแนน</button>
-        <button class="rejectBtn danger">ปฏิเสธ</button>
+        <button type="button" class="approveBtn">อนุมัติ +1 คะแนน</button>
+        <button type="button" class="rejectBtn danger">ปฏิเสธ</button>
       </div>
     `;
 
     box.querySelector(".approveBtn").addEventListener("click", async () => {
       const note = box.querySelector(".reviewNote").value.trim();
-      await reviewItem(item, "approved", 1, note);
+      await reviewItem(item, "approved", note, box);
     });
 
     box.querySelector(".rejectBtn").addEventListener("click", async () => {
       const note = box.querySelector(".reviewNote").value.trim();
+
       if (!note) {
         message("กรุณาใส่เหตุผลก่อนปฏิเสธรูป", true);
+        box.querySelector(".reviewNote").focus();
         return;
       }
-      await reviewItem(item, "rejected", 0, note);
+
+      await reviewItem(item, "rejected", note, box);
     });
 
     el.appendChild(box);
   }
 }
 
-async function reviewItem(item, status, points, note) {
+/*
+  บันทึกผลตรวจผ่าน RPC ใน Supabase เท่านั้น
+  การเปลี่ยนสถานะและการเพิ่มคะแนนทำในฐานข้อมูล
+  ไม่แก้คะแนนโดยตรงจากหน้าเว็บ
+*/
+async function reviewItem(item, status, note, box) {
   if (busy) return;
+
   if (!currentUser || !currentProfile || !isAdmin(currentProfile.role)) {
-    message("ไม่มีสิทธิ์ตรวจรูป", true);
+    message("ไม่มีสิทธิ์ตรวจรูป กรุณาเข้าสู่ระบบใหม่", true);
     return;
   }
 
-  /*
-    การบันทึกผลตรวจและเพิ่มคะแนนควรทำผ่าน RPC ฝั่งฐานข้อมูล
-    ที่ตรวจสอบสิทธิ์แอดมินและป้องกันการให้คะแนนซ้ำ
-    ไม่ควรเพิ่มคะแนนด้วยการแก้ profiles จากหน้าเว็บโดยตรง
-  */
-  message(
-    "ยังไม่ได้บันทึกผลตรวจ: ต้องมี RPC สำหรับตรวจรูปใน Supabase " +
-    "ที่บันทึกสถานะและคะแนนในธุรกรรมเดียวกัน",
-    true
-  );
+  if (status === "rejected" && !note.trim()) {
+    message("กรุณาระบุเหตุผลก่อนปฏิเสธรูป", true);
+    return;
+  }
+
+  if (!["approved", "rejected"].includes(status)) {
+    message("สถานะการตรวจไม่ถูกต้อง", true);
+    return;
+  }
+
+  busy = true;
+
+  const buttons = box
+    ? box.querySelectorAll("button")
+    : [];
+
+  buttons.forEach(button => {
+    button.disabled = true;
+  });
+
+  try {
+    message("กำลังบันทึกผลตรวจรูป #" + item.id + "...");
+
+    // ต้องตรงกับชื่อพารามิเตอร์ใน SQL ที่สร้างไว้
+    const { data, error } = await db.rpc("admin_review_checkin", {
+      p_checkin_id: item.id,
+      p_status: status,
+      p_note: note.trim()
+    });
+
+    if (error) throw error;
+
+    if (!data || data.success !== true) {
+      throw new Error("ฐานข้อมูลไม่ได้ยืนยันว่าบันทึกผลสำเร็จ");
+    }
+
+    // โหลดข้อมูลล่าสุดจากฐานข้อมูล
+    await Promise.all([
+      loadStats(),
+      loadPending(),
+      loadHistory()
+    ]);
+
+    if (status === "approved") {
+      message(
+        "อนุมัติรูป #" + item.id +
+        " สำเร็จ เพิ่ม 1 คะแนนให้สมาชิกแล้ว"
+      );
+    } else {
+      message(
+        "ปฏิเสธรูป #" + item.id +
+        " สำเร็จ บันทึกเหตุผลแล้วและไม่ได้เพิ่มคะแนน"
+      );
+    }
+  } catch (e) {
+    message("บันทึกผลตรวจไม่สำเร็จ: " + e.message, true);
+
+    // หากบันทึกไม่สำเร็จ โหลดรายการใหม่เพื่อแสดงสถานะจากฐานข้อมูล
+    try {
+      await loadPending();
+    } catch (_) {
+      // แสดงข้อผิดพลาดหลักไว้
+    }
+  } finally {
+    busy = false;
+
+    // ปุ่มของรายการเดิมอาจถูกสร้างใหม่หลังโหลดข้อมูล
+    document.querySelectorAll(".approveBtn, .rejectBtn")
+      .forEach(button => {
+        button.disabled = false;
+      });
+  }
 }
 
 async function loadHistory() {
@@ -395,6 +517,7 @@ async function loadHistory() {
   }
 
   const rows = Array.isArray(data) ? data : [];
+
   if (!rows.length) {
     el.textContent = "ยังไม่มีประวัติการตรวจรูป";
     return;
@@ -402,12 +525,15 @@ async function loadHistory() {
 
   el.innerHTML = rows.map(item => `
     <div class="item">
-      <div><strong>${escapeHTML(item.display_name || item.user_id || "-")}</strong></div>
+      <div>
+        <strong>${escapeHTML(item.display_name || item.user_id || "-")}</strong>
+      </div>
       <div class="status ${statusClass(item.status)}">
         ${escapeHTML(statusText(item.status))}
       </div>
+      <div class="muted">รหัสรายการ: ${escapeHTML(item.id)}</div>
       <div class="muted">ประเภท: ${escapeHTML(item.checkin_type || "-")}</div>
-      <div class="muted">คะแนน: ${escapeHTML(item.points_awarded ?? 0)}</div>
+      <div class="muted">คะแนนที่ให้: ${escapeHTML(item.points_awarded ?? 0)}</div>
       <div class="muted">ผู้ตรวจ: ${escapeHTML(item.reviewer_name || item.reviewed_by || "-")}</div>
       <div class="muted">เวลาตรวจ: ${escapeHTML(dateText(item.reviewed_at))}</div>
       <div>หมายเหตุ: ${escapeHTML(item.review_note || "-")}</div>
@@ -427,6 +553,7 @@ async function loadMembers() {
   }
 
   const rows = Array.isArray(data) ? data : [];
+
   if (!rows.length) {
     el.textContent = "ไม่พบข้อมูลสมาชิก";
     return;
@@ -435,7 +562,7 @@ async function loadMembers() {
   el.innerHTML = rows.map(item => `
     <div class="item">
       <strong>${escapeHTML(item.display_name || "ยังไม่ได้ตั้งชื่อ")}</strong>
-      <div class="muted">ID: ${escapeHTML(item.id || item.user_id || "-")}</div>
+      <div class="muted">ID: ${escapeHTML(item.id || "-")}</div>
       <div>สิทธิ์: ${escapeHTML(item.role || "member")}</div>
       <div>คะแนน: ${escapeHTML(item.points ?? 0)}</div>
     </div>
@@ -443,15 +570,19 @@ async function loadMembers() {
 }
 
 async function refreshAll() {
-  if (!currentUser || !currentProfile || !isAdmin(currentProfile.role)) return;
+  if (!currentUser || !currentProfile || !isAdmin(currentProfile.role)) {
+    return;
+  }
 
   $("refreshBtn").disabled = true;
+
   try {
     await Promise.all([
       loadStats(),
       loadPending(),
       loadHistory()
     ]);
+
     message("โหลดข้อมูลเสร็จแล้ว");
   } catch (e) {
     message("โหลดข้อมูลไม่สำเร็จ: " + e.message, true);
@@ -466,27 +597,34 @@ $("loginForm").addEventListener("submit", async event => {
 
   const email = $("email").value.trim();
   const password = $("password").value;
+  const submitButton = $("loginForm").querySelector("button");
 
-  const { error } = await db.auth.signInWithPassword({ email, password });
-
-  if (error) {
-    message("เข้าสู่ระบบไม่สำเร็จ: " + error.message, true);
-    return;
-  }
+  submitButton.disabled = true;
 
   try {
+    const { error } = await db.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if (error) throw error;
+
     await checkSession();
   } catch (e) {
-    message("เกิดข้อผิดพลาด: " + e.message, true);
+    message("เข้าสู่ระบบไม่สำเร็จ: " + e.message, true);
+  } finally {
+    submitButton.disabled = false;
   }
 });
 
 $("logoutBtn").addEventListener("click", async () => {
   const { error } = await db.auth.signOut();
+
   if (error) {
     message("ออกจากระบบไม่สำเร็จ: " + error.message, true);
     return;
   }
+
   currentUser = null;
   currentProfile = null;
   $("dashboard").classList.add("hidden");
@@ -497,13 +635,18 @@ $("logoutBtn").addEventListener("click", async () => {
 $("refreshBtn").addEventListener("click", refreshAll);
 $("membersBtn").addEventListener("click", loadMembers);
 
-db.auth.onAuthStateChange(() => {
+db.auth.onAuthStateChange((event, session) => {
+  // ไม่เรียกซ้ำขณะกำลังตรวจ session หรือกำลังล็อกอิน
+  if (event === "TOKEN_REFRESHED") return;
+
   setTimeout(() => {
     checkSession().catch(e => message(e.message, true));
   }, 0);
 });
 
-checkSession().catch(e => message("เริ่มระบบไม่สำเร็จ: " + e.message, true));
+checkSession().catch(e => {
+  message("เริ่มระบบไม่สำเร็จ: " + e.message, true);
+});
 </script>
 </body>
 </html>
