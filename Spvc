@@ -7,597 +7,616 @@
   <meta name="theme-color" content="#16834a">
   <title>Green Cup Box | ลดโลกร้อน</title>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
     * { box-sizing: border-box; }
 
     body {
       margin: 0;
       font-family: system-ui, sans-serif;
-      background: #f3f9f2;
-      color: #193b2a;
+      background: #f2f8f2;
+      color: #203b2b;
     }
 
     header {
       background: #16834a;
       color: white;
-      padding: 22px 18px;
-      border-radius: 0 0 26px 26px;
+      padding: 20px 16px;
+      text-align: center;
     }
 
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .brand { font-size: 23px; font-weight: 800; }
-    header p { line-height: 1.7; }
+    header h1 { margin: 0 0 6px; font-size: 27px; }
+    header p { margin: 0; }
 
     main {
-      max-width: 760px;
+      width: min(760px, 100%);
       margin: auto;
-      padding: 18px;
-    }
-
-    .panel {
-      background: white;
-      padding: 20px;
-      border-radius: 18px;
-      margin-bottom: 16px;
-      box-shadow: 0 3px 14px #153e2410;
-    }
-
-    h2 { margin-top: 0; }
-
-    .points {
-      background: #e2f5df;
-      border-radius: 14px;
       padding: 16px;
-      margin: 16px 0;
     }
 
-    .point-number {
-      font-size: 28px;
-      font-weight: 800;
-      color: #16834a;
-      margin: 8px 0;
-      overflow-wrap: anywhere;
+    .card {
+      background: white;
+      padding: 18px;
+      margin-bottom: 16px;
+      border-radius: 16px;
+      box-shadow: 0 3px 12px #173d1b12;
     }
 
-    button {
-      background: #16834a;
-      color: white;
-      border: 0;
-      border-radius: 12px;
-      padding: 12px 16px;
-      font-size: 16px;
-      cursor: pointer;
-      margin: 3px;
-    }
+    h2 { margin: 0 0 14px; font-size: 20px; }
+    p { line-height: 1.6; }
 
-    button:disabled {
-      background: #a6b5aa;
-      cursor: not-allowed;
+    label {
+      display: block;
+      margin: 12px 0 6px;
+      font-weight: 600;
     }
 
     input {
       display: block;
       width: 100%;
       padding: 12px;
-      margin: 8px 0 14px;
-      border: 1px solid #cbd9cd;
+      border: 1px solid #cbd9ce;
       border-radius: 10px;
       font-size: 16px;
       background: white;
-      color: #193b2a;
     }
 
-    label { font-weight: 600; }
-
-    .menu-button {
-      background: white;
-      color: #16834a;
-      font-size: 24px;
-      margin: 0;
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 11px 15px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      background: #16834a;
+      color: white;
     }
 
-    .menu-panel {
-      background: white;
-      color: #193b2a;
+    button:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
+    .secondary {
+      background: #e5f3e8;
+      color: #176638;
+    }
+
+    .danger { background: #b93838; }
+    .full { width: 100%; margin-top: 12px; }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .row button { flex: 1; }
+
+    .points {
+      background: #e7f6e9;
+      border: 1px solid #cce9d2;
+      padding: 18px;
       border-radius: 14px;
-      padding: 14px;
-      margin-top: 14px;
+      text-align: center;
     }
 
-    .menu-panel button {
-      width: 100%;
-      margin: 5px 0;
+    .points strong {
+      display: block;
+      font-size: 34px;
+      color: #16834a;
     }
 
-    .logout-button { background: #c62828; }
+    .muted { color: #65766a; font-size: 14px; }
+    .message { margin-top: 10px; font-size: 14px; overflow-wrap: anywhere; }
+    .success { color: #14763d; }
+    .error { color: #b42323; }
 
     .reward {
-      padding: 16px 0;
-      border-bottom: 1px solid #e5eee5;
-      overflow-wrap: anywhere;
+      border: 1px solid #e0e9e1;
+      border-radius: 13px;
+      padding: 15px;
+      margin-top: 12px;
     }
 
-    .reward-name {
-      font-size: 18px;
-      font-weight: 700;
-    }
+    .reward h3 { margin: 0 0 6px; font-size: 17px; }
+    .reward p { margin: 5px 0 12px; }
+    .reward button { width: 100%; }
 
-    .reward-detail {
-      background: #f3f9f2;
-      padding: 10px;
-      border-radius: 10px;
-      margin: 8px 0;
-    }
-
-    .muted { color: #587061; font-size: 14px; }
-
-    .status {
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-      line-height: 1.6;
-    }
-
-    .error { color: #b42318; }
-    .success { color: #16834a; }
+    .hidden { display: none !important; }
 
     footer {
       text-align: center;
-      padding: 22px;
-      color: #587061;
+      color: #65766a;
+      padding: 20px;
+      font-size: 13px;
     }
-
-    [hidden] { display: none !important; }
   </style>
 </head>
 
 <body>
-<header>
-  <div class="topbar">
-    <div class="brand">🌱 Green Cup Box</div>
-    <button type="button" id="menu-btn"
-      class="menu-button" aria-label="เปิดเมนูสมาชิก"
-      aria-expanded="false" hidden>☰</button>
-  </div>
+  <header>
+    <h1>🌱 Green Cup Box</h1>
+    <p>พกแก้ว พกกล่อง ลดขยะ รับคะแนน แลกของรางวัล</p>
+  </header>
 
-  <p>ลดโลกร้อน เริ่มต้นง่าย ๆ ด้วยการพกแก้วและกล่องส่วนตัว</p>
-  <button type="button" id="view-rewards-btn">🎁 ดูของรางวัล</button>
+  <main>
+    <section class="card">
+      <h2>👤 สมาชิก</h2>
+      <div id="authArea">
+        <p class="muted">เข้าสู่ระบบหรือสมัครสมาชิกเพื่อดูคะแนนและแลกของรางวัล</p>
 
-  <div id="menu-panel" class="menu-panel" hidden>
-    <strong>👤 บัญชีสมาชิก</strong>
-    <p id="menu-email" class="muted"></p>
-    <button type="button" id="menu-points-btn">🌿 ดูคะแนนของฉัน</button>
-    <button type="button" id="refresh-points-btn">🔄 อัปเดตคะแนน</button>
-    <button type="button" id="logout-btn" class="logout-button">ออกจากระบบ</button>
-    <p id="menu-status" class="status" role="status"></p>
-  </div>
-</header>
+        <label for="email">อีเมล</label>
+        <input id="email" type="email" placeholder="กรอกอีเมล" autocomplete="email">
 
-<main>
-  <section class="panel">
-    <h2>🌎 รักษ์โลกได้ทุกวัน</h2>
-    <p>พกแก้ว พกกล่อง ลดขยะ ร่วมสร้างโลกที่น่าอยู่ไปด้วยกัน</p>
+        <label for="password">รหัสผ่าน</label>
+        <input id="password" type="password" placeholder="กรอกรหัสผ่าน" autocomplete="current-password">
 
-    <div class="points" id="points-box">
-      <strong>🌿 คะแนนสะสมของคุณ</strong>
-      <p id="points-display" class="point-number">กำลังตรวจสอบสมาชิก...</p>
-      <p class="muted">คะแนนแสดงจากข้อมูลสมาชิกในระบบ</p>
-    </div>
-  </section>
+        <div class="row" style="margin-top:12px">
+          <button id="loginBtn">เข้าสู่ระบบ</button>
+          <button id="signupBtn" class="secondary">สมัครสมาชิก</button>
+        </div>
+      </div>
 
-  <section class="panel" id="member-panel">
-    <h2>👤 สมาชิก Green Cup Box</h2>
-    <p class="muted">สมัครสมาชิกหรือเข้าสู่ระบบด้วยอีเมล</p>
+      <div id="memberArea" class="hidden">
+        <p>ยินดีต้อนรับ <strong id="memberName">สมาชิก</strong></p>
+        <p class="muted" id="memberEmail"></p>
 
-    <form id="member-form">
-      <label for="member-email">อีเมล</label>
-      <input id="member-email" type="email" placeholder="กรอกอีเมล"
-        autocomplete="email" required>
+        <label for="displayName">ชื่อที่ต้องการแสดงบนเว็บไซต์</label>
+        <input id="displayName" maxlength="40" placeholder="ตั้งชื่อสมาชิกของคุณ">
 
-      <label for="member-password">รหัสผ่าน</label>
-      <input id="member-password" type="password"
-        placeholder="กรอกรหัสผ่าน" autocomplete="current-password"
-        minlength="6" required>
+        <button id="saveNameBtn" class="full">💾 บันทึกชื่อสมาชิก</button>
+        <div id="nameMessage" class="message" aria-live="polite"></div>
 
-      <button type="button" id="signup-btn">สมัครสมาชิก</button>
-      <button type="submit" id="login-btn">เข้าสู่ระบบ</button>
-    </form>
+        <button id="logoutBtn" class="danger full">ออกจากระบบ</button>
+      </div>
 
-    <p id="member-status" class="status" role="status"></p>
-  </section>
+      <div id="authMessage" class="message" aria-live="polite"></div>
+    </section>
 
-  <section class="panel" id="rewards">
-    <h2>🎁 ของรางวัลของเรา</h2>
-    <p id="status" class="status muted" role="status">กำลังโหลดของรางวัล...</p>
-    <div id="reward-list"></div>
-  </section>
-</main>
+    <section class="card">
+      <h2>⭐ คะแนนสะสมของคุณ</h2>
+      <div class="points">
+        <span>คะแนนปัจจุบัน</span>
+        <strong id="pointsValue">—</strong>
+        <span>คะแนน</span>
+      </div>
+      <p id="pointsMessage" class="message muted" aria-live="polite">
+        เข้าสู่ระบบเพื่อดูคะแนนของคุณ
+      </p>
+      <button id="refreshBtn" class="secondary full">🔄 รีเฟรชคะแนนและของรางวัล</button>
+    </section>
 
-<footer>Green Cup Box · โลกสีเขียวเริ่มที่เรา 🌎</footer>
+    <section class="card">
+      <h2>🎁 ของรางวัลของเรา</h2>
+      <p class="muted">เลือกของรางวัลที่ต้องการ แล้วกดแลกคะแนน</p>
+      <div id="rewardsList">กำลังโหลดของรางวัล...</div>
+      <div id="rewardsMessage" class="message" aria-live="polite"></div>
+    </section>
+  </main>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-"use strict";
+  <footer>🌍 Green Cup Box — เริ่มต้นรักษ์โลกได้จากตัวเรา</footer>
 
-// 1. Supabase เดิม
-const SUPABASE_URL = "https://sjlmwicteshsabzlkvab.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_tqvsVPcYKq-QC6LtA3oVeg_NsR7wchz";
+  <script>
+    // ใช้ Supabase โปรเจกต์เดิมของคุณ
+    const SUPABASE_URL = "https://sjlmwicteshsabzlkvab.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_tqvsVPcYKq-QC6LtA3oVeg_NsR7wchz";
 
-const db = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
+    const db = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
 
-const $ = id => document.getElementById(id);
+    const $ = (id) => document.getElementById(id);
 
-const memberPanel = $("member-panel");
-const memberStatus = $("member-status");
-const menuStatus = $("menu-status");
-const pointsDisplay = $("points-display");
-const emailInput = $("member-email");
-const passwordInput = $("member-password");
+    let currentUser = null;
+    let busy = false;
 
-const signupBtn = $("signup-btn");
-const loginBtn = $("login-btn");
-const logoutBtn = $("logout-btn");
-const menuBtn = $("menu-btn");
-const menuPanel = $("menu-panel");
-
-let currentUserId = null;
-let pointsRequest = 0;
-let rewardsLoading = false;
-const redeemingRewards = new Set();
-
-function setStatus(element, message, type = "") {
-  element.textContent = message;
-  element.className = "status" + (type ? " " + type : "");
-}
-
-function closeMenu() {
-  menuPanel.hidden = true;
-  menuBtn.setAttribute("aria-expanded", "false");
-}
-
-function setBusy(busy) {
-  signupBtn.disabled = busy;
-  loginBtn.disabled = busy;
-}
-
-function showMember(user, message = "") {
-  currentUserId = user ? user.id : null;
-  pointsRequest++;
-
-  memberPanel.hidden = !!user;
-  menuBtn.hidden = !user;
-
-  if (user) {
-    $("menu-email").textContent = user.email || "สมาชิก Green Cup Box";
-    pointsDisplay.textContent = "กำลังโหลดคะแนน...";
-    closeMenu();
-    if (message) setStatus(memberStatus, message, "success");
-  } else {
-    closeMenu();
-    $("menu-email").textContent = "";
-    menuStatus.textContent = "";
-    pointsDisplay.textContent = "กรุณาเข้าสู่ระบบเพื่อดูคะแนน";
-    if (message) setStatus(memberStatus, message);
-  }
-}
-
-// 2. อ่านคะแนนจาก profiles.points (แก้ชื่อคอลัมน์แล้ว)
-async function loadMemberPoints(userId) {
-  const requestId = ++pointsRequest;
-
-  if (!userId || userId !== currentUserId) return;
-
-  pointsDisplay.textContent = "กำลังโหลดคะแนน...";
-
-  try {
-    const { data, error } = await db
-      .from("profiles")
-      .select("points")
-      .eq("id", userId)
-      .maybeSingle();
-
-    if (requestId !== pointsRequest || currentUserId !== userId) return;
-    if (error) throw error;
-
-    if (!data) {
-      pointsDisplay.textContent = "ไม่พบข้อมูลสมาชิกใน profiles";
-      return;
+    function showMessage(id, text, type = "") {
+      const el = $(id);
+      el.textContent = text || "";
+      el.className = "message " + type;
     }
 
-    const total = Number(data.points);
-
-    if (data.points === null || !Number.isFinite(total) || total < 0) {
-      throw new Error("ข้อมูลคะแนนไม่ถูกต้อง");
+    function setBusy(value) {
+      busy = value;
+      ["loginBtn", "signupBtn", "saveNameBtn",
+       "logoutBtn", "refreshBtn"].forEach(id => {
+        $(id).disabled = value;
+      });
     }
 
-    pointsDisplay.textContent = `🌿 ${total.toLocaleString("th-TH")} แต้ม`;
-
-  } catch (error) {
-    if (requestId === pointsRequest && currentUserId === userId) {
-      pointsDisplay.textContent = "อ่านคะแนนไม่ได้: " + error.message;
-    }
-  }
-}
-
-async function refreshMyPoints() {
-  if (!currentUserId) {
-    alert("กรุณาเข้าสู่ระบบก่อน");
-    return;
-  }
-  await loadMemberPoints(currentUserId);
-}
-
-// 3. โหลดของรางวัล
-async function loadRewards() {
-  if (rewardsLoading) return;
-  rewardsLoading = true;
-
-  const status = $("status");
-  const list = $("reward-list");
-
-  status.textContent = "กำลังโหลดของรางวัล...";
-  list.replaceChildren();
-
-  try {
-    const { data, error } = await db
-      .from("rewards")
-      .select("*")
-      .order("id", { ascending: true });
-
-    if (error) throw error;
-
-    if (!data || data.length === 0) {
-      status.textContent = "ยังไม่มีรายการของรางวัลในระบบ";
-      return;
+    function getRewardName(reward) {
+      return reward.name || reward.title ||
+        reward.reward_name || reward.label || "ของรางวัล";
     }
 
-    const fragment = document.createDocumentFragment();
+    function getRewardCost(reward) {
+      const keys = ["cost", "points_cost", "point_cost",
+        "points_required", "required_points"];
 
-    for (const reward of data) {
-      const item = document.createElement("article");
-      item.className = "reward";
+      for (const key of keys) {
+        if (reward[key] !== undefined && reward[key] !== null) {
+          return Number(reward[key]);
+        }
+      }
+      return null;
+    }
 
-      const heading = document.createElement("div");
-      heading.className = "reward-name";
-      heading.textContent =
-        `${reward.icon || "🎁"} ${reward.name ?? reward.title ?? "ของรางวัล"}`;
-      item.appendChild(heading);
+    function getRewardDescription(reward) {
+      return reward.description || reward.detail || "";
+    }
 
-      const detail = document.createElement("div");
-      detail.className = "reward-detail muted";
+    function getRewardStock(reward) {
+      if (reward.stock !== undefined && reward.stock !== null) {
+        return Number(reward.stock);
+      }
+      return null;
+    }
 
-      const cost = Number(reward.cost);
-      const validCost = reward.cost !== null &&
-        reward.cost !== undefined &&
-        Number.isFinite(cost) && cost > 0;
+    async function ensureProfile(user, preferredName = "") {
+      // สร้างแถวโปรไฟล์เมื่อยังไม่มี โดยใช้ ID จากบัญชีที่ล็อกอิน
+      const { data: existing, error: readError } = await db
+        .from("profiles")
+        .select("id, display_name, points")
+        .eq("id", user.id)
+        .maybeSingle();
 
-      detail.textContent = `ใช้ ${validCost ? cost : "ไม่ระบุ"} แต้ม` +
-        (reward.stock !== null && reward.stock !== undefined
-          ? ` · คงเหลือ ${reward.stock} ชิ้น` : "");
-      item.appendChild(detail);
+      if (readError) throw readError;
+      if (existing) return existing;
 
-      const button = document.createElement("button");
-      button.type = "button";
-      button.textContent = "🎁 แลกของรางวัล";
+      const initialName =
+        preferredName ||
+        user.user_metadata?.display_name ||
+        user.email?.split("@")[0] ||
+        "สมาชิก";
 
-      const stock = Number(reward.stock);
-      const hasStock = reward.stock !== null && reward.stock !== undefined;
+      const { error: insertError } = await db
+        .from("profiles")
+        .insert({
+          id: user.id,
+          role: "member",
+          points: 0,
+          display_name: initialName
+        });
 
-      if (hasStock && (!Number.isFinite(stock) || stock <= 0)) {
-        button.disabled = true;
-        button.textContent = "สินค้าหมด";
-      } else if (!validCost) {
-        button.disabled = true;
-        button.textContent = "ข้อมูลคะแนนไม่ถูกต้อง";
-      } else {
-        button.addEventListener("click", () => redeemReward(reward.id, button));
+      if (insertError) throw insertError;
+
+      const { data, error } = await db
+        .from("profiles")
+        .select("id, display_name, points")
+        .eq("id", user.id)
+        .single();
+
+      if (error) throw error;
+      return data;
+    }
+
+    async function loadMember() {
+      const { data: result, error } = await db.auth.getUser();
+      if (error) throw error;
+
+      currentUser = result.user;
+
+      if (!currentUser) {
+        $("authArea").classList.remove("hidden");
+        $("memberArea").classList.add("hidden");
+        $("memberName").textContent = "สมาชิก";
+        $("pointsValue").textContent = "—";
+        $("pointsMessage").textContent = "เข้าสู่ระบบเพื่อดูคะแนนของคุณ";
+        $("displayName").value = "";
+        return;
       }
 
-      item.appendChild(button);
-      fragment.appendChild(item);
+      $("authArea").classList.add("hidden");
+      $("memberArea").classList.remove("hidden");
+      $("memberEmail").textContent = currentUser.email || "";
+
+      const profile = await ensureProfile(currentUser);
+
+      const name = profile.display_name ||
+        currentUser.user_metadata?.display_name ||
+        currentUser.email?.split("@")[0] ||
+        "สมาชิก";
+
+      $("memberName").textContent = name;
+      $("displayName").value = name;
+
+      $("pointsValue").textContent =
+        Number(profile.points ?? 0).toLocaleString("th-TH");
+
+      $("pointsMessage").textContent = "อัปเดตคะแนนเรียบร้อย";
+      $("pointsMessage").className = "message success";
     }
 
-    list.replaceChildren(fragment);
-    status.textContent = `พบของรางวัล ${data.length} รายการ`;
+    async function signUp() {
+      const email = $("email").value.trim();
+      const password = $("password").value;
 
-  } catch (error) {
-    status.textContent = "โหลดของรางวัลไม่สำเร็จ: " + error.message;
-  } finally {
-    rewardsLoading = false;
-  }
-}
+      if (!email || !password) {
+        showMessage("authMessage", "กรุณากรอกอีเมลและรหัสผ่าน", "error");
+        return;
+      }
 
-// 4. แลกของรางวัลผ่าน RPC
-async function redeemReward(rewardId, button) {
-  const userId = currentUserId;
-  const key = String(rewardId);
+      if (password.length < 6) {
+        showMessage("authMessage", "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร", "error");
+        return;
+      }
 
-  if (!userId) {
-    alert("กรุณาเข้าสู่ระบบก่อนแลกของรางวัล");
-    return;
-  }
-  if (redeemingRewards.has(key)) return;
-  if (!confirm("ยืนยันการแลกของรางวัลนี้หรือไม่?")) return;
+      setBusy(true);
+      showMessage("authMessage", "กำลังสมัครสมาชิก...");
 
-  redeemingRewards.add(key);
-  button.disabled = true;
-  button.textContent = "กำลังแลก...";
+      try {
+        const { data, error } = await db.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              display_name: email.split("@")[0]
+            }
+          }
+        });
 
-  try {
-    const { data: sessionData, error: sessionError } = await db.auth.getSession();
-    if (sessionError) throw sessionError;
+        if (error) throw error;
 
-    if (!sessionData.session ||
-        sessionData.session.user.id !== userId ||
-        currentUserId !== userId) {
-      throw new Error("เซสชันเปลี่ยนไป กรุณาเข้าสู่ระบบใหม่");
+        if (data.session) {
+          currentUser = data.user;
+          await loadMember();
+          showMessage("authMessage", "สมัครสมาชิกสำเร็จ 💚", "success");
+          await loadRewards();
+        } else {
+          showMessage(
+            "authMessage",
+            "สมัครแล้ว! โปรดตรวจสอบอีเมลเพื่อยืนยันบัญชี หากระบบขอให้ยืนยันก่อนเข้าสู่ระบบ",
+            "success"
+          );
+        }
+      } catch (error) {
+        showMessage("authMessage", error.message || "สมัครสมาชิกไม่สำเร็จ", "error");
+      } finally {
+        setBusy(false);
+      }
     }
 
-    const { data, error } = await db.rpc("redeem_reward", {
-      p_reward_id: rewardId
+    async function signIn() {
+      const email = $("email").value.trim();
+      const password = $("password").value;
+
+      if (!email || !password) {
+        showMessage("authMessage", "กรุณากรอกอีเมลและรหัสผ่าน", "error");
+        return;
+      }
+
+      setBusy(true);
+      showMessage("authMessage", "กำลังเข้าสู่ระบบ...");
+
+      try {
+        const { error } = await db.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+
+        await loadMember();
+        await loadRewards();
+        showMessage("authMessage", "เข้าสู่ระบบสำเร็จ 💚", "success");
+      } catch (error) {
+        showMessage("authMessage", error.message || "เข้าสู่ระบบไม่สำเร็จ", "error");
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    async function saveDisplayName() {
+      if (!currentUser) {
+        showMessage("nameMessage", "กรุณาเข้าสู่ระบบก่อน", "error");
+        return;
+      }
+
+      const name = $("displayName").value.trim();
+
+      if (!name) {
+        showMessage("nameMessage", "กรุณากรอกชื่อที่ต้องการแสดง", "error");
+        return;
+      }
+
+      if (name.length > 40) {
+        showMessage("nameMessage", "ชื่อต้องไม่เกิน 40 ตัวอักษร", "error");
+        return;
+      }
+
+      setBusy(true);
+      showMessage("nameMessage", "กำลังบันทึกชื่อ...");
+
+      try {
+        await ensureProfile(currentUser, name);
+
+        const { data, error } = await db
+          .from("profiles")
+          .update({ display_name: name })
+          .eq("id", currentUser.id)
+          .select("display_name")
+          .single();
+
+        if (error) throw error;
+
+        $("memberName").textContent = data.display_name;
+        $("displayName").value = data.display_name;
+        showMessage("nameMessage", "บันทึกชื่อเรียบร้อยแล้ว 💚", "success");
+      } catch (error) {
+        showMessage(
+          "nameMessage",
+          "บันทึกชื่อไม่สำเร็จ: " + (error.message || "เกิดข้อผิดพลาด"),
+          "error"
+        );
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    async function signOut() {
+      setBusy(true);
+
+      try {
+        const { error } = await db.auth.signOut();
+        if (error) throw error;
+
+        currentUser = null;
+        await loadMember();
+        showMessage("authMessage", "ออกจากระบบแล้ว", "success");
+      } catch (error) {
+        showMessage("authMessage", error.message || "ออกจากระบบไม่สำเร็จ", "error");
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    async function loadRewards() {
+      $("rewardsList").textContent = "กำลังโหลดของรางวัล...";
+      showMessage("rewardsMessage", "");
+
+      try {
+        const { data, error } = await db
+          .from("rewards")
+          .select("*")
+          .order("id", { ascending: true });
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+          $("rewardsList").textContent = "ยังไม่มีของรางวัลในระบบ";
+          return;
+        }
+
+        $("rewardsList").replaceChildren();
+
+        data.forEach(reward => {
+          const card = document.createElement("div");
+          card.className = "reward";
+
+          const title = document.createElement("h3");
+          title.textContent = "🎁 " + getRewardName(reward);
+          card.appendChild(title);
+
+          const description = document.createElement("p");
+          description.textContent = getRewardDescription(reward);
+          card.appendChild(description);
+
+          const cost = getRewardCost(reward);
+          const costText = document.createElement("p");
+          costText.className = "muted";
+          costText.textContent = cost === null
+            ? "คะแนนที่ใช้แลก: โปรดตรวจสอบคอลัมน์คะแนนในตาราง rewards"
+            : "⭐ ใช้ " + cost + " คะแนน";
+          card.appendChild(costText);
+
+          const stock = getRewardStock(reward);
+          if (stock !== null) {
+            const stockText = document.createElement("p");
+            stockText.className = "muted";
+            stockText.textContent = "คงเหลือ: " + stock;
+            card.appendChild(stockText);
+          }
+
+          const button = document.createElement("button");
+          button.textContent = "แลกของรางวัล";
+          button.disabled = !currentUser || stock === 0;
+          button.addEventListener("click", () => redeemReward(reward.id, button));
+          card.appendChild(button);
+
+          $("rewardsList").appendChild(card);
+        });
+      } catch (error) {
+        $("rewardsList").textContent = "โหลดของรางวัลไม่สำเร็จ";
+        showMessage("rewardsMessage", error.message || "โปรดลองอีกครั้ง", "error");
+      }
+    }
+
+    async function redeemReward(rewardId, button) {
+      if (!currentUser) {
+        showMessage("rewardsMessage", "กรุณาเข้าสู่ระบบก่อนแลกรางวัล", "error");
+        return;
+      }
+
+      if (!confirm("ยืนยันการแลกของรางวัลนี้หรือไม่?")) return;
+
+      button.disabled = true;
+      showMessage("rewardsMessage", "กำลังดำเนินการแลกรางวัล...");
+
+      try {
+        const { data, error } = await db.rpc("redeem_reward", {
+          p_reward_id: rewardId
+        });
+
+        if (error) throw error;
+
+        // รองรับ RPC ที่ส่งผลลัพธ์เป็น JSON object
+        const result = Array.isArray(data) ? data[0] : data;
+
+        if (result && result.success === false) {
+          throw new Error(result.message || "ไม่สามารถแลกรางวัลได้");
+        }
+
+        if (result && result.error) {
+          throw new Error(result.error);
+        }
+
+        showMessage(
+          "rewardsMessage",
+          result && result.message
+            ? result.message
+            : "ส่งคำขอแลกรางวัลแล้ว โปรดตรวจสอบคะแนนและประวัติการแลก",
+          "success"
+        );
+
+        await loadMember();
+        await loadRewards();
+      } catch (error) {
+        showMessage(
+          "rewardsMessage",
+          "แลกรางวัลไม่สำเร็จ: " + (error.message || "เกิดข้อผิดพลาด"),
+          "error"
+        );
+        button.disabled = false;
+      }
+    }
+
+    async function refreshAll() {
+      setBusy(true);
+
+      try {
+        await loadMember();
+        await loadRewards();
+      } catch (error) {
+        showMessage("pointsMessage", error.message || "โหลดข้อมูลไม่สำเร็จ", "error");
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    $("loginBtn").addEventListener("click", signIn);
+    $("signupBtn").addEventListener("click", signUp);
+    $("saveNameBtn").addEventListener("click", saveDisplayName);
+    $("logoutBtn").addEventListener("click", signOut);
+    $("refreshBtn").addEventListener("click", refreshAll);
+
+    async function init() {
+      try {
+        await loadMember();
+        await loadRewards();
+      } catch (error) {
+        showMessage(
+          "authMessage",
+          "โหลดข้อมูลไม่สำเร็จ: " + (error.message || "ตรวจสอบการเชื่อมต่อ"),
+          "error"
+        );
+      }
+    }
+
+    db.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_OUT") {
+        currentUser = null;
+        $("authArea").classList.remove("hidden");
+        $("memberArea").classList.add("hidden");
+        $("pointsValue").textContent = "—";
+        $("pointsMessage").textContent = "เข้าสู่ระบบเพื่อดูคะแนนของคุณ";
+        loadRewards();
+      }
     });
 
-    if (error) throw error;
-    if (!data || data.ok !== true) {
-      throw new Error(data?.message || "แลกรางวัลไม่สำเร็จ");
-    }
-
-    let message = `🎉 แลกของรางวัลสำเร็จ!\nใช้คะแนน ${data.cost} แต้ม`;
-    if (data.remaining_points !== undefined) {
-      message += `\nคะแนนคงเหลือ ${data.remaining_points} แต้ม`;
-    }
-    if (data.remaining_stock !== undefined) {
-      message += `\nสินค้าคงเหลือ ${data.remaining_stock} ชิ้น`;
-    }
-    if (data.code) message += `\nรหัสรับรางวัล: ${data.code}`;
-    alert(message);
-
-    if (currentUserId === userId) await loadMemberPoints(userId);
-
-  } catch (error) {
-    alert("แลกของรางวัลไม่สำเร็จ: " + error.message);
-  } finally {
-    redeemingRewards.delete(key);
-    await loadRewards();
-  }
-}
-
-// 5. สมัครสมาชิก
-signupBtn.addEventListener("click", async () => {
-  const email = emailInput.value.trim();
-  const password = passwordInput.value;
-
-  if (!email || !password) {
-    setStatus(memberStatus, "กรุณากรอกอีเมลและรหัสผ่าน", "error");
-    return;
-  }
-  if (password.length < 6) {
-    setStatus(memberStatus, "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร", "error");
-    return;
-  }
-
-  setBusy(true);
-  setStatus(memberStatus, "กำลังสมัครสมาชิก...");
-
-  try {
-    const { data, error } = await db.auth.signUp({ email, password });
-    if (error) throw error;
-
-    if (data.session && data.user) {
-      showMember(data.user, "สมัครสมาชิกสำเร็จ");
-      await loadMemberPoints(data.user.id);
-    } else {
-      setStatus(memberStatus,
-        "สมัครแล้ว กรุณาตรวจอีเมลเพื่อยืนยันบัญชี", "success");
-    }
-  } catch (error) {
-    setStatus(memberStatus, "สมัครไม่สำเร็จ: " + error.message, "error");
-  } finally {
-    setBusy(false);
-  }
-});
-
-// 6. เข้าสู่ระบบ
-$("member-form").addEventListener("submit", async event => {
-  event.preventDefault();
-
-  const email = emailInput.value.trim();
-  const password = passwordInput.value;
-
-  if (!email || !password) {
-    setStatus(memberStatus, "กรุณากรอกอีเมลและรหัสผ่าน", "error");
-    return;
-  }
-
-  setBusy(true);
-  setStatus(memberStatus, "กำลังเข้าสู่ระบบ...");
-
-  try {
-    const { data, error } = await db.auth.signInWithPassword({ email, password });
-    if (error) throw error;
-
-    showMember(data.user, "เข้าสู่ระบบสำเร็จ");
-    await loadMemberPoints(data.user.id);
-  } catch (error) {
-    setStatus(memberStatus, "เข้าสู่ระบบไม่สำเร็จ: " + error.message, "error");
-  } finally {
-    setBusy(false);
-  }
-});
-
-// 7. ออกจากระบบ
-logoutBtn.addEventListener("click", async () => {
-  logoutBtn.disabled = true;
-  menuStatus.textContent = "กำลังออกจากระบบ...";
-
-  try {
-    const { error } = await db.auth.signOut();
-    if (error) throw error;
-    showMember(null, "ออกจากระบบแล้ว");
-  } catch (error) {
-    menuStatus.textContent = "ออกจากระบบไม่สำเร็จ: " + error.message;
-  } finally {
-    logoutBtn.disabled = false;
-  }
-});
-
-// 8. เมนูและปุ่มต่าง ๆ
-$("view-rewards-btn").addEventListener("click", () => {
-  $("rewards").scrollIntoView({ behavior: "smooth" });
-});
-
-menuBtn.addEventListener("click", () => {
-  const opening = menuPanel.hidden;
-  menuPanel.hidden = !opening;
-  menuBtn.setAttribute("aria-expanded", String(opening));
-});
-
-$("menu-points-btn").addEventListener("click", () => {
-  closeMenu();
-  $("points-box").scrollIntoView({ behavior: "smooth" });
-});
-
-$("refresh-points-btn").addEventListener("click", async () => {
-  closeMenu();
-  await refreshMyPoints();
-});
-
-// 9. คืนสถานะการเข้าสู่ระบบ
-async function restoreSession() {
-  try {
-    const { data, error } = await db.auth.getSession();
-    if (error) throw error;
-
-    if (data.session) {
-      showMember(data.session.user, "เข้าสู่ระบบแล้ว");
-      await loadMemberPoints(data.session.user.id);
-    } else {
-      showMember(null, "กรุณาเข้าสู่ระบบสมาชิก");
-    }
-  } catch (error) {
-    setStatus(memberStatus,
-      "ตรวจสอบสมาชิกไม่สำเร็จ: " + error.message, "error");
-    pointsDisplay.textContent = "ตรวจสอบสถานะสมาชิกไม่สำเร็จ";
-  }
-}
-
-db.auth.onAuthStateChange((event, session) => {
-  if (event === "SIGNED_OUT") {
-    showMember(null, "ออกจากระบบแล้ว");
-  }
-});
-
-// 10. เริ่มทำงาน
-loadRewards();
-restoreSession();
-</script>
+    init();
+  </script>
 </body>
 </html>
