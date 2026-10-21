@@ -246,10 +246,55 @@ async function loadRewards(){
  const b=document.createElement("button");b.textContent=q!==null&&q<=0?"ของรางวัลหมด":"แลกของรางวัล";b.disabled=!currentUser||(q!==null&&q<=0);b.addEventListener("click",()=>redeem(r.id,b));c.appendChild(b);$("rewardsList").appendChild(c);});
  }catch(e){$("rewardsList").textContent="โหลดของรางวัลไม่สำเร็จ: "+e.message;}
 }
+
 async function redeem(id,button){
- if(!currentUser)return msg("rewardsMessage","กรุณาเข้าสู่ระบบก่อน","error");if(busy)return;if(!confirm("ยืนยันการแลกของรางวัลหรือไม่?"))return;
- busy=true;button.disabled=true;try{const {data,error}=await db.rpc("redeem_reward",{p_reward_id:id});if(error)throw error;const r=Array.isArray(data)?data[0]:data;if(r?.success===false)throw new Error(r.message||"แลกรางวัลไม่สำเร็จ");if(r?.error)throw new Error(r.error);msg("rewardsMessage",r?.message||"แลกรางวัลสำเร็จ","success");await refreshAll();}
- catch(e){msg("rewardsMessage","แลกไม่สำเร็จ: "+e.message,"error");await loadRewards();}finally{busy=false;}
+ if(!currentUser)
+   return msg("rewardsMessage","กรุณาเข้าสู่ระบบก่อน","error");
+
+ if(busy)return;
+ if(!confirm("ยืนยันการแลกของรางวัลหรือไม่?"))return;
+
+ busy=true;
+ button.disabled=true;
+
+ try{
+   const {data,error}=await db.rpc("redeem_reward",{
+     p_reward_id:id
+   });
+
+   if(error)throw error;
+
+   const r=Array.isArray(data)?data[0]:data;
+
+   if(r?.ok===false || r?.success===false || r?.error){
+     throw new Error(
+       r.message || r.error || "แลกรางวัลไม่สำเร็จ"
+     );
+   }
+
+   msg(
+     "rewardsMessage",
+     r?.message || "แลกรางวัลสำเร็จ",
+     "success"
+   );
+
+   await refreshAll();
+
+ }catch(e){
+   const message=e.message || "แลกรางวัลไม่สำเร็จ";
+
+   if(message.includes("ใช้สิทธิ์แลกรางวัลไปแล้ว")){
+     msg("rewardsMessage",message,"error");
+   }else{
+     msg("rewardsMessage","แลกไม่สำเร็จ: "+message,"error");
+   }
+
+   await loadRewards();
+
+ }finally{
+   busy=false;
+   button.disabled=false;
+ }
 }
 async function loadHistory(){
  const list=$("historyList");list.replaceChildren();if(!currentUser){list.textContent="เข้าสู่ระบบเพื่อดูประวัติการแลก";return;}list.textContent="กำลังโหลดประวัติ...";
