@@ -10,7 +10,6 @@
 
   <style>
     * { box-sizing: border-box; }
-
     html { scroll-behavior: smooth; }
 
     body {
@@ -24,35 +23,25 @@
       background: #16834a;
       color: white;
       position: relative;
-      z-index: 20;
+      z-index: 10;
       box-shadow: 0 3px 12px #173d1b15;
     }
 
     .header-inner {
       width: min(760px, 100%);
       margin: auto;
-      padding: 16px;
+      padding: 15px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
     }
 
-    .brand h1 {
-      margin: 0 0 5px;
-      font-size: clamp(20px, 5vw, 27px);
-    }
+    .brand { min-width: 0; }
+    .brand h1 { margin: 0 0 5px; font-size: 25px; }
+    .brand p { margin: 0; font-size: 12px; line-height: 1.5; }
 
-    .brand p {
-      margin: 0;
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    .menu-wrap {
-      position: relative;
-      flex-shrink: 0;
-    }
+    .menu-wrap { position: relative; flex-shrink: 0; }
 
     .menu-toggle {
       width: 48px;
@@ -63,29 +52,26 @@
       align-items: center;
       justify-content: center;
       gap: 5px;
+      background: #ffffff18;
       border: 1px solid #ffffff70;
       border-radius: 12px;
-      background: #ffffff18;
-      color: white;
     }
 
     .menu-toggle span {
       width: 24px;
       height: 3px;
+      display: block;
       background: white;
       border-radius: 5px;
-      display: block;
-      transition: transform .2s, opacity .2s;
+      transition: .2s;
     }
 
     .menu-toggle[aria-expanded="true"] span:first-child {
       transform: translateY(8px) rotate(45deg);
     }
-
     .menu-toggle[aria-expanded="true"] span:nth-child(2) {
       opacity: 0;
     }
-
     .menu-toggle[aria-expanded="true"] span:last-child {
       transform: translateY(-8px) rotate(-45deg);
     }
@@ -94,7 +80,7 @@
       position: absolute;
       top: calc(100% + 10px);
       right: 0;
-      width: min(280px, calc(100vw - 32px));
+      width: min(290px, calc(100vw - 24px));
       padding: 10px;
       background: white;
       color: #203b2b;
@@ -104,51 +90,31 @@
     }
 
     .menu-heading {
-      margin: 4px 8px 8px;
-      font-size: 13px;
+      margin: 5px 8px 10px;
       color: #718176;
+      font-size: 13px;
     }
 
     .menu-item {
       display: flex;
       align-items: center;
-      gap: 11px;
+      gap: 10px;
       width: 100%;
       padding: 13px 12px;
       margin: 3px 0;
-      border-radius: 10px;
       text-align: left;
-      font-size: 15px;
       background: white;
       color: #203b2b;
+      border-radius: 10px;
+      font-size: 15px;
     }
 
-    .menu-item:hover {
-      background: #eaf6ed;
-    }
+    .menu-item:hover { background: #eaf6ed; }
+    .menu-icon { width: 25px; text-align: center; font-size: 19px; }
+    .menu-divider { height: 1px; background: #e5ece6; margin: 8px 4px; }
+    .logout-menu { background: #fff3f3; color: #b42323; }
 
-    .menu-icon {
-      width: 25px;
-      text-align: center;
-      font-size: 19px;
-    }
-
-    .menu-divider {
-      height: 1px;
-      background: #e5ece6;
-      margin: 8px 4px;
-    }
-
-    .menu-item.logout-menu {
-      color: #b42323;
-      background: #fff5f5;
-    }
-
-    main {
-      width: min(760px, 100%);
-      margin: auto;
-      padding: 16px;
-    }
+    main { width: min(760px, 100%); margin: auto; padding: 16px; }
 
     .card {
       background: white;
@@ -156,14 +122,10 @@
       margin-bottom: 16px;
       border-radius: 16px;
       box-shadow: 0 3px 12px #173d1b12;
-      scroll-margin-top: 16px;
+      scroll-margin-top: 15px;
     }
 
-    h2 {
-      margin: 0 0 14px;
-      font-size: 20px;
-    }
-
+    h2 { margin: 0 0 14px; font-size: 20px; }
     p { line-height: 1.6; }
 
     label {
@@ -195,29 +157,12 @@
       font-family: inherit;
     }
 
-    button:disabled {
-      opacity: .55;
-      cursor: not-allowed;
-    }
-
-    .secondary {
-      background: #e5f3e8;
-      color: #176638;
-    }
-
+    button:disabled { opacity: .55; cursor: not-allowed; }
+    .secondary { background: #e5f3e8; color: #176638; }
     .danger { background: #b93838; }
+    .full { width: 100%; margin-top: 12px; }
 
-    .full {
-      width: 100%;
-      margin-top: 12px;
-    }
-
-    .row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
+    .row { display: flex; gap: 8px; flex-wrap: wrap; }
     .row button { flex: 1; }
 
     .points {
@@ -234,17 +179,8 @@
       color: #16834a;
     }
 
-    .muted {
-      color: #65766a;
-      font-size: 14px;
-    }
-
-    .message {
-      margin-top: 10px;
-      font-size: 14px;
-      overflow-wrap: anywhere;
-    }
-
+    .muted { color: #65766a; font-size: 14px; }
+    .message { margin-top: 10px; font-size: 14px; overflow-wrap: anywhere; }
     .success { color: #14763d; }
     .error { color: #b42323; }
 
@@ -253,13 +189,10 @@
       border-radius: 13px;
       padding: 15px;
       margin-top: 12px;
+      overflow-wrap: anywhere;
     }
 
-    .reward h3 {
-      margin: 0 0 6px;
-      font-size: 17px;
-    }
-
+    .reward h3 { margin: 0 0 6px; font-size: 17px; }
     .reward p { margin: 5px 0 12px; }
     .reward button { width: 100%; }
 
@@ -274,6 +207,7 @@
 
     @media (max-width: 380px) {
       .header-inner { padding: 12px; }
+      .brand h1 { font-size: 21px; }
       .brand p { font-size: 11px; }
       main { padding: 12px; }
       .card { padding: 15px; }
@@ -282,7 +216,6 @@
 </head>
 
 <body>
-
 <header>
   <div class="header-inner">
     <div class="brand">
@@ -291,17 +224,9 @@
     </div>
 
     <div class="menu-wrap">
-      <button
-        id="menuToggle"
-        class="menu-toggle"
-        type="button"
-        aria-label="เปิดเมนู"
-        aria-expanded="false"
-        aria-controls="mainMenu"
-      >
-        <span></span>
-        <span></span>
-        <span></span>
+      <button id="menuToggle" class="menu-toggle" type="button"
+        aria-label="เปิดเมนู" aria-expanded="false" aria-controls="mainMenu">
+        <span></span><span></span><span></span>
       </button>
 
       <nav id="mainMenu" class="menu-panel hidden" aria-label="เมนูหลัก">
@@ -322,13 +247,15 @@
           <span>แลกของรางวัล</span>
         </button>
 
+        <button class="menu-item" type="button" data-target="historyCard">
+          <span class="menu-icon">📜</span>
+          <span>ประวัติการแลก</span>
+        </button>
+
         <div id="menuDivider" class="menu-divider hidden"></div>
 
-        <button
-          id="logoutMenuBtn"
-          class="menu-item logout-menu hidden"
-          type="button"
-        >
+        <button id="logoutMenuBtn"
+          class="menu-item logout-menu hidden" type="button">
           <span class="menu-icon">🚪</span>
           <span>ออกจากระบบ</span>
         </button>
@@ -342,31 +269,19 @@
     <h2>👤 สมาชิก</h2>
 
     <div id="authArea">
-      <p class="muted">
-        เข้าสู่ระบบหรือสมัครสมาชิกเพื่อดูคะแนนและแลกของรางวัล
-      </p>
+      <p class="muted">เข้าสู่ระบบหรือสมัครสมาชิกเพื่อดูคะแนนและแลกของรางวัล</p>
 
       <label for="email">อีเมล</label>
-      <input
-        id="email"
-        type="email"
-        placeholder="กรอกอีเมล"
-        autocomplete="email"
-      >
+      <input id="email" type="email" placeholder="กรอกอีเมล"
+        autocomplete="email">
 
       <label for="password">รหัสผ่าน</label>
-      <input
-        id="password"
-        type="password"
-        placeholder="กรอกรหัสผ่าน"
-        autocomplete="current-password"
-      >
+      <input id="password" type="password" placeholder="กรอกรหัสผ่าน"
+        autocomplete="current-password">
 
       <div class="row" style="margin-top:12px">
         <button id="loginBtn" type="button">เข้าสู่ระบบ</button>
-        <button id="signupBtn" class="secondary" type="button">
-          สมัครสมาชิก
-        </button>
+        <button id="signupBtn" class="secondary" type="button">สมัครสมาชิก</button>
       </div>
     </div>
 
@@ -375,16 +290,11 @@
       <p class="muted" id="memberEmail"></p>
 
       <label for="displayName">ชื่อที่ต้องการแสดงบนเว็บไซต์</label>
-      <input
-        id="displayName"
-        maxlength="40"
-        placeholder="ตั้งชื่อสมาชิกของคุณ"
-      >
+      <input id="displayName" maxlength="40" placeholder="ตั้งชื่อสมาชิกของคุณ">
 
       <button id="saveNameBtn" class="full" type="button">
         💾 บันทึกชื่อสมาชิก
       </button>
-
       <div id="nameMessage" class="message" aria-live="polite"></div>
     </div>
 
@@ -393,17 +303,12 @@
 
   <section class="card" id="pointsCard">
     <h2>⭐ คะแนนสะสมของคุณ</h2>
-
     <div class="points">
       <span>คะแนนปัจจุบัน</span>
       <strong id="pointsValue">—</strong>
       <span>คะแนน</span>
     </div>
-
-    <p id="pointsMessage" class="message muted">
-      เข้าสู่ระบบเพื่อดูคะแนนของคุณ
-    </p>
-
+    <p id="pointsMessage" class="message muted">เข้าสู่ระบบเพื่อดูคะแนนของคุณ</p>
     <button id="refreshBtn" class="secondary full" type="button">
       🔄 รีเฟรชคะแนนและของรางวัล
     </button>
@@ -414,6 +319,15 @@
     <p class="muted">เลือกของรางวัลที่ต้องการ แล้วกดแลกคะแนน</p>
     <div id="rewardsList">กำลังโหลดของรางวัล...</div>
     <div id="rewardsMessage" class="message" aria-live="polite"></div>
+  </section>
+
+  <section class="card" id="historyCard">
+    <h2>📜 ประวัติการแลกของรางวัล</h2>
+    <p class="muted">รายการแลกของรางวัลของสมาชิกที่เข้าสู่ระบบ</p>
+    <div id="historyList">กำลังโหลดประวัติ...</div>
+    <button id="historyRefreshBtn" class="secondary full" type="button">
+      🔄 รีเฟรชประวัติ
+    </button>
   </section>
 </main>
 
@@ -429,32 +343,20 @@
   let currentUser = null;
   let busy = false;
 
-  // ===== เมนูสามขีด =====
-
+  // เมนูสามขีด
   function openMenu(open) {
     $("mainMenu").classList.toggle("hidden", !open);
     $("menuToggle").setAttribute("aria-expanded", String(open));
-    $("menuToggle").setAttribute(
-      "aria-label",
-      open ? "ปิดเมนู" : "เปิดเมนู"
-    );
+    $("menuToggle").setAttribute("aria-label", open ? "ปิดเมนู" : "เปิดเมนู");
   }
 
   $("menuToggle").addEventListener("click", event => {
     event.stopPropagation();
-
-    const isOpen =
-      $("menuToggle").getAttribute("aria-expanded") === "true";
-
-    openMenu(!isOpen);
+    openMenu($("menuToggle").getAttribute("aria-expanded") !== "true");
   });
 
-  $("mainMenu").addEventListener("click", event => {
-    event.stopPropagation();
-  });
-
+  $("mainMenu").addEventListener("click", event => event.stopPropagation());
   document.addEventListener("click", () => openMenu(false));
-
   document.addEventListener("keydown", event => {
     if (event.key === "Escape") openMenu(false);
   });
@@ -463,19 +365,12 @@
     button.addEventListener("click", () => {
       const target = $(button.dataset.target);
       openMenu(false);
-
-      if (target) {
-        target.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
-      }
+      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   });
 
   function updateMenuMemberState() {
     const loggedIn = Boolean(currentUser);
-
     $("logoutMenuBtn").classList.toggle("hidden", !loggedIn);
     $("menuDivider").classList.toggle("hidden", !loggedIn);
   }
@@ -487,16 +382,8 @@
 
   function setBusy(value) {
     busy = value;
-
-    [
-      "loginBtn",
-      "signupBtn",
-      "saveNameBtn",
-      "logoutMenuBtn",
-      "refreshBtn"
-    ].forEach(id => {
-      $(id).disabled = value;
-    });
+    ["loginBtn", "signupBtn", "saveNameBtn", "logoutMenuBtn", "refreshBtn"]
+      .forEach(id => { $(id).disabled = value; });
   }
 
   function rewardName(r) {
@@ -504,18 +391,10 @@
   }
 
   function rewardCost(r) {
-    for (const key of [
-      "cost",
-      "points_cost",
-      "point_cost",
-      "points_required",
-      "required_points"
-    ]) {
-      if (r[key] !== undefined && r[key] !== null) {
-        return Number(r[key]);
-      }
+    for (const key of ["cost", "points_cost", "point_cost",
+      "points_required", "required_points"]) {
+      if (r[key] !== undefined && r[key] !== null) return Number(r[key]);
     }
-
     return null;
   }
 
@@ -524,10 +403,10 @@
   }
 
   function defaultName(user) {
-    return user.user_metadata?.display_name ||
-      user.email?.split("@")[0] || "สมาชิก";
+    return user.user_metadata?.display_name || user.email?.split("@")[0] || "สมาชิก";
   }
 
+  // อ่านโปรไฟล์สมาชิก
   async function ensureProfile(user) {
     const { data, error } = await db
       .from("profiles")
@@ -538,16 +417,12 @@
     if (error) throw error;
     if (data) return data;
 
-    const name = defaultName(user);
-
-    const { error: insertError } = await db
-      .from("profiles")
-      .insert({
-        id: user.id,
-        role: "member",
-        points: 0,
-        display_name: name
-      });
+    const { error: insertError } = await db.from("profiles").insert({
+      id: user.id,
+      role: "member",
+      points: 0,
+      display_name: defaultName(user)
+    });
 
     if (insertError) {
       const { data: retry, error: retryError } = await db
@@ -568,10 +443,7 @@
       .maybeSingle();
 
     if (readError) throw readError;
-    if (!created) {
-      throw new Error("สร้างโปรไฟล์แล้วแต่ยังอ่านข้อมูลไม่พบ");
-    }
-
+    if (!created) throw new Error("สร้างโปรไฟล์แล้วแต่ยังอ่านข้อมูลไม่พบ");
     return created;
   }
 
@@ -604,10 +476,8 @@
 
     $("memberName").textContent = name;
     $("displayName").value = name;
-
     $("pointsValue").textContent =
       Number(profile.points ?? 0).toLocaleString("th-TH");
-
     $("pointsMessage").textContent = "อัปเดตคะแนนเรียบร้อย";
     $("pointsMessage").className = "message success";
 
@@ -624,13 +494,8 @@
       showMessage("authMessage", "กรุณากรอกอีเมลและรหัสผ่าน", "error");
       return;
     }
-
     if (password.length < 6) {
-      showMessage(
-        "authMessage",
-        "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร",
-        "error"
-      );
+      showMessage("authMessage", "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร", "error");
       return;
     }
 
@@ -641,30 +506,22 @@
       const { data, error } = await db.auth.signUp({
         email,
         password,
-        options: {
-          data: { display_name: email.split("@")[0] }
-        }
+        options: { data: { display_name: email.split("@")[0] } }
       });
-
       if (error) throw error;
 
       if (data.session) {
         await loadMember();
         await loadRewards();
+        await loadHistory();
         showMessage("authMessage", "สมัครสมาชิกสำเร็จ 💚", "success");
       } else {
-        showMessage(
-          "authMessage",
+        showMessage("authMessage",
           "สมัครแล้ว โปรดตรวจสอบอีเมลเพื่อยืนยันบัญชีก่อนเข้าสู่ระบบ",
-          "success"
-        );
+          "success");
       }
     } catch (error) {
-      showMessage(
-        "authMessage",
-        error.message || "สมัครสมาชิกไม่สำเร็จ",
-        "error"
-      );
+      showMessage("authMessage", error.message || "สมัครสมาชิกไม่สำเร็จ", "error");
     } finally {
       setBusy(false);
     }
@@ -685,23 +542,15 @@
     showMessage("authMessage", "กำลังเข้าสู่ระบบ...");
 
     try {
-      const { error } = await db.auth.signInWithPassword({
-        email,
-        password
-      });
-
+      const { error } = await db.auth.signInWithPassword({ email, password });
       if (error) throw error;
 
       await loadMember();
       await loadRewards();
-
+      await loadHistory();
       showMessage("authMessage", "เข้าสู่ระบบสำเร็จ 💚", "success");
     } catch (error) {
-      showMessage(
-        "authMessage",
-        error.message || "เข้าสู่ระบบไม่สำเร็จ",
-        "error"
-      );
+      showMessage("authMessage", error.message || "เข้าสู่ระบบไม่สำเร็จ", "error");
     } finally {
       setBusy(false);
     }
@@ -709,19 +558,16 @@
 
   async function saveDisplayName() {
     if (busy) return;
-
     if (!currentUser) {
       showMessage("nameMessage", "กรุณาเข้าสู่ระบบก่อน", "error");
       return;
     }
 
     const name = $("displayName").value.trim();
-
     if (!name) {
       showMessage("nameMessage", "กรุณากรอกชื่อที่ต้องการแสดง", "error");
       return;
     }
-
     if (name.length > 40) {
       showMessage("nameMessage", "ชื่อต้องไม่เกิน 40 ตัวอักษร", "error");
       return;
@@ -747,42 +593,31 @@
           .select("id");
 
         if (updateError) throw updateError;
-
         if (!updated || updated.length === 0) {
-          throw new Error(
-            "อัปเดตโปรไฟล์ไม่ได้ กรุณาตรวจสอบสิทธิ์ UPDATE ใน Supabase RLS"
-          );
+          throw new Error("อัปเดตโปรไฟล์ไม่ได้ กรุณาตรวจสอบสิทธิ์ UPDATE ใน Supabase RLS");
         }
       } else {
-        const { error: insertError } = await db
-          .from("profiles")
-          .insert({
-            id: currentUser.id,
-            role: "member",
-            points: 0,
-            display_name: name
-          });
-
+        const { error: insertError } = await db.from("profiles").insert({
+          id: currentUser.id,
+          role: "member",
+          points: 0,
+          display_name: name
+        });
         if (insertError) throw insertError;
       }
 
       const { error: metadataError } = await db.auth.updateUser({
         data: { display_name: name }
       });
-
       if (metadataError) throw metadataError;
 
       $("memberName").textContent = name;
       $("displayName").value = name;
-
       showMessage("nameMessage", "บันทึกชื่อเรียบร้อยแล้ว 💚", "success");
     } catch (error) {
-      showMessage(
-        "nameMessage",
-        "บันทึกชื่อไม่สำเร็จ: " +
-          (error.message || "เกิดข้อผิดพลาด"),
-        "error"
-      );
+      showMessage("nameMessage",
+        "บันทึกชื่อไม่สำเร็จ: " + (error.message || "เกิดข้อผิดพลาด"),
+        "error");
     } finally {
       setBusy(false);
     }
@@ -790,7 +625,6 @@
 
   async function signOut() {
     if (busy) return;
-
     if (!confirm("ต้องการออกจากระบบใช่ไหม?")) return;
 
     setBusy(true);
@@ -801,23 +635,19 @@
 
       currentUser = null;
       openMenu(false);
-
       await loadMember();
       await loadRewards();
-
+      await loadHistory();
       showMessage("authMessage", "ออกจากระบบแล้ว", "success");
       $("memberCard").scrollIntoView({ behavior: "smooth" });
     } catch (error) {
-      showMessage(
-        "authMessage",
-        error.message || "ออกจากระบบไม่สำเร็จ",
-        "error"
-      );
+      showMessage("authMessage", error.message || "ออกจากระบบไม่สำเร็จ", "error");
     } finally {
       setBusy(false);
     }
   }
 
+  // โหลดของรางวัล
   async function loadRewards() {
     $("rewardsList").textContent = "กำลังโหลดของรางวัล...";
     showMessage("rewardsMessage", "");
@@ -858,7 +688,6 @@
         card.appendChild(costText);
 
         const stock = rewardStock(r);
-
         if (stock !== null) {
           const stockText = document.createElement("p");
           stockText.className = "muted";
@@ -876,25 +705,16 @@
       });
     } catch (error) {
       $("rewardsList").textContent = "โหลดของรางวัลไม่สำเร็จ";
-
-      showMessage(
-        "rewardsMessage",
-        error.message || "โปรดลองอีกครั้ง",
-        "error"
-      );
+      showMessage("rewardsMessage", error.message || "โปรดลองอีกครั้ง", "error");
     }
   }
 
+  // แลกของรางวัลผ่านฟังก์ชัน Supabase เดิม
   async function redeemReward(rewardId, button) {
     if (!currentUser) {
-      showMessage(
-        "rewardsMessage",
-        "กรุณาเข้าสู่ระบบก่อนแลกรางวัล",
-        "error"
-      );
+      showMessage("rewardsMessage", "กรุณาเข้าสู่ระบบก่อนแลกรางวัล", "error");
       return;
     }
-
     if (busy) return;
     if (!confirm("ยืนยันการแลกของรางวัลนี้หรือไม่?")) return;
 
@@ -905,53 +725,118 @@
       const { data, error } = await db.rpc("redeem_reward", {
         p_reward_id: rewardId
       });
-
       if (error) throw error;
 
       const result = Array.isArray(data) ? data[0] : data;
-
       if (result && result.success === false) {
         throw new Error(result.message || "ไม่สามารถแลกรางวัลได้");
       }
+      if (result && result.error) throw new Error(result.error);
 
-      if (result && result.error) {
-        throw new Error(result.error);
-      }
-
-      showMessage(
-        "rewardsMessage",
-        result?.message || "ส่งคำขอแลกรางวัลแล้ว",
-        "success"
-      );
+      showMessage("rewardsMessage",
+        result?.message || "ส่งคำขอแลกรางวัลแล้ว", "success");
 
       await loadMember();
       await loadRewards();
+      await loadHistory();
     } catch (error) {
-      showMessage(
-        "rewardsMessage",
-        "แลกรางวัลไม่สำเร็จ: " +
-          (error.message || "เกิดข้อผิดพลาด"),
-        "error"
+      showMessage("rewardsMessage",
+        "แลกรางวัลไม่สำเร็จ: " + (error.message || "เกิดข้อผิดพลาด"),
+        "error");
+      button.disabled = false;
+    }
+  }
+
+  // ประวัติการแลก: อ่านเฉพาะรายการของสมาชิกที่เข้าสู่ระบบ
+  async function loadHistory() {
+    const list = $("historyList");
+    list.replaceChildren();
+
+    if (!currentUser) {
+      list.textContent = "กรุณาเข้าสู่ระบบเพื่อดูประวัติการแลก";
+      return;
+    }
+
+    list.textContent = "กำลังโหลดประวัติ...";
+
+    try {
+      const { data, error } = await db
+        .from("redemptions")
+        .select("id, user_id, reward_id, cost, code, created_at")
+        .eq("user_id", currentUser.id)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      if (!data || data.length === 0) {
+        list.textContent = "ยังไม่มีประวัติการแลกของรางวัล";
+        return;
+      }
+
+      const { data: rewards, error: rewardError } = await db
+        .from("rewards")
+        .select("*");
+
+      if (rewardError) throw rewardError;
+
+      const rewardMap = new Map(
+        (rewards || []).map(r => [String(r.id), rewardName(r)])
       );
 
-      button.disabled = false;
+      list.replaceChildren();
+
+      data.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "reward";
+
+        const title = document.createElement("h3");
+        title.textContent = "🎁 " +
+          (rewardMap.get(String(item.reward_id)) ||
+          "ของรางวัล #" + item.reward_id);
+        card.appendChild(title);
+
+        const cost = document.createElement("p");
+        cost.className = "muted";
+        cost.textContent = "⭐ ใช้คะแนน: " +
+          Number(item.cost).toLocaleString("th-TH") + " คะแนน";
+        card.appendChild(cost);
+
+        const date = document.createElement("p");
+        date.className = "muted";
+        const parsedDate = new Date(item.created_at);
+        date.textContent = "📅 วันที่แลก: " +
+          (Number.isNaN(parsedDate.getTime())
+            ? "-"
+            : parsedDate.toLocaleString("th-TH", {
+                dateStyle: "medium",
+                timeStyle: "short"
+              }));
+        card.appendChild(date);
+
+        if (item.code) {
+          const code = document.createElement("p");
+          code.textContent = "🧾 รหัสการแลก: " + item.code;
+          card.appendChild(code);
+        }
+
+        list.appendChild(card);
+      });
+    } catch (error) {
+      list.textContent = "โหลดประวัติไม่สำเร็จ: " +
+        (error.message || "เกิดข้อผิดพลาด");
     }
   }
 
   async function refreshAll() {
     if (busy) return;
-
     setBusy(true);
 
     try {
       await loadMember();
       await loadRewards();
+      await loadHistory();
     } catch (error) {
-      showMessage(
-        "pointsMessage",
-        error.message || "โหลดข้อมูลไม่สำเร็จ",
-        "error"
-      );
+      showMessage("pointsMessage", error.message || "โหลดข้อมูลไม่สำเร็จ", "error");
     } finally {
       setBusy(false);
     }
@@ -962,6 +847,7 @@
   $("saveNameBtn").addEventListener("click", saveDisplayName);
   $("logoutMenuBtn").addEventListener("click", signOut);
   $("refreshBtn").addEventListener("click", refreshAll);
+  $("historyRefreshBtn").addEventListener("click", loadHistory);
 
   db.auth.onAuthStateChange(event => {
     if (event === "SIGNED_OUT") {
@@ -971,12 +857,14 @@
       $("authArea").classList.remove("hidden");
       $("memberArea").classList.add("hidden");
       $("pointsValue").textContent = "—";
-      $("pointsMessage").textContent =
-        "เข้าสู่ระบบเพื่อดูคะแนนของคุณ";
+      $("pointsMessage").textContent = "เข้าสู่ระบบเพื่อดูคะแนนของคุณ";
       $("pointsMessage").className = "message muted";
       $("displayName").value = "";
       $("memberEmail").textContent = "";
       $("memberName").textContent = "สมาชิก";
+      showMessage("nameMessage", "");
+
+      $("historyList").textContent = "กรุณาเข้าสู่ระบบเพื่อดูประวัติการแลก";
     }
   });
 
@@ -984,18 +872,15 @@
     try {
       await loadMember();
       await loadRewards();
+      await loadHistory();
     } catch (error) {
-      showMessage(
-        "authMessage",
-        "โหลดข้อมูลไม่สำเร็จ: " +
-          (error.message || "ตรวจสอบการเชื่อมต่อ"),
-        "error"
-      );
+      showMessage("authMessage",
+        "โหลดข้อมูลไม่สำเร็จ: " + (error.message || "ตรวจสอบการเชื่อมต่อ"),
+        "error");
     }
   }
 
   init();
 </script>
-
 </body>
 </html>
