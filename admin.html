@@ -348,12 +348,16 @@ async function loadPending() {
   }
 }
 
+    
 async function reviewItem(item,status,note,box) {
   if (busy) return;
-  if (!currentUser || !currentProfile || !isAdmin(currentProfile.role)) {
+
+  if (!currentUser || !currentProfile ||
+      !isAdmin(currentProfile.role)) {
     message("ไม่มีสิทธิ์ตรวจรูป กรุณาเข้าสู่ระบบใหม่",true);
     return;
   }
+
   if (status === "rejected" && !note) {
     message("กรุณาระบุเหตุผลก่อนปฏิเสธรูป",true);
     return;
@@ -361,28 +365,45 @@ async function reviewItem(item,status,note,box) {
 
   busy = true;
   box.querySelectorAll("button").forEach(b => b.disabled = true);
+
   try {
     message("กำลังบันทึกผลตรวจรูป #" + item.id + "...");
-    const {data,error} = await db.rpc("admin_review_checkin",{
+
+    const {data,error} = await db.rpc("review_checkin",{
       p_checkin_id:item.id,
-      p_status:status,
-      p_note:note
+      p_decision:status,
+      p_points:1,
+      p_note:note || null
     });
+
     if (error) throw error;
+
     if (!data || data.success !== true) {
-      throw new Error("ฐานข้อมูลไม่ได้ยืนยันว่าบันทึกผลสำเร็จ");
+      throw new Error(
+        typeof data === "string"
+          ? data
+          : JSON.stringify(data)
+      );
     }
 
-    await Promise.all([loadStats(),loadPending(),loadHistory()]);
+    await Promise.all([
+      loadStats(),
+      loadPending(),
+      loadHistory()
+    ]);
+
     message(status === "approved"
       ? "อนุมัติรูป #" + item.id + " สำเร็จ เพิ่ม 1 คะแนนแล้ว"
       : "ปฏิเสธรูป #" + item.id + " สำเร็จ");
+
   } catch (e) {
     message("บันทึกผลตรวจไม่สำเร็จ: " + e.message,true);
     await loadPending();
+
   } finally {
     busy = false;
-    document.querySelectorAll(".approveBtn,.rejectBtn").forEach(b => b.disabled = false);
+    document.querySelectorAll(".approveBtn,.rejectBtn")
+      .forEach(b => b.disabled = false);
   }
 }
 
@@ -561,15 +582,15 @@ db.auth.onAuthStateChange((event,session) => {
 });
 
 checkSession().catch(e => message("เริ่มระบบไม่สำเร็จ: " + e.message,true));
-</script>
-</body>
-  
+  </script>
+
 <button type="button" onclick="window.location.href='index.html'"
-  style="position:fixed;top:12px;left:12px;z-index:99999;
+  style="position:fixed;bottom:16px;left:16px;z-index:99999;
   padding:10px 16px;background:#16834a;color:white;
   border:none;border-radius:10px;font-size:15px;
   font-weight:bold;cursor:pointer;">
   ← กลับหน้าหลัก
 </button>
 
+</body>
 </html>
