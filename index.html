@@ -45,6 +45,7 @@
       padding: 12px 16px;
       font-size: 16px;
       cursor: pointer;
+      margin: 3px;
     }
     .reward {
       padding: 13px 0;
@@ -53,6 +54,7 @@
     }
     .muted { color: #587061; font-size: 14px; }
     footer { text-align: center; padding: 22px; color: #587061; }
+    [hidden] { display: none !important; }
   </style>
 </head>
 <body>
@@ -68,34 +70,36 @@
     <section class="hero">
       <h2>รักษ์โลกได้ทุกวัน</h2>
       <p>พกแก้ว พกกล่อง ลดขยะ และร่วมสร้างโลกที่น่าอยู่ไปด้วยกัน</p>
+
       <div class="points">
         <strong>🌿 คะแนนสะสมของคุณ</strong>
-        <p>ระบบคะแนนจะแสดงเมื่อเข้าสู่ระบบสมาชิก</p>
+        <p id="points-display">กรุณาเข้าสู่ระบบเพื่อดูคะแนน</p>
       </div>
-      
-<div class="panel" id="member-panel">
-  <h2>👤 สมาชิก Green Cup Box</h2>
-  <p class="muted">สมัครสมาชิกหรือเข้าสู่ระบบด้วยอีเมล</p>
 
-  <label for="member-email">อีเมล</label>
-  <input id="member-email" type="email"
-    placeholder="กรอกอีเมล"
-    autocomplete="email"
-    style="display:block;width:100%;padding:12px;margin:8px 0 14px">
+      <div class="panel" id="member-panel">
+        <h2>👤 สมาชิก Green Cup Box</h2>
+        <p class="muted">สมัครสมาชิกหรือเข้าสู่ระบบด้วยอีเมล</p>
 
-  <label for="member-password">รหัสผ่าน</label>
-  <input id="member-password" type="password"
-    placeholder="กรอกรหัสผ่าน"
-    autocomplete="current-password"
-    style="display:block;width:100%;padding:12px;margin:8px 0 14px">
+        <div id="member-fields">
+          <label for="member-email">อีเมล</label>
+          <input id="member-email" type="email"
+            placeholder="กรอกอีเมล"
+            autocomplete="email"
+            style="display:block;width:100%;padding:12px;margin:8px 0 14px">
 
-  <button type="button" id="signup-btn">สมัครสมาชิก</button>
-  <button type="button" id="login-btn">เข้าสู่ระบบ</button>
-  <button type="button" id="logout-btn" hidden>ออกจากระบบ</button>
+          <label for="member-password">รหัสผ่าน</label>
+          <input id="member-password" type="password"
+            placeholder="กรอกรหัสผ่าน"
+            autocomplete="current-password"
+            style="display:block;width:100%;padding:12px;margin:8px 0 14px">
+        </div>
 
-  <p id="member-status" role="status" aria-live="polite"></p>
-</div>
+        <button type="button" id="signup-btn">สมัครสมาชิก</button>
+        <button type="button" id="login-btn">เข้าสู่ระบบ</button>
+        <button type="button" id="logout-btn" hidden>ออกจากระบบ</button>
 
+        <p id="member-status" role="status" aria-live="polite"></p>
+      </div>
     </section>
 
     <section class="panel" id="rewards">
@@ -109,27 +113,21 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
+    // ใส่ค่าเดิมของโปรเจกต์ Supabase ที่ใช้งานอยู่
     const SUPABASE_URL = "https://sjlmwicteshsabzlkvab.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_tqvsVPcYKq-QC6LtA3oVeg_NsR7wchz";
 
+    const db = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
+
+    // โหลดของรางวัล: คงการทำงานเดิมไว้
     async function loadRewards() {
       const status = document.getElementById("status");
       const list = document.getElementById("reward-list");
 
-      if (
-        SUPABASE_URL === "ใส่_PROJECT_URL" ||
-        SUPABASE_ANON_KEY === "ใส่_PUBLISHABLE_KEY"
-      ) {
-        status.textContent =
-          "หน้าเว็บพร้อมแล้ว รอเชื่อมต่อ Supabase";
-        return;
-      }
-
       try {
-        const db = window.supabase.createClient(
-          SUPABASE_URL, SUPABASE_ANON_KEY
-        );
-
         const { data, error } = await db
           .from("rewards")
           .select("*");
@@ -146,20 +144,20 @@
         data.forEach((reward) => {
           const item = document.createElement("div");
           item.className = "reward";
-          const name =
-            reward.name ?? reward.title ?? "ของรางวัล";
-          const detail = Object.entries(reward)
-            .filter(([key]) => key !== "name" && key !== "title")
-            .map(([key, value]) => `${key}: ${
-              typeof value === "object"
-                ? JSON.stringify(value)
-                : String(value ?? "-")
-            }`)
-            .join(" · ");
 
           const heading = document.createElement("strong");
-          heading.textContent = "🎁 " + name;
+          heading.textContent =
+            "🎁 " + (reward.name ?? reward.title ?? "ของรางวัล");
           item.appendChild(heading);
+
+          const detail = Object.entries(reward)
+            .filter(([key]) => key !== "name" && key !== "title")
+            .map(([key, value]) =>
+              `${key}: ${typeof value === "object"
+                ? JSON.stringify(value)
+                : String(value ?? "-")}`
+            )
+            .join(" · ");
 
           if (detail) {
             const info = document.createElement("p");
@@ -171,112 +169,163 @@
           list.appendChild(item);
         });
 
-        status.textContent =
-          `พบของรางวัล ${data.length} รายการ`;
+        status.textContent = `พบของรางวัล ${data.length} รายการ`;
       } catch (error) {
-        status.textContent =
-          "เชื่อมต่อไม่สำเร็จ: " + error.message;
+        status.textContent = "โหลดของรางวัลไม่สำเร็จ: " + error.message;
       }
     }
 
+    const memberStatus = document.getElementById("member-status");
+    const memberFields = document.getElementById("member-fields");
+    const signupBtn = document.getElementById("signup-btn");
+    const loginBtn = document.getElementById("login-btn");
+    const logoutBtn = document.getElementById("logout-btn");
+    const emailInput = document.getElementById("member-email");
+    const passwordInput = document.getElementById("member-password");
+    const pointsDisplay = document.getElementById("points-display");
+
+    function showMember(message, loggedIn) {
+      memberStatus.textContent = message;
+      memberFields.hidden = loggedIn;
+      signupBtn.hidden = loggedIn;
+      loginBtn.hidden = loggedIn;
+      logoutBtn.hidden = !loggedIn;
+
+      if (!loggedIn) {
+        pointsDisplay.textContent = "กรุณาเข้าสู่ระบบเพื่อดูคะแนน";
+      }
+    }
+
+    // อ่านคะแนนของผู้ใช้ที่ล็อกอินอยู่เท่านั้น
+    async function loadMemberPoints(userId) {
+      pointsDisplay.textContent = "กำลังโหลดคะแนน...";
+
+      const { data, error } = await db
+        .from("point_transactions")
+        .select("delta")
+        .eq("user_id", userId);
+
+      if (error) {
+        pointsDisplay.textContent =
+          "อ่านคะแนนไม่ได้ กรุณาตรวจสอบสิทธิ์ฐานข้อมูล";
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        pointsDisplay.textContent =
+          "ยังไม่มีรายการคะแนนในระบบ";
+        return;
+      }
+
+      let total = 0;
+
+      for (const row of data) {
+        const amount = Number(row.delta);
+
+        if (!Number.isFinite(amount)) {
+          pointsDisplay.textContent =
+            "ข้อมูลคะแนนไม่ใช่ตัวเลข กรุณาตรวจสอบฐานข้อมูล";
+          return;
+        }
+
+        total += amount;
+      }
+
+      pointsDisplay.textContent = `คะแนนสะสม ${total} แต้ม`;
+    }
+
+    signupBtn.addEventListener("click", async () => {
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!email || !password) {
+        memberStatus.textContent = "กรุณากรอกอีเมลและรหัสผ่าน";
+        return;
+      }
+
+      memberStatus.textContent = "กำลังสมัครสมาชิก...";
+
+      const { data, error } = await db.auth.signUp({
+        email,
+        password
+      });
+
+      if (error) {
+        memberStatus.textContent = "สมัครไม่สำเร็จ: " + error.message;
+        return;
+      }
+
+      if (data.session && data.user) {
+        showMember("เข้าสู่ระบบแล้ว: " + data.user.email, true);
+        await loadMemberPoints(data.user.id);
+      } else {
+        memberStatus.textContent =
+          "สมัครแล้ว กรุณาตรวจอีเมลเพื่อยืนยันบัญชี";
+      }
+    });
+
+    loginBtn.addEventListener("click", async () => {
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!email || !password) {
+        memberStatus.textContent = "กรุณากรอกอีเมลและรหัสผ่าน";
+        return;
+      }
+
+      memberStatus.textContent = "กำลังเข้าสู่ระบบ...";
+
+      const { data, error } = await db.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        memberStatus.textContent =
+          "เข้าสู่ระบบไม่สำเร็จ: " + error.message;
+        return;
+      }
+
+      showMember("เข้าสู่ระบบแล้ว: " + data.user.email, true);
+      await loadMemberPoints(data.user.id);
+    });
+
+    logoutBtn.addEventListener("click", async () => {
+      const { error } = await db.auth.signOut();
+
+      if (error) {
+        memberStatus.textContent = "ออกจากระบบไม่สำเร็จ: " + error.message;
+        return;
+      }
+
+      showMember("ออกจากระบบแล้ว", false);
+    });
+
+    // คืนสถานะสมาชิกเมื่อเปิดหรือรีเฟรชเว็บไซต์
+    async function restoreSession() {
+      const { data, error } = await db.auth.getSession();
+
+      if (error) {
+        memberStatus.textContent = "ตรวจสอบสมาชิกไม่สำเร็จ";
+        return;
+      }
+
+      if (data.session) {
+        showMember("เข้าสู่ระบบแล้ว: " + data.session.user.email, true);
+        await loadMemberPoints(data.session.user.id);
+      } else {
+        showMember("กรุณาเข้าสู่ระบบสมาชิก", false);
+      }
+    }
+
+    db.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_OUT") {
+        showMember("ออกจากระบบแล้ว", false);
+      }
+    });
+
     loadRewards();
- </script>
-  
-<script>
-  const memberDb = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
-  );
-
-  const memberStatus = document.getElementById("member-status");
-  const signupBtn = document.getElementById("signup-btn");
-  const loginBtn = document.getElementById("login-btn");
-  const logoutBtn = document.getElementById("logout-btn");
-
-  function showMember(message, loggedIn) {
-    memberStatus.textContent = message;
-    signupBtn.hidden = loggedIn;
-    loginBtn.hidden = loggedIn;
-    logoutBtn.hidden = !loggedIn;
-  }
-
-  signupBtn.addEventListener("click", async () => {
-    const email = document.getElementById("member-email").value.trim();
-    const password = document.getElementById("member-password").value;
-
-    if (!email || !password) {
-      memberStatus.textContent = "กรุณากรอกอีเมลและรหัสผ่าน";
-      return;
-    }
-
-    memberStatus.textContent = "กำลังสมัครสมาชิก...";
-
-    const { data, error } = await memberDb.auth.signUp({
-      email,
-      password
-    });
-
-    if (error) {
-      memberStatus.textContent = "สมัครไม่สำเร็จ: " + error.message;
-      return;
-    }
-
-    if (data.session) {
-      showMember("สมัครสมาชิกสำเร็จ 🎉", true);
-    } else {
-      memberStatus.textContent =
-        "ส่งคำขอสมัครแล้ว กรุณาตรวจอีเมลเพื่อยืนยันบัญชี";
-    }
-  });
-
-  loginBtn.addEventListener("click", async () => {
-    const email = document.getElementById("member-email").value.trim();
-    const password = document.getElementById("member-password").value;
-
-    if (!email || !password) {
-      memberStatus.textContent = "กรุณากรอกอีเมลและรหัสผ่าน";
-      return;
-    }
-
-    memberStatus.textContent = "กำลังเข้าสู่ระบบ...";
-
-    const { data, error } = await memberDb.auth.signInWithPassword({
-      email,
-      password
-    });
-
-    if (error) {
-      memberStatus.textContent = "เข้าสู่ระบบไม่สำเร็จ: " + error.message;
-      return;
-    }
-
-    showMember("เข้าสู่ระบบสำเร็จ 🎉", true);
-  });
-
-  logoutBtn.addEventListener("click", async () => {
-    const { error } = await memberDb.auth.signOut();
-
-    if (error) {
-      memberStatus.textContent = "ออกจากระบบไม่สำเร็จ";
-      return;
-    }
-
-    showMember("ออกจากระบบแล้ว", false);
-  });
-
-  memberDb.auth.getSession().then(({ data, error }) => {
-    if (error) {
-      memberStatus.textContent = "ตรวจสอบสมาชิกไม่สำเร็จ";
-      return;
-    }
-
-    if (data.session) {
-      showMember("เข้าสู่ระบบอยู่แล้ว 🎉", true);
-    }
-  });
-</script>
-</body>
-</html>
-
+    restoreSession();
+  </script>
 </body>
 </html>
