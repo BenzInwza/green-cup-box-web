@@ -333,7 +333,8 @@ async function reviewCheckin(id,decision,points,note,card){
  card.querySelectorAll("button").forEach(b=>b.disabled=true);
  try{
   const {data,error}=await db.rpc("review_checkin",{p_checkin_id:id,p_decision:decision,p_points:points,p_note:note||null});if(error)throw error;
-  const r=Array.isArray(data)?data[0]:data;if(r?.success===false)throw new Error(r.message||"ตรวจรูปไม่สำเร็จ");
+  const r=Array.isArray(data)?data[0]:data;if(r?.ok===false || r?.success===false)
+  throw new Error(r.message||"แลกรางวัลไม่สำเร็จ");
   msg("adminMessage",decision==="rejected"?"ปฏิเสธรูปแล้ว":"อนุมัติแล้ว เพิ่ม "+points+" คะแนน","success");
   await Promise.all([loadAdminCheckins(),loadMyCheckins(),loadMember()]);
  }catch(e){msg("adminMessage","ตรวจรูปไม่สำเร็จ: "+e.message,"error");card.querySelectorAll("button").forEach(b=>b.disabled=false);}
