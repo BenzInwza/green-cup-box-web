@@ -9,17 +9,20 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       font-family: system-ui, sans-serif;
       background: #f1f8f2;
       color: #203b2b;
     }
+
     header {
       background: #16834a;
       color: white;
       padding: 16px;
     }
+
     .header-inner {
       max-width: 760px;
       margin: auto;
@@ -28,8 +31,11 @@
       align-items: center;
       gap: 12px;
     }
+
     h1 { font-size: 23px; margin: 0; }
+
     .menu-wrap { position: relative; }
+
     .menu-toggle {
       background: #ffffff20;
       border: 1px solid #ffffff80;
@@ -38,6 +44,7 @@
       font-size: 23px;
       color: white;
     }
+
     .menu-panel {
       position: absolute;
       right: 0;
@@ -49,6 +56,7 @@
       box-shadow: 0 8px 25px #0002;
       z-index: 5;
     }
+
     .menu-item {
       display: block;
       width: 100%;
@@ -59,8 +67,15 @@
       background: white;
       color: #203b2b;
     }
+
     .menu-item:hover { background: #eaf6ed; }
-    main { max-width: 760px; margin: auto; padding: 14px; }
+
+    main {
+      max-width: 760px;
+      margin: auto;
+      padding: 14px;
+    }
+
     .card {
       background: white;
       border-radius: 15px;
@@ -69,8 +84,11 @@
       box-shadow: 0 3px 12px #0000000d;
       scroll-margin-top: 12px;
     }
+
     h2 { font-size: 20px; margin-top: 0; }
+
     label { display: block; margin: 12px 0 6px; }
+
     input {
       width: 100%;
       padding: 12px;
@@ -78,6 +96,7 @@
       border-radius: 9px;
       font-size: 16px;
     }
+
     button {
       cursor: pointer;
       border: 0;
@@ -88,24 +107,58 @@
       font-size: 15px;
       font-weight: 650;
     }
-    button:disabled { opacity: .55; cursor: not-allowed; }
-    .secondary { background: #e5f3e8; color: #176638; }
+
+    button:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
+    .secondary {
+      background: #e5f3e8;
+      color: #176638;
+    }
+
     .danger { background: #b93838; }
-    .row { display: flex; gap: 8px; margin-top: 12px; }
+
+    .row {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
     .row button { flex: 1; }
+
     .full { width: 100%; margin-top: 12px; }
+
     .hidden { display: none !important; }
-    .muted { color: #68776c; font-size: 14px; }
-    .message { margin-top: 10px; font-size: 14px; overflow-wrap: anywhere; }
+
+    .muted {
+      color: #68776c;
+      font-size: 14px;
+    }
+
+    .message {
+      margin-top: 10px;
+      font-size: 14px;
+      overflow-wrap: anywhere;
+    }
+
     .success { color: #14763d; }
     .error { color: #b42323; }
+
     .points {
       text-align: center;
       background: #e7f6e9;
       padding: 18px;
       border-radius: 12px;
     }
-    .points strong { display: block; font-size: 34px; color: #16834a; }
+
+    .points strong {
+      display: block;
+      font-size: 34px;
+      color: #16834a;
+    }
+
     .reward {
       border: 1px solid #e0e9e1;
       border-radius: 12px;
@@ -113,11 +166,32 @@
       margin-top: 12px;
       overflow-wrap: anywhere;
     }
+
     .reward h3 { margin: 0 0 8px; }
+    .reward p { margin: 8px 0; }
     .reward button { width: 100%; }
-    footer { text-align: center; padding: 20px; color: #68776c; }
+
+    .stock {
+      background: #f0f8f1;
+      color: #176638;
+      padding: 9px 11px;
+      border-radius: 8px;
+      font-weight: 650;
+    }
+
+    .stock.out {
+      background: #fff0f0;
+      color: #b42323;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #68776c;
+    }
   </style>
 </head>
+
 <body>
 <header>
   <div class="header-inner">
@@ -125,9 +199,11 @@
       <h1>🌱 Green Cup Box</h1>
       <small>พกแก้ว พกกล่อง ลดขยะ รับคะแนน</small>
     </div>
+
     <div class="menu-wrap">
       <button id="menuToggle" class="menu-toggle"
         aria-expanded="false" aria-controls="mainMenu">☰</button>
+
       <nav id="mainMenu" class="menu-panel hidden">
         <button class="menu-item" data-target="memberCard">👤 สมาชิก / ตั้งชื่อ</button>
         <button class="menu-item" data-target="pointsCard">⭐ คะแนนสะสม</button>
@@ -142,11 +218,16 @@
 <main>
   <section class="card" id="memberCard">
     <h2>👤 สมาชิก</h2>
+
     <div id="authArea">
       <label for="email">อีเมล</label>
-      <input id="email" type="email" autocomplete="email" placeholder="กรอกอีเมล">
+      <input id="email" type="email" autocomplete="email"
+        placeholder="กรอกอีเมล">
+
       <label for="password">รหัสผ่าน</label>
-      <input id="password" type="password" autocomplete="current-password" placeholder="กรอกรหัสผ่าน">
+      <input id="password" type="password"
+        autocomplete="current-password" placeholder="กรอกรหัสผ่าน">
+
       <div class="row">
         <button id="loginBtn">เข้าสู่ระบบ</button>
         <button id="signupBtn" class="secondary">สมัครสมาชิก</button>
@@ -156,27 +237,39 @@
     <div id="memberArea" class="hidden">
       <p>ยินดีต้อนรับ <strong id="memberName">สมาชิก</strong></p>
       <p class="muted" id="memberEmail"></p>
+
       <label for="displayName">ตั้งชื่อสมาชิก (ตั้งได้ครั้งเดียว)</label>
-      <input id="displayName" maxlength="40" placeholder="พิมพ์ชื่อที่ต้องการ">
+      <input id="displayName" maxlength="40"
+        placeholder="พิมพ์ชื่อที่ต้องการ">
+
       <button id="saveNameBtn" class="full">💾 บันทึกชื่อ</button>
       <p id="nameMessage" class="message"></p>
     </div>
+
     <p id="authMessage" class="message" aria-live="polite"></p>
   </section>
 
   <section class="card" id="pointsCard">
     <h2>⭐ คะแนนสะสมของคุณ</h2>
+
     <div class="points">
       <span>คะแนนปัจจุบัน</span>
       <strong id="pointsValue">—</strong>
       <span>คะแนน</span>
     </div>
-    <p id="pointsMessage" class="message muted">เข้าสู่ระบบเพื่อดูคะแนน</p>
-    <button id="refreshBtn" class="secondary full">🔄 รีเฟรชข้อมูล</button>
+
+    <p id="pointsMessage" class="message muted">
+      เข้าสู่ระบบเพื่อดูคะแนน
+    </p>
+
+    <button id="refreshBtn" class="secondary full">
+      🔄 รีเฟรชข้อมูล
+    </button>
   </section>
 
   <section class="card" id="rewardsCard">
     <h2>🎁 ของรางวัล</h2>
+    <p class="muted">ตรวจสอบคะแนนและจำนวนของรางวัลก่อนแลก</p>
     <div id="rewardsList">กำลังโหลด...</div>
     <p id="rewardsMessage" class="message"></p>
   </section>
@@ -184,7 +277,9 @@
   <section class="card" id="historyCard">
     <h2>📜 ประวัติการแลก</h2>
     <div id="historyList">เข้าสู่ระบบเพื่อดูประวัติ</div>
-    <button id="historyRefreshBtn" class="secondary full">🔄 รีเฟรชประวัติ</button>
+    <button id="historyRefreshBtn" class="secondary full">
+      🔄 รีเฟรชประวัติ
+    </button>
   </section>
 </main>
 
@@ -193,7 +288,12 @@
 <script>
 const SUPABASE_URL = "https://sjlmwicteshsabzlkvab.supabase.co";
 const SUPABASE_KEY = "sb_publishable_tqvsVPcYKq-QC6LtA3oVeg_NsR7wchz";
-const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
 const $ = id => document.getElementById(id);
 
 let currentUser = null;
@@ -205,19 +305,23 @@ function msg(id, text, type = "") {
 }
 
 function toggleMenu(force) {
-  const shouldOpen = typeof force === "boolean"
+  const open = typeof force === "boolean"
     ? force
     : $("mainMenu").classList.contains("hidden");
-  $("mainMenu").classList.toggle("hidden", !shouldOpen);
-  $("menuToggle").setAttribute("aria-expanded", String(shouldOpen));
+
+  $("mainMenu").classList.toggle("hidden", !open);
+  $("menuToggle").setAttribute("aria-expanded", String(open));
 }
 
 $("menuToggle").addEventListener("click", e => {
   e.stopPropagation();
   toggleMenu();
 });
+
 $("mainMenu").addEventListener("click", e => e.stopPropagation());
+
 document.addEventListener("click", () => toggleMenu(false));
+
 document.addEventListener("keydown", e => {
   if (e.key === "Escape") toggleMenu(false);
 });
@@ -251,6 +355,7 @@ async function getProfile() {
       display_name: "",
       name_locked: false
     });
+
     if (insertError) throw insertError;
 
     ({ data, error } = await db.from("profiles")
@@ -260,12 +365,14 @@ async function getProfile() {
 
     if (error) throw error;
   }
+
   return data;
 }
 
 async function loadMember() {
   const { data, error } = await db.auth.getUser();
   if (error) throw error;
+
   currentUser = data.user;
   updateMenu();
 
@@ -280,35 +387,47 @@ async function loadMember() {
     $("displayName").value = "";
     $("displayName").disabled = false;
     $("saveNameBtn").disabled = false;
+
     msg("nameMessage", "");
     return;
   }
 
   $("memberEmail").textContent = currentUser.email || "";
+
   const profile = await getProfile();
   const name = profile.display_name || "";
 
   $("memberName").textContent = name || "ยังไม่ได้ตั้งชื่อ";
   $("displayName").value = name;
-  $("pointsValue").textContent = Number(profile.points || 0).toLocaleString("th-TH");
+
+  $("pointsValue").textContent =
+    Number(profile.points || 0).toLocaleString("th-TH");
+
   $("pointsMessage").textContent = "อัปเดตคะแนนเรียบร้อย";
 
   const locked = profile.name_locked === true;
   $("displayName").disabled = locked;
   $("saveNameBtn").disabled = locked;
 
-  if (locked) {
-    msg("nameMessage", "🔒 ตั้งชื่อแล้ว ไม่สามารถเปลี่ยนได้อีก");
-  } else {
-    msg("nameMessage", "คุณสามารถตั้งชื่อได้หนึ่งครั้ง");
-  }
+  msg(
+    "nameMessage",
+    locked
+      ? "🔒 ตั้งชื่อแล้ว ไม่สามารถเปลี่ยนได้อีก"
+      : "คุณสามารถตั้งชื่อได้หนึ่งครั้ง"
+  );
 }
 
 async function signUp() {
   const email = $("email").value.trim();
   const password = $("password").value;
-  if (!email || !password) return msg("authMessage", "กรอกอีเมลและรหัสผ่านก่อน", "error");
-  if (password.length < 6) return msg("authMessage", "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร", "error");
+
+  if (!email || !password) {
+    return msg("authMessage", "กรอกอีเมลและรหัสผ่านก่อน", "error");
+  }
+
+  if (password.length < 6) {
+    return msg("authMessage", "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร", "error");
+  }
 
   try {
     const { data, error } = await db.auth.signUp({ email, password });
@@ -318,7 +437,11 @@ async function signUp() {
       await refreshAll();
       msg("authMessage", "สมัครสมาชิกสำเร็จ", "success");
     } else {
-      msg("authMessage", "สมัครแล้ว โปรดตรวจสอบอีเมลเพื่อยืนยันบัญชี", "success");
+      msg(
+        "authMessage",
+        "สมัครแล้ว โปรดตรวจสอบอีเมลเพื่อยืนยันบัญชี",
+        "success"
+      );
     }
   } catch (e) {
     msg("authMessage", e.message, "error");
@@ -328,11 +451,19 @@ async function signUp() {
 async function signIn() {
   const email = $("email").value.trim();
   const password = $("password").value;
-  if (!email || !password) return msg("authMessage", "กรอกอีเมลและรหัสผ่านก่อน", "error");
+
+  if (!email || !password) {
+    return msg("authMessage", "กรอกอีเมลและรหัสผ่านก่อน", "error");
+  }
 
   try {
-    const { error } = await db.auth.signInWithPassword({ email, password });
+    const { error } = await db.auth.signInWithPassword({
+      email,
+      password
+    });
+
     if (error) throw error;
+
     await refreshAll();
     msg("authMessage", "เข้าสู่ระบบสำเร็จ", "success");
   } catch (e) {
@@ -341,16 +472,25 @@ async function signIn() {
 }
 
 async function saveName() {
-  if (!currentUser) return msg("nameMessage", "กรุณาเข้าสู่ระบบก่อน", "error");
+  if (!currentUser) {
+    return msg("nameMessage", "กรุณาเข้าสู่ระบบก่อน", "error");
+  }
 
   const name = $("displayName").value.trim();
-  if (!name) return msg("nameMessage", "กรุณาพิมพ์ชื่อก่อนบันทึก", "error");
-  if (name.length > 40) return msg("nameMessage", "ชื่อต้องไม่เกิน 40 ตัวอักษร", "error");
+
+  if (!name) {
+    return msg("nameMessage", "กรุณาพิมพ์ชื่อก่อนบันทึก", "error");
+  }
+
+  if (name.length > 40) {
+    return msg("nameMessage", "ชื่อต้องไม่เกิน 40 ตัวอักษร", "error");
+  }
 
   $("saveNameBtn").disabled = true;
 
   try {
     const profile = await getProfile();
+
     if (profile.name_locked === true) {
       $("displayName").disabled = true;
       msg("nameMessage", "ชื่อนี้ถูกล็อกแล้ว ไม่สามารถเปลี่ยนได้", "error");
@@ -364,6 +504,7 @@ async function saveName() {
       .select("id");
 
     if (error) throw error;
+
     if (!data || data.length === 0) {
       throw new Error("ตั้งชื่อไม่ได้ อาจมีการตั้งชื่อไปแล้ว กรุณารีเฟรชหน้าเว็บ");
     }
@@ -371,6 +512,7 @@ async function saveName() {
     $("memberName").textContent = name;
     $("displayName").value = name;
     $("displayName").disabled = true;
+
     msg("nameMessage", "🔒 บันทึกชื่อสำเร็จ ตั้งชื่อได้ครั้งเดียว", "success");
   } catch (e) {
     msg("nameMessage", "บันทึกชื่อไม่สำเร็จ: " + e.message, "error");
@@ -380,12 +522,15 @@ async function saveName() {
 
 async function signOut() {
   if (!confirm("ต้องการออกจากระบบหรือไม่?")) return;
+
   try {
     const { error } = await db.auth.signOut();
     if (error) throw error;
+
     currentUser = null;
     await refreshAll();
     toggleMenu(false);
+
     msg("authMessage", "ออกจากระบบแล้ว", "success");
   } catch (e) {
     msg("authMessage", e.message, "error");
@@ -397,20 +542,55 @@ function nameOf(r) {
 }
 
 function costOf(r) {
-  for (const k of ["cost", "points_cost", "point_cost", "points_required", "required_points"]) {
-    if (r[k] != null) return Number(r[k]);
+  for (const key of [
+    "cost",
+    "points_cost",
+    "point_cost",
+    "points_required",
+    "required_points"
+  ]) {
+    if (r[key] != null) return Number(r[key]);
   }
+
+  return null;
+}
+
+/*
+  อ่านจำนวนจากชื่อคอลัมน์ที่พบบ่อย
+  ถ้าไม่ตรงกับฐานข้อมูล จะไม่แต่งจำนวนขึ้นมาเอง
+*/
+function quantityOf(r) {
+  for (const key of [
+    "stock",
+    "quantity",
+    "remaining",
+    "stock_quantity",
+    "available_quantity",
+    "qty"
+  ]) {
+    if (r[key] !== undefined && r[key] !== null && r[key] !== "") {
+      const value = Number(r[key]);
+      return Number.isFinite(value) ? value : null;
+    }
+  }
+
   return null;
 }
 
 async function loadRewards() {
   $("rewardsList").textContent = "กำลังโหลดของรางวัล...";
+
   try {
-    const { data, error } = await db.from("rewards").select("*").order("id");
+    const { data, error } = await db
+      .from("rewards")
+      .select("*")
+      .order("id");
+
     if (error) throw error;
+
     $("rewardsList").replaceChildren();
 
-    if (!data || !data.length) {
+    if (!data || data.length === 0) {
       $("rewardsList").textContent = "ยังไม่มีของรางวัล";
       return;
     }
@@ -430,40 +610,95 @@ async function loadRewards() {
       const cost = costOf(r);
       const price = document.createElement("p");
       price.className = "muted";
-      price.textContent = cost == null ? "ไม่พบราคาคะแนน" : "⭐ ใช้ " + cost + " คะแนน";
+
+      price.textContent =
+        cost === null || !Number.isFinite(cost)
+          ? "ไม่พบราคาคะแนน"
+          : "⭐ ใช้ " + cost.toLocaleString("th-TH") + " คะแนน";
+
       card.appendChild(price);
 
-      const button = document.createElement("button");
-      button.textContent = "แลกของรางวัล";
-      button.disabled = !currentUser || r.stock === 0;
-      button.addEventListener("click", () => redeem(r.id, button));
-      card.appendChild(button);
+      const quantity = quantityOf(r);
+      const stock = document.createElement("p");
 
+      if (quantity === null) {
+        stock.className = "muted";
+        stock.textContent = "📦 ยังอ่านจำนวนของรางวัลไม่ได้";
+      } else if (quantity <= 0) {
+        stock.className = "stock out";
+        stock.textContent = "📦 ของรางวัลหมด";
+      } else {
+        stock.className = "stock";
+        stock.textContent =
+          "📦 คงเหลือ " + quantity.toLocaleString("th-TH") + " ชิ้น";
+      }
+
+      card.appendChild(stock);
+
+      const button = document.createElement("button");
+
+      if (quantity !== null && quantity <= 0) {
+        button.textContent = "ของรางวัลหมด";
+      } else {
+        button.textContent = "แลกของรางวัล";
+      }
+
+      button.disabled =
+        !currentUser ||
+        (quantity !== null && quantity <= 0);
+
+      button.addEventListener("click", () => redeem(r.id, button));
+
+      card.appendChild(button);
       $("rewardsList").appendChild(card);
     });
   } catch (e) {
-    $("rewardsList").textContent = "โหลดของรางวัลไม่สำเร็จ: " + e.message;
+    $("rewardsList").textContent =
+      "โหลดของรางวัลไม่สำเร็จ: " + e.message;
   }
 }
 
 async function redeem(id, button) {
-  if (!currentUser) return msg("rewardsMessage", "กรุณาเข้าสู่ระบบก่อน", "error");
+  if (!currentUser) {
+    return msg("rewardsMessage", "กรุณาเข้าสู่ระบบก่อน", "error");
+  }
+
+  if (busy) return;
+
   if (!confirm("ยืนยันการแลกของรางวัลหรือไม่?")) return;
 
+  busy = true;
   button.disabled = true;
+
   try {
-    const { data, error } = await db.rpc("redeem_reward", { p_reward_id: id });
+    const { data, error } = await db.rpc("redeem_reward", {
+      p_reward_id: id
+    });
+
     if (error) throw error;
 
     const result = Array.isArray(data) ? data[0] : data;
-    if (result?.success === false) throw new Error(result.message || "แลกรางวัลไม่สำเร็จ");
-    if (result?.error) throw new Error(result.error);
 
-    msg("rewardsMessage", result?.message || "ส่งคำขอแลกรางวัลแล้ว", "success");
+    if (result?.success === false) {
+      throw new Error(result.message || "แลกรางวัลไม่สำเร็จ");
+    }
+
+    if (result?.error) {
+      throw new Error(result.error);
+    }
+
+    msg(
+      "rewardsMessage",
+      result?.message || "ส่งคำขอแลกรางวัลแล้ว",
+      "success"
+    );
+
     await refreshAll();
   } catch (e) {
     msg("rewardsMessage", "แลกไม่สำเร็จ: " + e.message, "error");
-    button.disabled = false;
+    await loadRewards();
+  } finally {
+    busy = false;
   }
 }
 
@@ -477,6 +712,7 @@ async function loadHistory() {
   }
 
   list.textContent = "กำลังโหลดประวัติ...";
+
   try {
     const { data, error } = await db.from("redemptions")
       .select("id, user_id, reward_id, cost, code, created_at")
@@ -484,35 +720,58 @@ async function loadHistory() {
       .order("created_at", { ascending: false });
 
     if (error) throw error;
-    if (!data || !data.length) {
+
+    if (!data || data.length === 0) {
       list.textContent = "ยังไม่มีประวัติการแลก";
       return;
     }
 
-    const { data: rewards, error: rewardError } = await db.from("rewards").select("*");
+    const { data: rewards, error: rewardError } = await db
+      .from("rewards")
+      .select("*");
+
     if (rewardError) throw rewardError;
-    const map = new Map((rewards || []).map(r => [String(r.id), nameOf(r)]));
+
+    const rewardMap = new Map(
+      (rewards || []).map(r => [String(r.id), nameOf(r)])
+    );
 
     list.replaceChildren();
+
     data.forEach(item => {
       const card = document.createElement("div");
       card.className = "reward";
 
       const title = document.createElement("h3");
-      title.textContent = "🎁 " + (map.get(String(item.reward_id)) || "ของรางวัล #" + item.reward_id);
+      title.textContent =
+        "🎁 " +
+        (rewardMap.get(String(item.reward_id)) ||
+          "ของรางวัล #" + item.reward_id);
+
       card.appendChild(title);
 
       const cost = document.createElement("p");
       cost.className = "muted";
-      cost.textContent = "⭐ ใช้คะแนน: " + Number(item.cost).toLocaleString("th-TH") + " คะแนน";
+      cost.textContent =
+        "⭐ ใช้คะแนน: " +
+        Number(item.cost).toLocaleString("th-TH") +
+        " คะแนน";
+
       card.appendChild(cost);
 
       const date = document.createElement("p");
       date.className = "muted";
+
       const parsed = new Date(item.created_at);
-      date.textContent = "📅 " + (Number.isNaN(parsed.getTime())
-        ? "-"
-        : parsed.toLocaleString("th-TH", { dateStyle: "medium", timeStyle: "short" }));
+
+      date.textContent = "📅 " +
+        (Number.isNaN(parsed.getTime())
+          ? "-"
+          : parsed.toLocaleString("th-TH", {
+              dateStyle: "medium",
+              timeStyle: "short"
+            }));
+
       card.appendChild(date);
 
       if (item.code) {
@@ -520,6 +779,7 @@ async function loadHistory() {
         code.textContent = "🧾 รหัสการแลก: " + item.code;
         card.appendChild(code);
       }
+
       list.appendChild(card);
     });
   } catch (e) {
