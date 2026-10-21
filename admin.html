@@ -2,135 +2,93 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#16834a">
-  <title>Green Cup Box | แอดมิน</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    :root {
-      --green: #16834a;
-      --light: #eaf7ee;
-      --bg: #f5f8f5;
-      --text: #203328;
-      --muted: #68786e;
-      --border: #dce7de;
-      --red: #c73535;
-      --orange: #a86600;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-    }
-    header {
-      background: var(--green);
-      color: white;
-      padding: 20px 16px;
-    }
-    header h1 { margin: 0 0 5px; font-size: 24px; }
-    header p { margin: 0; opacity: .9; }
-    main { max-width: 1000px; margin: auto; padding: 16px; }
-    .card {
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 3px 12px #173d2110;
-    }
-    h2 { margin: 0 0 14px; font-size: 19px; }
-    h3 { margin: 8px 0; font-size: 16px; }
-    input, select, textarea, button {
-      width: 100%;
-      padding: 11px;
-      margin: 5px 0;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      font: inherit;
-    }
-    button {
-      background: var(--green);
-      color: white;
-      border: 0;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    button.secondary { background: #e9f0eb; color: var(--text); }
-    button.danger { background: var(--red); }
-    button:disabled { opacity: .5; cursor: not-allowed; }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
-      gap: 10px;
-    }
-    .stat {
-      padding: 14px;
-      background: var(--light);
-      border-radius: 12px;
-    }
-    .stat strong { display: block; font-size: 25px; }
-    .muted { color: var(--muted); font-size: 13px; }
-    .status { font-weight: 700; }
-    .pending { color: var(--orange); }
-    .approved { color: var(--green); }
-    .rejected { color: var(--red); }
-    .item {
-      padding: 14px 0;
-      border-bottom: 1px solid var(--border);
-    }
-    .item:last-child { border-bottom: 0; }
-    .photo {
-      display: block;
-      width: 100%;
-      max-height: 420px;
-      object-fit: contain;
-      background: #f1f4f1;
-      border-radius: 12px;
-      margin: 10px 0;
-    }
-    .actions {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-    }
-    .hidden { display: none !important; }
-    #message {
-      padding: 12px;
-      border-radius: 10px;
-      margin-bottom: 12px;
-      background: #eaf7ee;
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-    }
-    @media (min-width: 650px) {
-      .two-col {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#16834a">
+<title>Green Cup Box | แอดมิน</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --green:#16834a; --light:#eaf7ee; --bg:#f5f8f5;
+  --text:#203328; --muted:#68786e; --border:#dce7de;
+  --red:#c73535; --orange:#a86600;
+}
+* {box-sizing:border-box}
+body {margin:0;font-family:system-ui,sans-serif;background:var(--bg);color:var(--text)}
+header {background:var(--green);color:white;padding:15px 16px;display:flex;align-items:center;gap:12px}
+header h1 {margin:0;font-size:21px}
+header p {margin:3px 0 0;font-size:13px;opacity:.9}
+#menuBtn {width:45px;min-width:45px;margin:0;padding:9px;background:#ffffff22;color:white;font-size:23px}
+main {max-width:1000px;margin:auto;padding:16px}
+.card {background:white;border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:16px;box-shadow:0 3px 12px #173d2110}
+h2 {margin:0 0 14px;font-size:19px}
+h3 {margin:8px 0;font-size:16px}
+input,select,textarea,button {width:100%;padding:11px;margin:5px 0;border-radius:10px;border:1px solid var(--border);font:inherit}
+button {background:var(--green);color:white;border:0;font-weight:700;cursor:pointer}
+button.secondary {background:#e9f0eb;color:var(--text)}
+button.danger {background:var(--red)}
+button:disabled {opacity:.5;cursor:not-allowed}
+.grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.stat {padding:14px;background:var(--light);border-radius:12px}
+.stat strong {display:block;font-size:25px}
+.muted {color:var(--muted);font-size:13px;overflow-wrap:anywhere}
+.item {padding:14px 0;border-bottom:1px solid var(--border);overflow-wrap:anywhere}
+.item:last-child {border-bottom:0}
+.photo {display:block;width:100%;max-height:420px;object-fit:contain;background:#f1f4f1;border-radius:12px;margin:10px 0}
+.actions {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.hidden {display:none!important}
+#message {padding:12px;border-radius:10px;margin-bottom:12px;background:var(--light);white-space:pre-wrap;overflow-wrap:anywhere}
+#sideMenu {position:fixed;inset:0;z-index:100;background:#14251dcc}
+#menuPanel {background:white;width:min(300px,85vw);height:100%;padding:20px;overflow:auto}
+#menuPanel h2 {margin:12px 0 20px}
+#menuPanel button {text-align:left;margin:5px 0}
+.menuClose {background:#e9f0eb!important;color:var(--text)!important}
+.roleRow {background:#f7faf7;border:1px solid var(--border);border-radius:12px;padding:12px;margin-top:10px}
+.status {font-weight:700}
+.approved {color:var(--green)}
+.rejected {color:var(--red)}
+.pending {color:var(--orange)}
+.sectionTitle {display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.sectionTitle button {width:auto}
+@media(min-width:650px) {
+  .two-col {display:grid;grid-template-columns:1fr 1fr;gap:16px}
+}
+</style>
 </head>
 <body>
+
 <header>
-  <h1>🌱 Green Cup Box</h1>
-  <p>ระบบแอดมินตรวจรูปและจัดการกิจกรรมลดขยะ</p>
+  <button id="menuBtn" aria-label="เปิดเมนู" aria-expanded="false">☰</button>
+  <div>
+    <h1>🌱 Green Cup Box</h1>
+    <p>ระบบแอดมินตรวจรูปและจัดการกิจกรรมลดขยะ</p>
+  </div>
 </header>
 
-<main>
+<div id="sideMenu" class="hidden">
+  <nav id="menuPanel" aria-label="เมนูหลัก">
+    <div class="sectionTitle">
+      <h2>☰ เมนูหลัก</h2>
+      <button id="closeMenuBtn" class="menuClose" style="width:auto">ปิด ✕</button>
+    </div>
+    <button data-target="top">🏠 หน้าหลัก</button>
+    <button data-target="statsSection">📊 สถิติระบบ</button>
+    <button data-target="pendingSection">📸 รูปที่รอตรวจ</button>
+    <button data-target="historySection">🧾 ประวัติการตรวจรูป</button>
+    <button data-target="membersSection">👥 สมาชิก / จัดการแอดมิน</button>
+    <button id="menuLogoutBtn" class="danger">ออกจากระบบ</button>
+  </nav>
+</div>
+
+<main id="top">
   <div id="message" class="hidden" role="status" aria-live="polite"></div>
 
   <section id="loginCard" class="card">
     <h2>เข้าสู่ระบบแอดมิน</h2>
     <p class="muted">เข้าสู่ระบบด้วยบัญชี Green Cup Box ที่ลงทะเบียนไว้แล้ว</p>
     <form id="loginForm">
-      <input id="email" type="email" placeholder="อีเมล"
-        autocomplete="email" required>
-      <input id="password" type="password" placeholder="รหัสผ่าน"
-        autocomplete="current-password" required>
+      <input id="email" type="email" placeholder="อีเมล" autocomplete="email" required>
+      <input id="password" type="password" placeholder="รหัสผ่าน" autocomplete="current-password" required>
       <button type="submit">เข้าสู่ระบบ</button>
     </form>
   </section>
@@ -143,7 +101,7 @@
       <button id="logoutBtn" class="secondary">ออกจากระบบ</button>
     </div>
 
-    <div class="card">
+    <section id="statsSection" class="card">
       <h2>📊 สถิติระบบ</h2>
       <div id="stats" class="grid">
         <div class="stat">สมาชิก<strong>—</strong></div>
@@ -151,28 +109,28 @@
         <div class="stat">ของรางวัล<strong>—</strong></div>
         <div class="stat">รายการแลกรางวัล<strong>—</strong></div>
       </div>
-    </div>
+    </section>
 
-    <div class="card">
+    <section id="pendingSection" class="card">
       <h2>📸 รูปที่รอตรวจ</h2>
-      <p class="muted">
-        ตรวจรูปก่อนให้คะแนน หากปฏิเสธต้องระบุเหตุผล
-        การอนุมัติจะเพิ่ม 1 คะแนนต่อรายการ
-      </p>
+      <p class="muted">อนุมัติรูปเพื่อเพิ่ม 1 คะแนนต่อรายการ หากปฏิเสธต้องใส่เหตุผล</p>
       <div id="pendingList">กำลังโหลดรายการ...</div>
-    </div>
+    </section>
 
-    <div class="card">
+    <section id="historySection" class="card">
       <h2>🧾 ประวัติการตรวจรูป</h2>
       <div id="historyList">กำลังโหลดประวัติ...</div>
-    </div>
+    </section>
 
-    <div class="card">
-      <h2>👥 สมาชิก</h2>
-      <p class="muted">รายชื่อสมาชิกและคะแนนสะสม</p>
-      <button id="membersBtn" class="secondary">โหลดรายชื่อสมาชิก</button>
+    <section id="membersSection" class="card">
+      <h2>👥 สมาชิกและจัดการแอดมิน</h2>
+      <p class="muted">
+        Owner และ Super Admin สามารถเปลี่ยนสมาชิกเป็นแอดมินได้
+        การเพิ่มแอดมินเป็นการเปลี่ยนสิทธิ์บัญชีที่สมัครแล้ว ไม่ใช่สร้างบัญชีใหม่
+      </p>
+      <button id="membersBtn">โหลดรายชื่อสมาชิก</button>
       <div id="membersList"></div>
-    </div>
+    </section>
   </section>
 </main>
 
@@ -182,17 +140,13 @@
 const SUPABASE_URL = "https://sjlmwicteshsabzlkvab.supabase.co";
 const SUPABASE_KEY = "sb_publishable_tqvsVPcYKq-QC6LtA3oVeg_NsR7wchz";
 
-const db = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
-
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const $ = id => document.getElementById(id);
 
 let currentUser = null;
 let currentProfile = null;
-let busy = false;
 let sessionCheckRunning = false;
+let busy = false;
 
 function message(text, error = false) {
   const el = $("message");
@@ -201,52 +155,61 @@ function message(text, error = false) {
   el.style.background = error ? "#fdecec" : "#eaf7ee";
   el.style.color = error ? "#a32020" : "#203328";
 }
-
 function clearMessage() {
   $("message").classList.add("hidden");
 }
-
 function escapeHTML(value) {
   return String(value ?? "").replace(/[&<>"']/g, c => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;"
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
   }[c]));
 }
-
 function dateText(value) {
   if (!value) return "-";
   const d = new Date(value);
-  return Number.isNaN(d.getTime())
-    ? "-"
-    : d.toLocaleString("th-TH");
+  return Number.isNaN(d.getTime()) ? "-" : d.toLocaleString("th-TH");
 }
-
 function isAdmin(role) {
-  return ["admin", "owner", "super_admin"].includes(role);
+  return ["admin","owner","super_admin"].includes(role);
 }
-
+function canManageRoles() {
+  return ["owner","super_admin"].includes(currentProfile?.role);
+}
 function statusText(status) {
   if (status === "approved") return "อนุมัติแล้ว";
   if (status === "rejected") return "ปฏิเสธแล้ว";
   return "รอตรวจ";
 }
-
 function statusClass(status) {
   if (status === "approved") return "approved";
   if (status === "rejected") return "rejected";
   return "pending";
 }
 
-async function getProfile(userId) {
-  const { data, error } = await db
-    .from("profiles")
-    .select("id, display_name, role, points")
-    .eq("id", userId)
-    .single();
+function openMenu() {
+  $("sideMenu").classList.remove("hidden");
+  $("menuBtn").setAttribute("aria-expanded", "true");
+}
+function closeMenu() {
+  $("sideMenu").classList.add("hidden");
+  $("menuBtn").setAttribute("aria-expanded", "false");
+}
+$("menuBtn").addEventListener("click", openMenu);
+$("closeMenuBtn").addEventListener("click", closeMenu);
+$("sideMenu").addEventListener("click", e => {
+  if (e.target === $("sideMenu")) closeMenu();
+});
+document.querySelectorAll("#menuPanel [data-target]").forEach(button => {
+  button.addEventListener("click", () => {
+    const target = $(button.dataset.target);
+    closeMenu();
+    if (target) target.scrollIntoView({behavior:"smooth",block:"start"});
+  });
+});
 
+async function getProfile(userId) {
+  const {data,error} = await db.from("profiles")
+    .select("id,display_name,role,points")
+    .eq("id",userId).single();
   if (error) throw error;
   return data;
 }
@@ -254,11 +217,9 @@ async function getProfile(userId) {
 async function checkSession() {
   if (sessionCheckRunning) return;
   sessionCheckRunning = true;
-
   try {
-    const { data, error } = await db.auth.getSession();
+    const {data,error} = await db.auth.getSession();
     if (error) throw error;
-
     currentUser = data.session?.user ?? null;
 
     if (!currentUser) {
@@ -269,7 +230,6 @@ async function checkSession() {
     }
 
     let profile;
-
     try {
       profile = await getProfile(currentUser.id);
     } catch (e) {
@@ -288,17 +248,13 @@ async function checkSession() {
       currentProfile = null;
       $("loginCard").classList.remove("hidden");
       $("dashboard").classList.add("hidden");
-      message(
-        "บัญชีนี้ไม่มีสิทธิ์แอดมิน กรุณาตรวจสอบ role ใน profiles",
-        true
-      );
+      message("บัญชีนี้ไม่มีสิทธิ์แอดมิน กรุณาตรวจ role ใน profiles", true);
       return;
     }
 
     currentProfile = profile;
     $("loginCard").classList.add("hidden");
     $("dashboard").classList.remove("hidden");
-
     $("accountInfo").textContent =
       (profile.display_name || currentUser.email || "แอดมิน") +
       " · สิทธิ์: " + profile.role;
@@ -311,25 +267,20 @@ async function checkSession() {
 
 async function loadStats() {
   const el = $("stats");
-  const { data, error } = await db.rpc("admin_get_stats");
-
+  const {data,error} = await db.rpc("admin_get_stats");
   if (error) {
-    el.innerHTML =
-      '<div class="item">โหลดสถิติไม่สำเร็จ: ' +
+    el.innerHTML = '<div class="item">โหลดสถิติไม่สำเร็จ: ' +
       escapeHTML(error.message) + '</div>';
     return;
   }
-
   const r = Array.isArray(data) ? (data[0] || {}) : (data || {});
-
   const fields = [
-    ["สมาชิก", r.total_members],
-    ["รูปเช็กอิน", r.total_checkins],
-    ["ของรางวัล", r.total_rewards],
-    ["รายการแลกรางวัล", r.total_redemptions]
+    ["สมาชิก",r.total_members],
+    ["รูปเช็กอิน",r.total_checkins],
+    ["ของรางวัล",r.total_rewards],
+    ["รายการแลกรางวัล",r.total_redemptions]
   ];
-
-  el.innerHTML = fields.map(([label, value]) =>
+  el.innerHTML = fields.map(([label,value]) =>
     '<div class="stat">' + escapeHTML(label) +
     '<strong>' + escapeHTML(value ?? 0) + '</strong></div>'
   ).join("");
@@ -339,38 +290,28 @@ async function loadPending() {
   const el = $("pendingList");
   el.textContent = "กำลังโหลดรายการ...";
 
-  const { data, error } = await db
-    .from("checkins")
-    .select("*")
-    .eq("status", "pending")
-    .order("created_at", { ascending: true });
+  const {data,error} = await db.from("checkins").select("*")
+    .eq("status","pending").order("created_at",{ascending:true});
 
   if (error) {
     el.textContent = "โหลดรูปไม่สำเร็จ: " + error.message;
     return;
   }
-
   if (!data?.length) {
     el.textContent = "ไม่มีรูปที่รอตรวจในขณะนี้";
     return;
   }
 
   el.innerHTML = "";
-
   for (const item of data) {
     const box = document.createElement("div");
     box.className = "item";
-
     let photoURL = "";
 
     if (item.photo_path) {
-      const { data: signed, error: photoError } = await db.storage
-        .from("checkin-photos")
-        .createSignedUrl(item.photo_path, 3600);
-
-      if (!photoError) {
-        photoURL = signed?.signedUrl || "";
-      }
+      const {data:signed,error:photoError} = await db.storage
+        .from("checkin-photos").createSignedUrl(item.photo_path,3600);
+      if (!photoError) photoURL = signed?.signedUrl || "";
     }
 
     box.innerHTML = `
@@ -379,274 +320,247 @@ async function loadPending() {
       <div class="muted">สมาชิก: ${escapeHTML(item.display_name || item.user_id)}</div>
       <div class="muted">ประเภท: ${escapeHTML(item.checkin_type || "-")}</div>
       <div class="muted">ส่งเมื่อ: ${escapeHTML(dateText(item.created_at))}</div>
-      ${
-        photoURL
-          ? `<a href="${escapeHTML(photoURL)}" target="_blank" rel="noopener">
-               <img class="photo" src="${escapeHTML(photoURL)}" alt="รูปเช็กอิน">
-             </a>`
-          : '<p>เปิดรูปไม่ได้ ตรวจสอบ photo_path และสิทธิ์ Storage</p>'
-      }
+      ${photoURL
+        ? `<a href="${escapeHTML(photoURL)}" target="_blank" rel="noopener">
+             <img class="photo" src="${escapeHTML(photoURL)}" alt="รูปเช็กอิน">
+           </a>`
+        : "<p>เปิดรูปไม่ได้ ตรวจสอบ photo_path และสิทธิ์ Storage</p>"}
       <label>หมายเหตุการตรวจ</label>
-      <textarea class="reviewNote"
-        placeholder="ระบุเหตุผล หากปฏิเสธรูป"></textarea>
+      <textarea class="reviewNote" placeholder="ระบุเหตุผลหากปฏิเสธรูป"></textarea>
       <div class="actions">
         <button type="button" class="approveBtn">อนุมัติ +1 คะแนน</button>
         <button type="button" class="rejectBtn danger">ปฏิเสธ</button>
-      </div>
-    `;
+      </div>`;
 
     box.querySelector(".approveBtn").addEventListener("click", async () => {
-      const note = box.querySelector(".reviewNote").value.trim();
-      await reviewItem(item, "approved", note, box);
+      await reviewItem(item,"approved",box.querySelector(".reviewNote").value.trim(),box);
     });
-
     box.querySelector(".rejectBtn").addEventListener("click", async () => {
       const note = box.querySelector(".reviewNote").value.trim();
-
       if (!note) {
-        message("กรุณาใส่เหตุผลก่อนปฏิเสธรูป", true);
+        message("กรุณาใส่เหตุผลก่อนปฏิเสธรูป",true);
         box.querySelector(".reviewNote").focus();
         return;
       }
-
-      await reviewItem(item, "rejected", note, box);
+      await reviewItem(item,"rejected",note,box);
     });
-
     el.appendChild(box);
   }
 }
 
-/*
-  บันทึกผลตรวจผ่าน RPC ใน Supabase เท่านั้น
-  การเปลี่ยนสถานะและการเพิ่มคะแนนทำในฐานข้อมูล
-  ไม่แก้คะแนนโดยตรงจากหน้าเว็บ
-*/
-async function reviewItem(item, status, note, box) {
+async function reviewItem(item,status,note,box) {
   if (busy) return;
-
   if (!currentUser || !currentProfile || !isAdmin(currentProfile.role)) {
-    message("ไม่มีสิทธิ์ตรวจรูป กรุณาเข้าสู่ระบบใหม่", true);
+    message("ไม่มีสิทธิ์ตรวจรูป กรุณาเข้าสู่ระบบใหม่",true);
     return;
   }
-
-  if (status === "rejected" && !note.trim()) {
-    message("กรุณาระบุเหตุผลก่อนปฏิเสธรูป", true);
-    return;
-  }
-
-  if (!["approved", "rejected"].includes(status)) {
-    message("สถานะการตรวจไม่ถูกต้อง", true);
+  if (status === "rejected" && !note) {
+    message("กรุณาระบุเหตุผลก่อนปฏิเสธรูป",true);
     return;
   }
 
   busy = true;
-
-  const buttons = box
-    ? box.querySelectorAll("button")
-    : [];
-
-  buttons.forEach(button => {
-    button.disabled = true;
-  });
-
+  box.querySelectorAll("button").forEach(b => b.disabled = true);
   try {
     message("กำลังบันทึกผลตรวจรูป #" + item.id + "...");
-
-    // ต้องตรงกับชื่อพารามิเตอร์ใน SQL ที่สร้างไว้
-    const { data, error } = await db.rpc("admin_review_checkin", {
-      p_checkin_id: item.id,
-      p_status: status,
-      p_note: note.trim()
+    const {data,error} = await db.rpc("admin_review_checkin",{
+      p_checkin_id:item.id,
+      p_status:status,
+      p_note:note
     });
-
     if (error) throw error;
-
     if (!data || data.success !== true) {
       throw new Error("ฐานข้อมูลไม่ได้ยืนยันว่าบันทึกผลสำเร็จ");
     }
 
-    // โหลดข้อมูลล่าสุดจากฐานข้อมูล
-    await Promise.all([
-      loadStats(),
-      loadPending(),
-      loadHistory()
-    ]);
-
-    if (status === "approved") {
-      message(
-        "อนุมัติรูป #" + item.id +
-        " สำเร็จ เพิ่ม 1 คะแนนให้สมาชิกแล้ว"
-      );
-    } else {
-      message(
-        "ปฏิเสธรูป #" + item.id +
-        " สำเร็จ บันทึกเหตุผลแล้วและไม่ได้เพิ่มคะแนน"
-      );
-    }
+    await Promise.all([loadStats(),loadPending(),loadHistory()]);
+    message(status === "approved"
+      ? "อนุมัติรูป #" + item.id + " สำเร็จ เพิ่ม 1 คะแนนแล้ว"
+      : "ปฏิเสธรูป #" + item.id + " สำเร็จ");
   } catch (e) {
-    message("บันทึกผลตรวจไม่สำเร็จ: " + e.message, true);
-
-    // หากบันทึกไม่สำเร็จ โหลดรายการใหม่เพื่อแสดงสถานะจากฐานข้อมูล
-    try {
-      await loadPending();
-    } catch (_) {
-      // แสดงข้อผิดพลาดหลักไว้
-    }
+    message("บันทึกผลตรวจไม่สำเร็จ: " + e.message,true);
+    await loadPending();
   } finally {
     busy = false;
-
-    // ปุ่มของรายการเดิมอาจถูกสร้างใหม่หลังโหลดข้อมูล
-    document.querySelectorAll(".approveBtn, .rejectBtn")
-      .forEach(button => {
-        button.disabled = false;
-      });
+    document.querySelectorAll(".approveBtn,.rejectBtn").forEach(b => b.disabled = false);
   }
 }
 
 async function loadHistory() {
   const el = $("historyList");
   el.textContent = "กำลังโหลดประวัติ...";
-
-  const { data, error } = await db.rpc("admin_get_review_history", {
-    p_limit: 50
-  });
-
+  const {data,error} = await db.rpc("admin_get_review_history",{p_limit:50});
   if (error) {
     el.textContent = "โหลดประวัติไม่สำเร็จ: " + error.message;
     return;
   }
-
   const rows = Array.isArray(data) ? data : [];
-
   if (!rows.length) {
     el.textContent = "ยังไม่มีประวัติการตรวจรูป";
     return;
   }
-
   el.innerHTML = rows.map(item => `
     <div class="item">
-      <div>
-        <strong>${escapeHTML(item.display_name || item.user_id || "-")}</strong>
-      </div>
-      <div class="status ${statusClass(item.status)}">
-        ${escapeHTML(statusText(item.status))}
-      </div>
+      <strong>${escapeHTML(item.display_name || item.user_id || "-")}</strong>
+      <div class="status ${statusClass(item.status)}">${escapeHTML(statusText(item.status))}</div>
       <div class="muted">รหัสรายการ: ${escapeHTML(item.id)}</div>
       <div class="muted">ประเภท: ${escapeHTML(item.checkin_type || "-")}</div>
       <div class="muted">คะแนนที่ให้: ${escapeHTML(item.points_awarded ?? 0)}</div>
       <div class="muted">ผู้ตรวจ: ${escapeHTML(item.reviewer_name || item.reviewed_by || "-")}</div>
       <div class="muted">เวลาตรวจ: ${escapeHTML(dateText(item.reviewed_at))}</div>
       <div>หมายเหตุ: ${escapeHTML(item.review_note || "-")}</div>
-    </div>
-  `).join("");
+    </div>`).join("");
 }
 
 async function loadMembers() {
   const el = $("membersList");
   el.textContent = "กำลังโหลดสมาชิก...";
 
-  const { data, error } = await db.rpc("admin_list_members");
-
+  const {data,error} = await db.rpc("admin_list_members");
   if (error) {
     el.textContent = "โหลดสมาชิกไม่สำเร็จ: " + error.message;
     return;
   }
 
   const rows = Array.isArray(data) ? data : [];
-
   if (!rows.length) {
     el.textContent = "ไม่พบข้อมูลสมาชิก";
     return;
   }
 
-  el.innerHTML = rows.map(item => `
-    <div class="item">
-      <strong>${escapeHTML(item.display_name || "ยังไม่ได้ตั้งชื่อ")}</strong>
-      <div class="muted">ID: ${escapeHTML(item.id || "-")}</div>
-      <div>สิทธิ์: ${escapeHTML(item.role || "member")}</div>
-      <div>คะแนน: ${escapeHTML(item.points ?? 0)}</div>
-    </div>
-  `).join("");
+  el.innerHTML = rows.map((item,index) => {
+    const editable = canManageRoles() &&
+      item.id !== currentUser.id &&
+      ["member","admin"].includes(item.role);
+
+    return `
+      <div class="item">
+        <strong>${escapeHTML(item.display_name || "ยังไม่ได้ตั้งชื่อ")}</strong>
+        <div class="muted">ID: ${escapeHTML(item.id)}</div>
+        <div>สิทธิ์ปัจจุบัน: ${escapeHTML(item.role || "member")}</div>
+        <div>คะแนน: ${escapeHTML(item.points ?? 0)}</div>
+        ${editable ? `
+          <div class="roleRow">
+            <label for="role-${index}">เปลี่ยนสิทธิ์</label>
+            <select id="role-${index}" class="roleSelect">
+              <option value="member" ${item.role === "member" ? "selected" : ""}>สมาชิก</option>
+              <option value="admin" ${item.role === "admin" ? "selected" : ""}>แอดมิน</option>
+            </select>
+            <button type="button" class="saveRoleBtn" data-user-id="${escapeHTML(item.id)}">
+              บันทึกสิทธิ์
+            </button>
+          </div>` : ""}
+      </div>`;
+  }).join("");
+
+  el.querySelectorAll(".saveRoleBtn").forEach(button => {
+    button.addEventListener("click", async () => {
+      if (!canManageRoles()) {
+        message("ต้องเข้าสู่ระบบด้วย Owner หรือ Super Admin",true);
+        return;
+      }
+
+      const select = button.parentElement.querySelector(".roleSelect");
+      const userId = button.dataset.userId;
+      const newRole = select.value;
+
+      if (!confirm("ยืนยันเปลี่ยนสิทธิ์สมาชิกเป็น " +
+        (newRole === "admin" ? "แอดมิน" : "สมาชิก") + " ?")) return;
+
+      button.disabled = true;
+      try {
+        const {data,error} = await db.rpc("admin_set_member_role",{
+          p_user_id:userId,
+          p_role:newRole
+        });
+        if (error) throw error;
+        if (!data || data.success !== true) {
+          throw new Error("ฐานข้อมูลไม่ได้ยืนยันการเปลี่ยนสิทธิ์");
+        }
+        message("เปลี่ยนสิทธิ์สำเร็จแล้ว");
+        await loadMembers();
+      } catch (e) {
+        message("เปลี่ยนสิทธิ์ไม่สำเร็จ: " + e.message,true);
+      } finally {
+        button.disabled = false;
+      }
+    });
+  });
+
+  if (!canManageRoles()) {
+    const note = document.createElement("p");
+    note.className = "muted";
+    note.textContent = "บัญชีนี้ดูรายชื่อได้ แต่ต้องเป็น Owner หรือ Super Admin จึงจะเปลี่ยนสิทธิ์ได้";
+    el.prepend(note);
+  }
 }
 
 async function refreshAll() {
-  if (!currentUser || !currentProfile || !isAdmin(currentProfile.role)) {
-    return;
-  }
-
+  if (!currentUser || !currentProfile || !isAdmin(currentProfile.role)) return;
   $("refreshBtn").disabled = true;
-
   try {
-    await Promise.all([
-      loadStats(),
-      loadPending(),
-      loadHistory()
-    ]);
-
+    await Promise.all([loadStats(),loadPending(),loadHistory()]);
     message("โหลดข้อมูลเสร็จแล้ว");
   } catch (e) {
-    message("โหลดข้อมูลไม่สำเร็จ: " + e.message, true);
+    message("โหลดข้อมูลไม่สำเร็จ: " + e.message,true);
   } finally {
     $("refreshBtn").disabled = false;
   }
 }
 
-$("loginForm").addEventListener("submit", async event => {
-  event.preventDefault();
-  clearMessage();
-
-  const email = $("email").value.trim();
-  const password = $("password").value;
-  const submitButton = $("loginForm").querySelector("button");
-
-  submitButton.disabled = true;
-
-  try {
-    const { error } = await db.auth.signInWithPassword({
-      email,
-      password
-    });
-
-    if (error) throw error;
-
-    await checkSession();
-  } catch (e) {
-    message("เข้าสู่ระบบไม่สำเร็จ: " + e.message, true);
-  } finally {
-    submitButton.disabled = false;
-  }
-});
-
-$("logoutBtn").addEventListener("click", async () => {
-  const { error } = await db.auth.signOut();
-
+async function logout() {
+  const {error} = await db.auth.signOut();
   if (error) {
-    message("ออกจากระบบไม่สำเร็จ: " + error.message, true);
+    message("ออกจากระบบไม่สำเร็จ: " + error.message,true);
     return;
   }
-
   currentUser = null;
   currentProfile = null;
   $("dashboard").classList.add("hidden");
   $("loginCard").classList.remove("hidden");
+  closeMenu();
   message("ออกจากระบบแล้ว");
+}
+
+$("loginForm").addEventListener("submit",async event => {
+  event.preventDefault();
+  clearMessage();
+  const submit = $("loginForm").querySelector("button");
+  submit.disabled = true;
+  try {
+    const {error} = await db.auth.signInWithPassword({
+      email:$("email").value.trim(),
+      password:$("password").value
+    });
+    if (error) throw error;
+    await checkSession();
+  } catch (e) {
+    message("เข้าสู่ระบบไม่สำเร็จ: " + e.message,true);
+  } finally {
+    submit.disabled = false;
+  }
 });
 
-$("refreshBtn").addEventListener("click", refreshAll);
-$("membersBtn").addEventListener("click", loadMembers);
+$("logoutBtn").addEventListener("click",logout);
+$("menuLogoutBtn").addEventListener("click",logout);
+$("refreshBtn").addEventListener("click",refreshAll);
+$("membersBtn").addEventListener("click",loadMembers);
 
-db.auth.onAuthStateChange((event, session) => {
-  // ไม่เรียกซ้ำขณะกำลังตรวจ session หรือกำลังล็อกอิน
+db.auth.onAuthStateChange((event,session) => {
   if (event === "TOKEN_REFRESHED") return;
-
+  if (event === "SIGNED_OUT") {
+    currentUser = null;
+    currentProfile = null;
+    $("dashboard").classList.add("hidden");
+    $("loginCard").classList.remove("hidden");
+    return;
+  }
   setTimeout(() => {
-    checkSession().catch(e => message(e.message, true));
-  }, 0);
+    checkSession().catch(e => message("ตรวจสอบบัญชีไม่สำเร็จ: " + e.message,true));
+  },0);
 });
 
-checkSession().catch(e => {
-  message("เริ่มระบบไม่สำเร็จ: " + e.message, true);
-});
+checkSession().catch(e => message("เริ่มระบบไม่สำเร็จ: " + e.message,true));
 </script>
 </body>
 </html>
