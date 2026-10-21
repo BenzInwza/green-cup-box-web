@@ -7,258 +7,133 @@
   <meta name="theme-color" content="#16834a">
   <title>Green Cup Box | ลดโลกร้อน</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
   <style>
     * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-
     body {
       margin: 0;
       font-family: system-ui, sans-serif;
-      background: #f2f8f2;
+      background: #f1f8f2;
       color: #203b2b;
     }
-
     header {
       background: #16834a;
       color: white;
-      position: relative;
-      z-index: 10;
-      box-shadow: 0 3px 12px #173d1b15;
+      padding: 16px;
     }
-
     .header-inner {
-      width: min(760px, 100%);
+      max-width: 760px;
       margin: auto;
-      padding: 15px 16px;
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       gap: 12px;
     }
-
-    .brand { min-width: 0; }
-    .brand h1 { margin: 0 0 5px; font-size: 25px; }
-    .brand p { margin: 0; font-size: 12px; line-height: 1.5; }
-
-    .menu-wrap { position: relative; flex-shrink: 0; }
-
+    h1 { font-size: 23px; margin: 0; }
+    .menu-wrap { position: relative; }
     .menu-toggle {
-      width: 48px;
-      height: 46px;
-      padding: 8px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-      background: #ffffff18;
-      border: 1px solid #ffffff70;
-      border-radius: 12px;
+      background: #ffffff20;
+      border: 1px solid #ffffff80;
+      border-radius: 10px;
+      padding: 10px 13px;
+      font-size: 23px;
+      color: white;
     }
-
-    .menu-toggle span {
-      width: 24px;
-      height: 3px;
-      display: block;
-      background: white;
-      border-radius: 5px;
-      transition: .2s;
-    }
-
-    .menu-toggle[aria-expanded="true"] span:first-child {
-      transform: translateY(8px) rotate(45deg);
-    }
-    .menu-toggle[aria-expanded="true"] span:nth-child(2) {
-      opacity: 0;
-    }
-    .menu-toggle[aria-expanded="true"] span:last-child {
-      transform: translateY(-8px) rotate(-45deg);
-    }
-
     .menu-panel {
       position: absolute;
-      top: calc(100% + 10px);
       right: 0;
-      width: min(290px, calc(100vw - 24px));
-      padding: 10px;
+      top: 52px;
+      width: 230px;
+      padding: 8px;
+      border-radius: 12px;
       background: white;
-      color: #203b2b;
-      border: 1px solid #dce9df;
-      border-radius: 16px;
-      box-shadow: 0 12px 32px #173d1b25;
+      box-shadow: 0 8px 25px #0002;
+      z-index: 5;
     }
-
-    .menu-heading {
-      margin: 5px 8px 10px;
-      color: #718176;
-      font-size: 13px;
-    }
-
     .menu-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      width: 100%;
-      padding: 13px 12px;
-      margin: 3px 0;
-      text-align: left;
-      background: white;
-      color: #203b2b;
-      border-radius: 10px;
-      font-size: 15px;
-    }
-
-    .menu-item:hover { background: #eaf6ed; }
-    .menu-icon { width: 25px; text-align: center; font-size: 19px; }
-    .menu-divider { height: 1px; background: #e5ece6; margin: 8px 4px; }
-    .logout-menu { background: #fff3f3; color: #b42323; }
-
-    main { width: min(760px, 100%); margin: auto; padding: 16px; }
-
-    .card {
-      background: white;
-      padding: 18px;
-      margin-bottom: 16px;
-      border-radius: 16px;
-      box-shadow: 0 3px 12px #173d1b12;
-      scroll-margin-top: 15px;
-    }
-
-    h2 { margin: 0 0 14px; font-size: 20px; }
-    p { line-height: 1.6; }
-
-    label {
-      display: block;
-      margin: 12px 0 6px;
-      font-weight: 600;
-    }
-
-    input {
       display: block;
       width: 100%;
       padding: 12px;
-      border: 1px solid #cbd9ce;
-      border-radius: 10px;
-      font-size: 16px;
+      border: 0;
+      border-radius: 8px;
+      text-align: left;
       background: white;
       color: #203b2b;
     }
-
+    .menu-item:hover { background: #eaf6ed; }
+    main { max-width: 760px; margin: auto; padding: 14px; }
+    .card {
+      background: white;
+      border-radius: 15px;
+      padding: 18px;
+      margin-bottom: 15px;
+      box-shadow: 0 3px 12px #0000000d;
+      scroll-margin-top: 12px;
+    }
+    h2 { font-size: 20px; margin-top: 0; }
+    label { display: block; margin: 12px 0 6px; }
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #cbd9ce;
+      border-radius: 9px;
+      font-size: 16px;
+    }
     button {
-      border: 0;
-      border-radius: 10px;
-      padding: 11px 15px;
-      font-size: 15px;
-      font-weight: 700;
       cursor: pointer;
+      border: 0;
+      border-radius: 9px;
+      padding: 11px 14px;
       background: #16834a;
       color: white;
-      font-family: inherit;
+      font-size: 15px;
+      font-weight: 650;
     }
-
     button:disabled { opacity: .55; cursor: not-allowed; }
     .secondary { background: #e5f3e8; color: #176638; }
     .danger { background: #b93838; }
-    .full { width: 100%; margin-top: 12px; }
-
-    .row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .row { display: flex; gap: 8px; margin-top: 12px; }
     .row button { flex: 1; }
-
-    .points {
-      background: #e7f6e9;
-      border: 1px solid #cce9d2;
-      padding: 18px;
-      border-radius: 14px;
-      text-align: center;
-    }
-
-    .points strong {
-      display: block;
-      font-size: 34px;
-      color: #16834a;
-    }
-
-    .muted { color: #65766a; font-size: 14px; }
+    .full { width: 100%; margin-top: 12px; }
+    .hidden { display: none !important; }
+    .muted { color: #68776c; font-size: 14px; }
     .message { margin-top: 10px; font-size: 14px; overflow-wrap: anywhere; }
     .success { color: #14763d; }
     .error { color: #b42323; }
-
+    .points {
+      text-align: center;
+      background: #e7f6e9;
+      padding: 18px;
+      border-radius: 12px;
+    }
+    .points strong { display: block; font-size: 34px; color: #16834a; }
     .reward {
       border: 1px solid #e0e9e1;
-      border-radius: 13px;
-      padding: 15px;
+      border-radius: 12px;
+      padding: 14px;
       margin-top: 12px;
       overflow-wrap: anywhere;
     }
-
-    .reward h3 { margin: 0 0 6px; font-size: 17px; }
-    .reward p { margin: 5px 0 12px; }
+    .reward h3 { margin: 0 0 8px; }
     .reward button { width: 100%; }
-
-    .hidden { display: none !important; }
-
-    footer {
-      text-align: center;
-      color: #65766a;
-      padding: 20px;
-      font-size: 13px;
-    }
-
-    @media (max-width: 380px) {
-      .header-inner { padding: 12px; }
-      .brand h1 { font-size: 21px; }
-      .brand p { font-size: 11px; }
-      main { padding: 12px; }
-      .card { padding: 15px; }
-    }
+    footer { text-align: center; padding: 20px; color: #68776c; }
   </style>
 </head>
-
 <body>
 <header>
   <div class="header-inner">
-    <div class="brand">
+    <div>
       <h1>🌱 Green Cup Box</h1>
-      <p>พกแก้ว พกกล่อง ลดขยะ รับคะแนน แลกของรางวัล</p>
+      <small>พกแก้ว พกกล่อง ลดขยะ รับคะแนน</small>
     </div>
-
     <div class="menu-wrap">
-      <button id="menuToggle" class="menu-toggle" type="button"
-        aria-label="เปิดเมนู" aria-expanded="false" aria-controls="mainMenu">
-        <span></span><span></span><span></span>
-      </button>
-
-      <nav id="mainMenu" class="menu-panel hidden" aria-label="เมนูหลัก">
-        <p class="menu-heading">🌿 เมนู Green Cup Box</p>
-
-        <button class="menu-item" type="button" data-target="memberCard">
-          <span class="menu-icon">👤</span>
-          <span>ข้อมูลสมาชิก / ตั้งชื่อ</span>
-        </button>
-
-        <button class="menu-item" type="button" data-target="pointsCard">
-          <span class="menu-icon">⭐</span>
-          <span>คะแนนสะสมของคุณ</span>
-        </button>
-
-        <button class="menu-item" type="button" data-target="rewardsCard">
-          <span class="menu-icon">🎁</span>
-          <span>แลกของรางวัล</span>
-        </button>
-
-        <button class="menu-item" type="button" data-target="historyCard">
-          <span class="menu-icon">📜</span>
-          <span>ประวัติการแลก</span>
-        </button>
-
-        <div id="menuDivider" class="menu-divider hidden"></div>
-
-        <button id="logoutMenuBtn"
-          class="menu-item logout-menu hidden" type="button">
-          <span class="menu-icon">🚪</span>
-          <span>ออกจากระบบ</span>
-        </button>
+      <button id="menuToggle" class="menu-toggle"
+        aria-expanded="false" aria-controls="mainMenu">☰</button>
+      <nav id="mainMenu" class="menu-panel hidden">
+        <button class="menu-item" data-target="memberCard">👤 สมาชิก / ตั้งชื่อ</button>
+        <button class="menu-item" data-target="pointsCard">⭐ คะแนนสะสม</button>
+        <button class="menu-item" data-target="rewardsCard">🎁 ของรางวัล</button>
+        <button class="menu-item" data-target="historyCard">📜 ประวัติการแลก</button>
+        <button id="logoutBtn" class="menu-item danger hidden">🚪 ออกจากระบบ</button>
       </nav>
     </div>
   </div>
@@ -267,38 +142,26 @@
 <main>
   <section class="card" id="memberCard">
     <h2>👤 สมาชิก</h2>
-
     <div id="authArea">
-      <p class="muted">เข้าสู่ระบบหรือสมัครสมาชิกเพื่อดูคะแนนและแลกของรางวัล</p>
-
       <label for="email">อีเมล</label>
-      <input id="email" type="email" placeholder="กรอกอีเมล"
-        autocomplete="email">
-
+      <input id="email" type="email" autocomplete="email" placeholder="กรอกอีเมล">
       <label for="password">รหัสผ่าน</label>
-      <input id="password" type="password" placeholder="กรอกรหัสผ่าน"
-        autocomplete="current-password">
-
-      <div class="row" style="margin-top:12px">
-        <button id="loginBtn" type="button">เข้าสู่ระบบ</button>
-        <button id="signupBtn" class="secondary" type="button">สมัครสมาชิก</button>
+      <input id="password" type="password" autocomplete="current-password" placeholder="กรอกรหัสผ่าน">
+      <div class="row">
+        <button id="loginBtn">เข้าสู่ระบบ</button>
+        <button id="signupBtn" class="secondary">สมัครสมาชิก</button>
       </div>
     </div>
 
     <div id="memberArea" class="hidden">
       <p>ยินดีต้อนรับ <strong id="memberName">สมาชิก</strong></p>
       <p class="muted" id="memberEmail"></p>
-
-      <label for="displayName">ชื่อที่ต้องการแสดงบนเว็บไซต์</label>
-      <input id="displayName" maxlength="40" placeholder="ตั้งชื่อสมาชิกของคุณ">
-
-      <button id="saveNameBtn" class="full" type="button">
-        💾 บันทึกชื่อสมาชิก
-      </button>
-      <div id="nameMessage" class="message" aria-live="polite"></div>
+      <label for="displayName">ตั้งชื่อสมาชิก (ตั้งได้ครั้งเดียว)</label>
+      <input id="displayName" maxlength="40" placeholder="พิมพ์ชื่อที่ต้องการ">
+      <button id="saveNameBtn" class="full">💾 บันทึกชื่อ</button>
+      <p id="nameMessage" class="message"></p>
     </div>
-
-    <div id="authMessage" class="message" aria-live="polite"></div>
+    <p id="authMessage" class="message" aria-live="polite"></p>
   </section>
 
   <section class="card" id="pointsCard">
@@ -308,579 +171,388 @@
       <strong id="pointsValue">—</strong>
       <span>คะแนน</span>
     </div>
-    <p id="pointsMessage" class="message muted">เข้าสู่ระบบเพื่อดูคะแนนของคุณ</p>
-    <button id="refreshBtn" class="secondary full" type="button">
-      🔄 รีเฟรชคะแนนและของรางวัล
-    </button>
+    <p id="pointsMessage" class="message muted">เข้าสู่ระบบเพื่อดูคะแนน</p>
+    <button id="refreshBtn" class="secondary full">🔄 รีเฟรชข้อมูล</button>
   </section>
 
   <section class="card" id="rewardsCard">
-    <h2>🎁 ของรางวัลของเรา</h2>
-    <p class="muted">เลือกของรางวัลที่ต้องการ แล้วกดแลกคะแนน</p>
-    <div id="rewardsList">กำลังโหลดของรางวัล...</div>
-    <div id="rewardsMessage" class="message" aria-live="polite"></div>
+    <h2>🎁 ของรางวัล</h2>
+    <div id="rewardsList">กำลังโหลด...</div>
+    <p id="rewardsMessage" class="message"></p>
   </section>
 
   <section class="card" id="historyCard">
-    <h2>📜 ประวัติการแลกของรางวัล</h2>
-    <p class="muted">รายการแลกของรางวัลของสมาชิกที่เข้าสู่ระบบ</p>
-    <div id="historyList">กำลังโหลดประวัติ...</div>
-    <button id="historyRefreshBtn" class="secondary full" type="button">
-      🔄 รีเฟรชประวัติ
-    </button>
+    <h2>📜 ประวัติการแลก</h2>
+    <div id="historyList">เข้าสู่ระบบเพื่อดูประวัติ</div>
+    <button id="historyRefreshBtn" class="secondary full">🔄 รีเฟรชประวัติ</button>
   </section>
 </main>
 
 <footer>🌍 Green Cup Box — เริ่มต้นรักษ์โลกได้จากตัวเรา</footer>
 
 <script>
-  const SUPABASE_URL = "https://sjlmwicteshsabzlkvab.supabase.co";
-  const SUPABASE_KEY = "sb_publishable_tqvsVPcYKq-QC6LtA3oVeg_NsR7wchz";
+const SUPABASE_URL = "https://sjlmwicteshsabzlkvab.supabase.co";
+const SUPABASE_KEY = "sb_publishable_tqvsVPcYKq-QC6LtA3oVeg_NsR7wchz";
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const $ = id => document.getElementById(id);
 
-  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  const $ = id => document.getElementById(id);
+let currentUser = null;
+let busy = false;
 
-  let currentUser = null;
-  let busy = false;
+function msg(id, text, type = "") {
+  $(id).textContent = text || "";
+  $(id).className = "message " + type;
+}
 
-  // เมนูสามขีด
-  function openMenu(open) {
-    $("mainMenu").classList.toggle("hidden", !open);
-    $("menuToggle").setAttribute("aria-expanded", String(open));
-    $("menuToggle").setAttribute("aria-label", open ? "ปิดเมนู" : "เปิดเมนู");
-  }
+function toggleMenu(force) {
+  const shouldOpen = typeof force === "boolean"
+    ? force
+    : $("mainMenu").classList.contains("hidden");
+  $("mainMenu").classList.toggle("hidden", !shouldOpen);
+  $("menuToggle").setAttribute("aria-expanded", String(shouldOpen));
+}
 
-  $("menuToggle").addEventListener("click", event => {
-    event.stopPropagation();
-    openMenu($("menuToggle").getAttribute("aria-expanded") !== "true");
+$("menuToggle").addEventListener("click", e => {
+  e.stopPropagation();
+  toggleMenu();
+});
+$("mainMenu").addEventListener("click", e => e.stopPropagation());
+document.addEventListener("click", () => toggleMenu(false));
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") toggleMenu(false);
+});
+
+document.querySelectorAll("[data-target]").forEach(button => {
+  button.addEventListener("click", () => {
+    toggleMenu(false);
+    $(button.dataset.target).scrollIntoView({ behavior: "smooth" });
   });
+});
 
-  $("mainMenu").addEventListener("click", event => event.stopPropagation());
-  document.addEventListener("click", () => openMenu(false));
-  document.addEventListener("keydown", event => {
-    if (event.key === "Escape") openMenu(false);
-  });
+function updateMenu() {
+  $("logoutBtn").classList.toggle("hidden", !currentUser);
+}
 
-  document.querySelectorAll("[data-target]").forEach(button => {
-    button.addEventListener("click", () => {
-      const target = $(button.dataset.target);
-      openMenu(false);
-      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-  });
+async function getProfile() {
+  if (!currentUser) return null;
 
-  function updateMenuMemberState() {
-    const loggedIn = Boolean(currentUser);
-    $("logoutMenuBtn").classList.toggle("hidden", !loggedIn);
-    $("menuDivider").classList.toggle("hidden", !loggedIn);
-  }
+  let { data, error } = await db.from("profiles")
+    .select("id, role, points, display_name, name_locked")
+    .eq("id", currentUser.id)
+    .maybeSingle();
 
-  function showMessage(id, text, type = "") {
-    $(id).textContent = text || "";
-    $(id).className = "message " + type;
-  }
+  if (error) throw error;
 
-  function setBusy(value) {
-    busy = value;
-    ["loginBtn", "signupBtn", "saveNameBtn", "logoutMenuBtn", "refreshBtn"]
-      .forEach(id => { $(id).disabled = value; });
-  }
-
-  function rewardName(r) {
-    return r.name || r.title || r.reward_name || r.label || "ของรางวัล";
-  }
-
-  function rewardCost(r) {
-    for (const key of ["cost", "points_cost", "point_cost",
-      "points_required", "required_points"]) {
-      if (r[key] !== undefined && r[key] !== null) return Number(r[key]);
-    }
-    return null;
-  }
-
-  function rewardStock(r) {
-    return r.stock == null ? null : Number(r.stock);
-  }
-
-  function defaultName(user) {
-    return user.user_metadata?.display_name || user.email?.split("@")[0] || "สมาชิก";
-  }
-
-  // อ่านโปรไฟล์สมาชิก
-  async function ensureProfile(user) {
-    const { data, error } = await db
-      .from("profiles")
-      .select("id, role, points, display_name")
-      .eq("id", user.id)
-      .maybeSingle();
-
-    if (error) throw error;
-    if (data) return data;
-
+  if (!data) {
     const { error: insertError } = await db.from("profiles").insert({
-      id: user.id,
+      id: currentUser.id,
       role: "member",
       points: 0,
-      display_name: defaultName(user)
+      display_name: "",
+      name_locked: false
     });
+    if (insertError) throw insertError;
 
-    if (insertError) {
-      const { data: retry, error: retryError } = await db
-        .from("profiles")
-        .select("id, role, points, display_name")
-        .eq("id", user.id)
-        .maybeSingle();
+    ({ data, error } = await db.from("profiles")
+      .select("id, role, points, display_name, name_locked")
+      .eq("id", currentUser.id)
+      .maybeSingle());
 
-      if (retryError) throw retryError;
-      if (retry) return retry;
-      throw insertError;
-    }
+    if (error) throw error;
+  }
+  return data;
+}
 
-    const { data: created, error: readError } = await db
-      .from("profiles")
-      .select("id, role, points, display_name")
-      .eq("id", user.id)
-      .maybeSingle();
+async function loadMember() {
+  const { data, error } = await db.auth.getUser();
+  if (error) throw error;
+  currentUser = data.user;
+  updateMenu();
 
-    if (readError) throw readError;
-    if (!created) throw new Error("สร้างโปรไฟล์แล้วแต่ยังอ่านข้อมูลไม่พบ");
-    return created;
+  $("authArea").classList.toggle("hidden", Boolean(currentUser));
+  $("memberArea").classList.toggle("hidden", !currentUser);
+
+  if (!currentUser) {
+    $("pointsValue").textContent = "—";
+    $("pointsMessage").textContent = "เข้าสู่ระบบเพื่อดูคะแนน";
+    $("memberName").textContent = "สมาชิก";
+    $("memberEmail").textContent = "";
+    $("displayName").value = "";
+    $("displayName").disabled = false;
+    $("saveNameBtn").disabled = false;
+    msg("nameMessage", "");
+    return;
   }
 
-  async function loadMember() {
-    const { data, error } = await db.auth.getUser();
+  $("memberEmail").textContent = currentUser.email || "";
+  const profile = await getProfile();
+  const name = profile.display_name || "";
+
+  $("memberName").textContent = name || "ยังไม่ได้ตั้งชื่อ";
+  $("displayName").value = name;
+  $("pointsValue").textContent = Number(profile.points || 0).toLocaleString("th-TH");
+  $("pointsMessage").textContent = "อัปเดตคะแนนเรียบร้อย";
+
+  const locked = profile.name_locked === true;
+  $("displayName").disabled = locked;
+  $("saveNameBtn").disabled = locked;
+
+  if (locked) {
+    msg("nameMessage", "🔒 ตั้งชื่อแล้ว ไม่สามารถเปลี่ยนได้อีก");
+  } else {
+    msg("nameMessage", "คุณสามารถตั้งชื่อได้หนึ่งครั้ง");
+  }
+}
+
+async function signUp() {
+  const email = $("email").value.trim();
+  const password = $("password").value;
+  if (!email || !password) return msg("authMessage", "กรอกอีเมลและรหัสผ่านก่อน", "error");
+  if (password.length < 6) return msg("authMessage", "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร", "error");
+
+  try {
+    const { data, error } = await db.auth.signUp({ email, password });
     if (error) throw error;
 
-    currentUser = data.user;
-    updateMenuMemberState();
+    if (data.session) {
+      await refreshAll();
+      msg("authMessage", "สมัครสมาชิกสำเร็จ", "success");
+    } else {
+      msg("authMessage", "สมัครแล้ว โปรดตรวจสอบอีเมลเพื่อยืนยันบัญชี", "success");
+    }
+  } catch (e) {
+    msg("authMessage", e.message, "error");
+  }
+}
 
-    if (!currentUser) {
-      $("authArea").classList.remove("hidden");
-      $("memberArea").classList.add("hidden");
-      $("pointsValue").textContent = "—";
-      $("pointsMessage").textContent = "เข้าสู่ระบบเพื่อดูคะแนนของคุณ";
-      $("pointsMessage").className = "message muted";
-      $("displayName").value = "";
-      $("memberEmail").textContent = "";
-      $("memberName").textContent = "สมาชิก";
-      showMessage("nameMessage", "");
+async function signIn() {
+  const email = $("email").value.trim();
+  const password = $("password").value;
+  if (!email || !password) return msg("authMessage", "กรอกอีเมลและรหัสผ่านก่อน", "error");
+
+  try {
+    const { error } = await db.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    await refreshAll();
+    msg("authMessage", "เข้าสู่ระบบสำเร็จ", "success");
+  } catch (e) {
+    msg("authMessage", e.message, "error");
+  }
+}
+
+async function saveName() {
+  if (!currentUser) return msg("nameMessage", "กรุณาเข้าสู่ระบบก่อน", "error");
+
+  const name = $("displayName").value.trim();
+  if (!name) return msg("nameMessage", "กรุณาพิมพ์ชื่อก่อนบันทึก", "error");
+  if (name.length > 40) return msg("nameMessage", "ชื่อต้องไม่เกิน 40 ตัวอักษร", "error");
+
+  $("saveNameBtn").disabled = true;
+
+  try {
+    const profile = await getProfile();
+    if (profile.name_locked === true) {
+      $("displayName").disabled = true;
+      msg("nameMessage", "ชื่อนี้ถูกล็อกแล้ว ไม่สามารถเปลี่ยนได้", "error");
       return;
     }
 
-    $("authArea").classList.add("hidden");
-    $("memberArea").classList.remove("hidden");
-    $("memberEmail").textContent = currentUser.email || "";
+    const { data, error } = await db.from("profiles")
+      .update({ display_name: name, name_locked: true })
+      .eq("id", currentUser.id)
+      .eq("name_locked", false)
+      .select("id");
 
-    const profile = await ensureProfile(currentUser);
-    const name = profile.display_name || defaultName(currentUser);
+    if (error) throw error;
+    if (!data || data.length === 0) {
+      throw new Error("ตั้งชื่อไม่ได้ อาจมีการตั้งชื่อไปแล้ว กรุณารีเฟรชหน้าเว็บ");
+    }
 
     $("memberName").textContent = name;
     $("displayName").value = name;
-    $("pointsValue").textContent =
-      Number(profile.points ?? 0).toLocaleString("th-TH");
-    $("pointsMessage").textContent = "อัปเดตคะแนนเรียบร้อย";
-    $("pointsMessage").className = "message success";
-
-    updateMenuMemberState();
+    $("displayName").disabled = true;
+    msg("nameMessage", "🔒 บันทึกชื่อสำเร็จ ตั้งชื่อได้ครั้งเดียว", "success");
+  } catch (e) {
+    msg("nameMessage", "บันทึกชื่อไม่สำเร็จ: " + e.message, "error");
+    $("saveNameBtn").disabled = false;
   }
+}
 
-  async function signUp() {
-    if (busy) return;
-
-    const email = $("email").value.trim();
-    const password = $("password").value;
-
-    if (!email || !password) {
-      showMessage("authMessage", "กรุณากรอกอีเมลและรหัสผ่าน", "error");
-      return;
-    }
-    if (password.length < 6) {
-      showMessage("authMessage", "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร", "error");
-      return;
-    }
-
-    setBusy(true);
-    showMessage("authMessage", "กำลังสมัครสมาชิก...");
-
-    try {
-      const { data, error } = await db.auth.signUp({
-        email,
-        password,
-        options: { data: { display_name: email.split("@")[0] } }
-      });
-      if (error) throw error;
-
-      if (data.session) {
-        await loadMember();
-        await loadRewards();
-        await loadHistory();
-        showMessage("authMessage", "สมัครสมาชิกสำเร็จ 💚", "success");
-      } else {
-        showMessage("authMessage",
-          "สมัครแล้ว โปรดตรวจสอบอีเมลเพื่อยืนยันบัญชีก่อนเข้าสู่ระบบ",
-          "success");
-      }
-    } catch (error) {
-      showMessage("authMessage", error.message || "สมัครสมาชิกไม่สำเร็จ", "error");
-    } finally {
-      setBusy(false);
-    }
+async function signOut() {
+  if (!confirm("ต้องการออกจากระบบหรือไม่?")) return;
+  try {
+    const { error } = await db.auth.signOut();
+    if (error) throw error;
+    currentUser = null;
+    await refreshAll();
+    toggleMenu(false);
+    msg("authMessage", "ออกจากระบบแล้ว", "success");
+  } catch (e) {
+    msg("authMessage", e.message, "error");
   }
+}
 
-  async function signIn() {
-    if (busy) return;
+function nameOf(r) {
+  return r.name || r.title || r.reward_name || r.label || "ของรางวัล";
+}
 
-    const email = $("email").value.trim();
-    const password = $("password").value;
+function costOf(r) {
+  for (const k of ["cost", "points_cost", "point_cost", "points_required", "required_points"]) {
+    if (r[k] != null) return Number(r[k]);
+  }
+  return null;
+}
 
-    if (!email || !password) {
-      showMessage("authMessage", "กรุณากรอกอีเมลและรหัสผ่าน", "error");
+async function loadRewards() {
+  $("rewardsList").textContent = "กำลังโหลดของรางวัล...";
+  try {
+    const { data, error } = await db.from("rewards").select("*").order("id");
+    if (error) throw error;
+    $("rewardsList").replaceChildren();
+
+    if (!data || !data.length) {
+      $("rewardsList").textContent = "ยังไม่มีของรางวัล";
       return;
     }
 
-    setBusy(true);
-    showMessage("authMessage", "กำลังเข้าสู่ระบบ...");
+    data.forEach(r => {
+      const card = document.createElement("div");
+      card.className = "reward";
 
-    try {
-      const { error } = await db.auth.signInWithPassword({ email, password });
-      if (error) throw error;
+      const title = document.createElement("h3");
+      title.textContent = "🎁 " + nameOf(r);
+      card.appendChild(title);
 
-      await loadMember();
-      await loadRewards();
-      await loadHistory();
-      showMessage("authMessage", "เข้าสู่ระบบสำเร็จ 💚", "success");
-    } catch (error) {
-      showMessage("authMessage", error.message || "เข้าสู่ระบบไม่สำเร็จ", "error");
-    } finally {
-      setBusy(false);
-    }
+      const description = document.createElement("p");
+      description.textContent = r.description || r.detail || "";
+      card.appendChild(description);
+
+      const cost = costOf(r);
+      const price = document.createElement("p");
+      price.className = "muted";
+      price.textContent = cost == null ? "ไม่พบราคาคะแนน" : "⭐ ใช้ " + cost + " คะแนน";
+      card.appendChild(price);
+
+      const button = document.createElement("button");
+      button.textContent = "แลกของรางวัล";
+      button.disabled = !currentUser || r.stock === 0;
+      button.addEventListener("click", () => redeem(r.id, button));
+      card.appendChild(button);
+
+      $("rewardsList").appendChild(card);
+    });
+  } catch (e) {
+    $("rewardsList").textContent = "โหลดของรางวัลไม่สำเร็จ: " + e.message;
+  }
+}
+
+async function redeem(id, button) {
+  if (!currentUser) return msg("rewardsMessage", "กรุณาเข้าสู่ระบบก่อน", "error");
+  if (!confirm("ยืนยันการแลกของรางวัลหรือไม่?")) return;
+
+  button.disabled = true;
+  try {
+    const { data, error } = await db.rpc("redeem_reward", { p_reward_id: id });
+    if (error) throw error;
+
+    const result = Array.isArray(data) ? data[0] : data;
+    if (result?.success === false) throw new Error(result.message || "แลกรางวัลไม่สำเร็จ");
+    if (result?.error) throw new Error(result.error);
+
+    msg("rewardsMessage", result?.message || "ส่งคำขอแลกรางวัลแล้ว", "success");
+    await refreshAll();
+  } catch (e) {
+    msg("rewardsMessage", "แลกไม่สำเร็จ: " + e.message, "error");
+    button.disabled = false;
+  }
+}
+
+async function loadHistory() {
+  const list = $("historyList");
+  list.replaceChildren();
+
+  if (!currentUser) {
+    list.textContent = "เข้าสู่ระบบเพื่อดูประวัติการแลก";
+    return;
   }
 
-  async function saveDisplayName() {
-    if (busy) return;
-    if (!currentUser) {
-      showMessage("nameMessage", "กรุณาเข้าสู่ระบบก่อน", "error");
+  list.textContent = "กำลังโหลดประวัติ...";
+  try {
+    const { data, error } = await db.from("redemptions")
+      .select("id, user_id, reward_id, cost, code, created_at")
+      .eq("user_id", currentUser.id)
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+    if (!data || !data.length) {
+      list.textContent = "ยังไม่มีประวัติการแลก";
       return;
     }
 
-    const name = $("displayName").value.trim();
-    if (!name) {
-      showMessage("nameMessage", "กรุณากรอกชื่อที่ต้องการแสดง", "error");
-      return;
-    }
-    if (name.length > 40) {
-      showMessage("nameMessage", "ชื่อต้องไม่เกิน 40 ตัวอักษร", "error");
-      return;
-    }
+    const { data: rewards, error: rewardError } = await db.from("rewards").select("*");
+    if (rewardError) throw rewardError;
+    const map = new Map((rewards || []).map(r => [String(r.id), nameOf(r)]));
 
-    setBusy(true);
-    showMessage("nameMessage", "กำลังบันทึกชื่อ...");
-
-    try {
-      const { data: profile, error: readError } = await db
-        .from("profiles")
-        .select("id")
-        .eq("id", currentUser.id)
-        .maybeSingle();
-
-      if (readError) throw readError;
-
-      if (profile) {
-        const { data: updated, error: updateError } = await db
-          .from("profiles")
-          .update({ display_name: name })
-          .eq("id", currentUser.id)
-          .select("id");
-
-        if (updateError) throw updateError;
-        if (!updated || updated.length === 0) {
-          throw new Error("อัปเดตโปรไฟล์ไม่ได้ กรุณาตรวจสอบสิทธิ์ UPDATE ใน Supabase RLS");
-        }
-      } else {
-        const { error: insertError } = await db.from("profiles").insert({
-          id: currentUser.id,
-          role: "member",
-          points: 0,
-          display_name: name
-        });
-        if (insertError) throw insertError;
-      }
-
-      const { error: metadataError } = await db.auth.updateUser({
-        data: { display_name: name }
-      });
-      if (metadataError) throw metadataError;
-
-      $("memberName").textContent = name;
-      $("displayName").value = name;
-      showMessage("nameMessage", "บันทึกชื่อเรียบร้อยแล้ว 💚", "success");
-    } catch (error) {
-      showMessage("nameMessage",
-        "บันทึกชื่อไม่สำเร็จ: " + (error.message || "เกิดข้อผิดพลาด"),
-        "error");
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  async function signOut() {
-    if (busy) return;
-    if (!confirm("ต้องการออกจากระบบใช่ไหม?")) return;
-
-    setBusy(true);
-
-    try {
-      const { error } = await db.auth.signOut();
-      if (error) throw error;
-
-      currentUser = null;
-      openMenu(false);
-      await loadMember();
-      await loadRewards();
-      await loadHistory();
-      showMessage("authMessage", "ออกจากระบบแล้ว", "success");
-      $("memberCard").scrollIntoView({ behavior: "smooth" });
-    } catch (error) {
-      showMessage("authMessage", error.message || "ออกจากระบบไม่สำเร็จ", "error");
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  // โหลดของรางวัล
-  async function loadRewards() {
-    $("rewardsList").textContent = "กำลังโหลดของรางวัล...";
-    showMessage("rewardsMessage", "");
-
-    try {
-      const { data, error } = await db
-        .from("rewards")
-        .select("*")
-        .order("id", { ascending: true });
-
-      if (error) throw error;
-
-      if (!data || data.length === 0) {
-        $("rewardsList").textContent = "ยังไม่มีของรางวัลในระบบ";
-        return;
-      }
-
-      $("rewardsList").replaceChildren();
-
-      data.forEach(r => {
-        const card = document.createElement("div");
-        card.className = "reward";
-
-        const title = document.createElement("h3");
-        title.textContent = "🎁 " + rewardName(r);
-        card.appendChild(title);
-
-        const description = document.createElement("p");
-        description.textContent = r.description || r.detail || "";
-        card.appendChild(description);
-
-        const cost = rewardCost(r);
-        const costText = document.createElement("p");
-        costText.className = "muted";
-        costText.textContent = cost === null
-          ? "คะแนนที่ใช้แลก: ไม่พบคอลัมน์ราคาคะแนน"
-          : "⭐ ใช้ " + cost + " คะแนน";
-        card.appendChild(costText);
-
-        const stock = rewardStock(r);
-        if (stock !== null) {
-          const stockText = document.createElement("p");
-          stockText.className = "muted";
-          stockText.textContent = "คงเหลือ: " + stock;
-          card.appendChild(stockText);
-        }
-
-        const button = document.createElement("button");
-        button.textContent = "แลกของรางวัล";
-        button.disabled = !currentUser || stock === 0;
-        button.addEventListener("click", () => redeemReward(r.id, button));
-
-        card.appendChild(button);
-        $("rewardsList").appendChild(card);
-      });
-    } catch (error) {
-      $("rewardsList").textContent = "โหลดของรางวัลไม่สำเร็จ";
-      showMessage("rewardsMessage", error.message || "โปรดลองอีกครั้ง", "error");
-    }
-  }
-
-  // แลกของรางวัลผ่านฟังก์ชัน Supabase เดิม
-  async function redeemReward(rewardId, button) {
-    if (!currentUser) {
-      showMessage("rewardsMessage", "กรุณาเข้าสู่ระบบก่อนแลกรางวัล", "error");
-      return;
-    }
-    if (busy) return;
-    if (!confirm("ยืนยันการแลกของรางวัลนี้หรือไม่?")) return;
-
-    button.disabled = true;
-    showMessage("rewardsMessage", "กำลังดำเนินการแลกรางวัล...");
-
-    try {
-      const { data, error } = await db.rpc("redeem_reward", {
-        p_reward_id: rewardId
-      });
-      if (error) throw error;
-
-      const result = Array.isArray(data) ? data[0] : data;
-      if (result && result.success === false) {
-        throw new Error(result.message || "ไม่สามารถแลกรางวัลได้");
-      }
-      if (result && result.error) throw new Error(result.error);
-
-      showMessage("rewardsMessage",
-        result?.message || "ส่งคำขอแลกรางวัลแล้ว", "success");
-
-      await loadMember();
-      await loadRewards();
-      await loadHistory();
-    } catch (error) {
-      showMessage("rewardsMessage",
-        "แลกรางวัลไม่สำเร็จ: " + (error.message || "เกิดข้อผิดพลาด"),
-        "error");
-      button.disabled = false;
-    }
-  }
-
-  // ประวัติการแลก: อ่านเฉพาะรายการของสมาชิกที่เข้าสู่ระบบ
-  async function loadHistory() {
-    const list = $("historyList");
     list.replaceChildren();
+    data.forEach(item => {
+      const card = document.createElement("div");
+      card.className = "reward";
 
-    if (!currentUser) {
-      list.textContent = "กรุณาเข้าสู่ระบบเพื่อดูประวัติการแลก";
-      return;
-    }
+      const title = document.createElement("h3");
+      title.textContent = "🎁 " + (map.get(String(item.reward_id)) || "ของรางวัล #" + item.reward_id);
+      card.appendChild(title);
 
-    list.textContent = "กำลังโหลดประวัติ...";
+      const cost = document.createElement("p");
+      cost.className = "muted";
+      cost.textContent = "⭐ ใช้คะแนน: " + Number(item.cost).toLocaleString("th-TH") + " คะแนน";
+      card.appendChild(cost);
 
-    try {
-      const { data, error } = await db
-        .from("redemptions")
-        .select("id, user_id, reward_id, cost, code, created_at")
-        .eq("user_id", currentUser.id)
-        .order("created_at", { ascending: false });
+      const date = document.createElement("p");
+      date.className = "muted";
+      const parsed = new Date(item.created_at);
+      date.textContent = "📅 " + (Number.isNaN(parsed.getTime())
+        ? "-"
+        : parsed.toLocaleString("th-TH", { dateStyle: "medium", timeStyle: "short" }));
+      card.appendChild(date);
 
-      if (error) throw error;
-
-      if (!data || data.length === 0) {
-        list.textContent = "ยังไม่มีประวัติการแลกของรางวัล";
-        return;
+      if (item.code) {
+        const code = document.createElement("p");
+        code.textContent = "🧾 รหัสการแลก: " + item.code;
+        card.appendChild(code);
       }
-
-      const { data: rewards, error: rewardError } = await db
-        .from("rewards")
-        .select("*");
-
-      if (rewardError) throw rewardError;
-
-      const rewardMap = new Map(
-        (rewards || []).map(r => [String(r.id), rewardName(r)])
-      );
-
-      list.replaceChildren();
-
-      data.forEach(item => {
-        const card = document.createElement("div");
-        card.className = "reward";
-
-        const title = document.createElement("h3");
-        title.textContent = "🎁 " +
-          (rewardMap.get(String(item.reward_id)) ||
-          "ของรางวัล #" + item.reward_id);
-        card.appendChild(title);
-
-        const cost = document.createElement("p");
-        cost.className = "muted";
-        cost.textContent = "⭐ ใช้คะแนน: " +
-          Number(item.cost).toLocaleString("th-TH") + " คะแนน";
-        card.appendChild(cost);
-
-        const date = document.createElement("p");
-        date.className = "muted";
-        const parsedDate = new Date(item.created_at);
-        date.textContent = "📅 วันที่แลก: " +
-          (Number.isNaN(parsedDate.getTime())
-            ? "-"
-            : parsedDate.toLocaleString("th-TH", {
-                dateStyle: "medium",
-                timeStyle: "short"
-              }));
-        card.appendChild(date);
-
-        if (item.code) {
-          const code = document.createElement("p");
-          code.textContent = "🧾 รหัสการแลก: " + item.code;
-          card.appendChild(code);
-        }
-
-        list.appendChild(card);
-      });
-    } catch (error) {
-      list.textContent = "โหลดประวัติไม่สำเร็จ: " +
-        (error.message || "เกิดข้อผิดพลาด");
-    }
+      list.appendChild(card);
+    });
+  } catch (e) {
+    list.textContent = "โหลดประวัติไม่สำเร็จ: " + e.message;
   }
+}
 
-  async function refreshAll() {
-    if (busy) return;
-    setBusy(true);
-
-    try {
-      await loadMember();
-      await loadRewards();
-      await loadHistory();
-    } catch (error) {
-      showMessage("pointsMessage", error.message || "โหลดข้อมูลไม่สำเร็จ", "error");
-    } finally {
-      setBusy(false);
-    }
+async function refreshAll() {
+  try {
+    await loadMember();
+    await loadRewards();
+    await loadHistory();
+  } catch (e) {
+    msg("authMessage", "โหลดข้อมูลไม่สำเร็จ: " + e.message, "error");
   }
+}
 
-  $("loginBtn").addEventListener("click", signIn);
-  $("signupBtn").addEventListener("click", signUp);
-  $("saveNameBtn").addEventListener("click", saveDisplayName);
-  $("logoutMenuBtn").addEventListener("click", signOut);
-  $("refreshBtn").addEventListener("click", refreshAll);
-  $("historyRefreshBtn").addEventListener("click", loadHistory);
+$("loginBtn").addEventListener("click", signIn);
+$("signupBtn").addEventListener("click", signUp);
+$("saveNameBtn").addEventListener("click", saveName);
+$("logoutBtn").addEventListener("click", signOut);
+$("refreshBtn").addEventListener("click", refreshAll);
+$("historyRefreshBtn").addEventListener("click", loadHistory);
 
-  db.auth.onAuthStateChange(event => {
-    if (event === "SIGNED_OUT") {
-      currentUser = null;
-      updateMenuMemberState();
-
-      $("authArea").classList.remove("hidden");
-      $("memberArea").classList.add("hidden");
-      $("pointsValue").textContent = "—";
-      $("pointsMessage").textContent = "เข้าสู่ระบบเพื่อดูคะแนนของคุณ";
-      $("pointsMessage").className = "message muted";
-      $("displayName").value = "";
-      $("memberEmail").textContent = "";
-      $("memberName").textContent = "สมาชิก";
-      showMessage("nameMessage", "");
-
-      $("historyList").textContent = "กรุณาเข้าสู่ระบบเพื่อดูประวัติการแลก";
-    }
-  });
-
-  async function init() {
-    try {
-      await loadMember();
-      await loadRewards();
-      await loadHistory();
-    } catch (error) {
-      showMessage("authMessage",
-        "โหลดข้อมูลไม่สำเร็จ: " + (error.message || "ตรวจสอบการเชื่อมต่อ"),
-        "error");
-    }
+db.auth.onAuthStateChange(event => {
+  if (event === "SIGNED_OUT") {
+    currentUser = null;
+    updateMenu();
+    $("historyList").textContent = "เข้าสู่ระบบเพื่อดูประวัติการแลก";
   }
+});
 
-  init();
+refreshAll();
 </script>
 </body>
 </html>
