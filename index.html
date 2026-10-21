@@ -41,7 +41,10 @@
 </head>
 <body class="page-member">
 <header><div class="header-inner"><div><h1>🌱 Green Cup Box</h1><small>พกแก้ว พกกล่อง ลดขยะ รับคะแนน</small></div>
-<div class="page-links"><a class="page-link" href="index.html">👤 สมาชิก</a><a class="page-link" href="admin.html">🛡️ แอดมิน</a></div><div class="menu-wrap"><button id="menuToggle" class="menu-toggle" aria-expanded="false" aria-controls="mainMenu">☰</button>
+<div class="page-links">
+  <a class="page-link" href="index.html">👤 สมาชิก</a>
+  <a class="page-link hidden" id="adminPageLink" href="admin.html">🛡️ แอดมิน</a>
+</div><div class="menu-wrap"><button id="menuToggle" class="menu-toggle" aria-expanded="false" aria-controls="mainMenu">☰</button>
 <nav id="mainMenu" class="menu-panel hidden">
 <button class="menu-item" data-target="memberCard">👤 สมาชิก / ตั้งชื่อ</button>
 <button class="menu-item" data-target="memberCountCard">👥 จำนวนสมาชิก</button>
@@ -92,6 +95,26 @@ const SUPABASE_KEY = "sb_publishable_tqvsVPcYKq-QC6LtA3oVeg_NsR7wchz";
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const $ = id => document.getElementById(id);
 let currentUser = null, busy = false, selectedPhoto = null;
+let currentProfileRole = null;
+
+function isAdmin() {
+  return currentUser &&
+    (currentProfileRole === "admin" || currentProfileRole === "owner");
+}
+
+function updateAdminVisibility() {
+  const allowed = Boolean(isAdmin());
+
+  $("adminPageLink").classList.toggle("hidden", !allowed);
+  $("adminCard").classList.toggle("hidden", !allowed);
+  $("adminMembersCard").classList.toggle("hidden", !allowed);
+
+  document.querySelectorAll(
+    '[data-target="adminCard"], [data-target="adminMembersCard"]'
+  ).forEach(button => {
+    button.classList.toggle("hidden", !allowed);
+  });
+}
 
 function msg(id,text,type=""){ $(id).textContent=text||""; $(id).className="message "+type; }
 function toggleMenu(force){const open=typeof force==="boolean"?force:$("mainMenu").classList.contains("hidden");$("mainMenu").classList.toggle("hidden",!open);$("menuToggle").setAttribute("aria-expanded",String(open));}
@@ -100,7 +123,15 @@ $("mainMenu").addEventListener("click",e=>e.stopPropagation());
 document.addEventListener("click",()=>toggleMenu(false));
 document.addEventListener("keydown",e=>{if(e.key==="Escape")toggleMenu(false);});
 document.querySelectorAll("[data-target]").forEach(b=>b.addEventListener("click",()=>{toggleMenu(false);$(b.dataset.target).scrollIntoView({behavior:"smooth"});}));
-function updateMenu(){$("logoutBtn").classList.toggle("hidden",!currentUser);}
+function updateMenu() {
+  $("logoutBtn").classList.toggle("hidden", !currentUser);
+
+  if (!currentUser) {
+    currentProfileRole = null;
+  }
+
+  updateAdminVisibility();
+}
 
 async function getProfile(){
  if(!currentUser)return null;
@@ -118,13 +149,17 @@ async function loadMember(){
  const {data,error}=await db.auth.getUser();if(error)throw error;currentUser=data.user;updateMenu();
  $("authArea").classList.toggle("hidden",!!currentUser);$("memberArea").classList.toggle("hidden",!currentUser);
  if(!currentUser){$("pointsValue").textContent="—";$("pointsMessage").textContent="เข้าสู่ระบบเพื่อดูคะแนน";$("memberName").textContent="สมาชิก";$("memberEmail").textContent="";$("displayName").value="";$("displayName").disabled=false;$("saveNameBtn").disabled=false;msg("nameMessage","");$("adminCard").classList.add("hidden");$("myCheckins").textContent="เข้าสู่ระบบเพื่อดูประวัติเช็กอิน";return;}
- $("memberEmail").textContent=currentUser.email||"";
- const p=await getProfile();const name=p.display_name||"";$("memberName").textContent=name||"ยังไม่ได้ตั้งชื่อ";$("displayName").value=name;
+ $("memberEmail").textContent=currentUser.email||"";const p = await getProfile();
+
+currentProfileRole = p.role;
+updateAdminVisibility();
+
+const name = p.display_name || "";
+$("memberName").textContent = name || "ยังไม่ได้ตั้งชื่อ";
+$("displayName").value = name;
  $("pointsValue").textContent=Number(p.points||0).toLocaleString("th-TH");$("pointsMessage").textContent="อัปเดตคะแนนเรียบร้อย";
  const locked=p.name_locked===true;$("displayName").disabled=locked;$("saveNameBtn").disabled=locked;
  msg("nameMessage",locked?"🔒 ตั้งชื่อแล้ว ไม่สามารถเปลี่ยนได้อีก":"คุณสามารถตั้งชื่อได้หนึ่งครั้ง");
- $("adminCard").classList.toggle("hidden",p.role!=="admin");
- $("adminMembersCard").classList.toggle("hidden",p.role!=="admin");
 }
 
 async function signUp() {
