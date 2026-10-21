@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#16834a">
-  <title>Green Cup Box | ลดโลกร้อน</title>
+  <title>Green Cup Box | สมาชิก</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     *{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;background:#f1f8f2;color:#203b2b}
@@ -27,11 +27,21 @@
     .status.approved{background:#e0f6e7;color:#176638}.status.rejected{background:#ffe5e5;color:#a31f1f}
     footer{text-align:center;padding:20px;color:#68776c}
     .admin-member{border:1px solid #e0e9e1;border-radius:12px;padding:12px;margin-top:10px;overflow-wrap:anywhere}.admin-member .row{align-items:center}.admin-member .role{font-size:13px;color:#68776c}
+
+    .page-links{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end;margin-left:auto}
+    .page-link{display:inline-block;padding:9px 11px;border-radius:9px;border:1px solid #ffffff80;color:white;text-decoration:none;font-size:14px;font-weight:650}
+    body.page-member #adminCard,body.page-member #adminMembersCard{display:none!important}
+    body.page-admin #memberCountCard,body.page-admin #pointsCard,body.page-admin #checkinCard,body.page-admin #rewardsCard,body.page-admin #historyCard{display:none!important}
+    body.page-admin #mainMenu [data-target="memberCountCard"],body.page-admin #mainMenu [data-target="pointsCard"],body.page-admin #mainMenu [data-target="checkinCard"],body.page-admin #mainMenu [data-target="rewardsCard"],body.page-admin #mainMenu [data-target="historyCard"]{display:none}
+    body.page-member #mainMenu [data-target="adminCard"],body.page-member #mainMenu [data-target="adminMembersCard"]{display:none}
+    body.page-admin #memberCard h2{font-size:0}body.page-admin #memberCard h2:after{content:"🛡️ แอดมินเข้าสู่ระบบ";font-size:20px}
+    body.page-admin #memberArea{display:none!important}
+    @media(max-width:520px){.header-inner{flex-wrap:wrap}.page-links{order:3;width:100%;margin-left:0}.page-link{flex:1;text-align:center}}
   </style>
 </head>
-<body>
+<body class="page-member">
 <header><div class="header-inner"><div><h1>🌱 Green Cup Box</h1><small>พกแก้ว พกกล่อง ลดขยะ รับคะแนน</small></div>
-<div class="menu-wrap"><button id="menuToggle" class="menu-toggle" aria-expanded="false" aria-controls="mainMenu">☰</button>
+<div class="page-links"><a class="page-link" href="index.html">👤 สมาชิก</a><a class="page-link" href="admin.html">🛡️ แอดมิน</a></div><div class="menu-wrap"><button id="menuToggle" class="menu-toggle" aria-expanded="false" aria-controls="mainMenu">☰</button>
 <nav id="mainMenu" class="menu-panel hidden">
 <button class="menu-item" data-target="memberCard">👤 สมาชิก / ตั้งชื่อ</button>
 <button class="menu-item" data-target="memberCountCard">👥 จำนวนสมาชิก</button>
@@ -39,6 +49,8 @@
 <button class="menu-item" data-target="checkinCard">📸 ส่งรูปเช็กอิน</button>
 <button class="menu-item" data-target="rewardsCard">🎁 ของรางวัล</button>
 <button class="menu-item" data-target="historyCard">📜 ประวัติการแลก</button>
+<button class="menu-item" data-target="adminCard">🛡️ ตรวจรูป (แอดมิน)</button>
+<button class="menu-item" data-target="adminMembersCard">👥 จัดการแอดมิน</button>
 <button id="logoutBtn" class="menu-item danger hidden">🚪 ออกจากระบบ</button>
 </nav></div></div></header>
 <main>
