@@ -126,13 +126,58 @@ async function loadMember(){
  $("adminCard").classList.toggle("hidden",p.role!=="admin");
  $("adminMembersCard").classList.toggle("hidden",p.role!=="admin");
 }
-async function signUp(){
- const email=$("email").value.trim(),password=$("password").value;
- if(!email||!password)return msg("authMessage","กรอกอีเมลและรหัสผ่านก่อน","error");
- if(password.length<6)return msg("authMessage","รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร","error");
- $("signupBtn").disabled=true;
- try{const {data,error}=await db.auth.signUp({email,password});if(error)throw error;if(data.session){await refreshAll();msg("authMessage","สมัครสมาชิกสำเร็จ","success");}else msg("authMessage","สมัครแล้ว โปรดตรวจสอบอีเมลเพื่อยืนยันบัญชี","success");}
- catch(e){msg("authMessage",e.message,"error");}finally{$("signupBtn").disabled=false;}
+
+async function signUp() {
+  const email = $("email").value.trim();
+  const password = $("password").value;
+  const btn = $("signupBtn");
+
+  if (!email || !password) {
+    msg("authMessage", "กรุณากรอกอีเมลและรหัสผ่านก่อน", "error");
+    return;
+  }
+
+  if (password.length < 6) {
+    msg("authMessage", "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร", "error");
+    return;
+  }
+
+  btn.disabled = true;
+  msg("authMessage", "กำลังสมัครสมาชิก...");
+
+  try {
+    const { data, error } = await db.auth.signUp({
+      email: email,
+      password: password
+    });
+
+    if (error) throw error;
+
+    if (!data.user) {
+      throw new Error("ไม่พบข้อมูลบัญชีจาก Supabase");
+    }
+
+    if (data.session) {
+      await refreshAll();
+      msg("authMessage", "สมัครสมาชิกสำเร็จ!", "success");
+    } else {
+      msg(
+        "authMessage",
+        "สมัครแล้ว กรุณาตรวจสอบอีเมลเพื่อยืนยันบัญชี",
+        "success"
+      );
+    }
+  } catch (e) {
+    console.error("Signup error:", e);
+    msg(
+      "authMessage",
+      "สมัครสมาชิกไม่สำเร็จ: " +
+        (e.message || "เกิดข้อผิดพลาด กรุณาลองใหม่"),
+      "error"
+    );
+  } finally {
+    btn.disabled = false;
+  }
 }
 async function signIn(){
  const email=$("email").value.trim(),password=$("password").value;if(!email||!password)return msg("authMessage","กรอกอีเมลและรหัสผ่านก่อน","error");
