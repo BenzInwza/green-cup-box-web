@@ -17,8 +17,15 @@
     header {
       background: #16834a;
       color: white;
-      padding: 24px 18px;
+      padding: 20px 18px;
       border-radius: 0 0 26px 26px;
+      position: relative;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
     }
     .brand { font-size: 23px; font-weight: 800; }
     header p { line-height: 1.7; }
@@ -47,6 +54,25 @@
       cursor: pointer;
       margin: 3px;
     }
+    .menu-button {
+      background: white;
+      color: #16834a;
+      font-size: 25px;
+      width: 48px;
+      height: 46px;
+      padding: 4px;
+      margin: 0;
+    }
+    .menu-panel {
+      background: white;
+      color: #193b2a;
+      border-radius: 16px;
+      padding: 15px;
+      margin-top: 14px;
+      box-shadow: 0 4px 14px #103c2020;
+    }
+    .menu-panel button { width: 100%; margin: 5px 0; }
+    .logout-button { background: #c62828; }
     .reward {
       padding: 13px 0;
       border-bottom: 1px solid #e5eee5;
@@ -54,16 +80,44 @@
     }
     .muted { color: #587061; font-size: 14px; }
     footer { text-align: center; padding: 22px; color: #587061; }
+    input {
+      border: 1px solid #cbd9cd;
+      border-radius: 10px;
+      font-size: 16px;
+    }
     [hidden] { display: none !important; }
   </style>
 </head>
 <body>
   <header>
-    <div class="brand">🌱 Green Cup Box</div>
+    <div class="topbar">
+      <div class="brand">🌱 Green Cup Box</div>
+
+      <button type="button" id="menu-btn"
+        class="menu-button" aria-label="เปิดเมนู"
+        aria-expanded="false" aria-controls="menu-panel" hidden>
+        ☰
+      </button>
+    </div>
+
     <p>ลดโลกร้อน เริ่มต้นง่าย ๆ ด้วยการพกแก้วและกล่องส่วนตัว</p>
-    <button onclick="document.getElementById('rewards').scrollIntoView({behavior:'smooth'})">
+
+    <button type="button"
+      onclick="document.getElementById('rewards').scrollIntoView({behavior:'smooth'})">
       ดูของรางวัล ♻️
     </button>
+
+    <div id="menu-panel" class="menu-panel" hidden>
+      <strong>👤 บัญชีสมาชิก</strong>
+      <p id="menu-email" class="muted"></p>
+      <button type="button" id="menu-points-btn">
+        🌿 ดูคะแนนของฉัน
+      </button>
+      <button type="button" id="logout-btn" class="logout-button">
+        ↪ ออกจากระบบ
+      </button>
+      <p id="menu-status" role="status" aria-live="polite"></p>
+    </div>
   </header>
 
   <main>
@@ -71,7 +125,7 @@
       <h2>รักษ์โลกได้ทุกวัน</h2>
       <p>พกแก้ว พกกล่อง ลดขยะ และร่วมสร้างโลกที่น่าอยู่ไปด้วยกัน</p>
 
-      <div class="points">
+      <div class="points" id="points-box">
         <strong>🌿 คะแนนสะสมของคุณ</strong>
         <p id="points-display">กรุณาเข้าสู่ระบบเพื่อดูคะแนน</p>
       </div>
@@ -83,21 +137,17 @@
         <div id="member-fields">
           <label for="member-email">อีเมล</label>
           <input id="member-email" type="email"
-            placeholder="กรอกอีเมล"
-            autocomplete="email"
+            placeholder="กรอกอีเมล" autocomplete="email"
             style="display:block;width:100%;padding:12px;margin:8px 0 14px">
 
           <label for="member-password">รหัสผ่าน</label>
           <input id="member-password" type="password"
-            placeholder="กรอกรหัสผ่าน"
-            autocomplete="current-password"
+            placeholder="กรอกรหัสผ่าน" autocomplete="current-password"
             style="display:block;width:100%;padding:12px;margin:8px 0 14px">
         </div>
 
         <button type="button" id="signup-btn">สมัครสมาชิก</button>
         <button type="button" id="login-btn">เข้าสู่ระบบ</button>
-        <button type="button" id="logout-btn" hidden>ออกจากระบบ</button>
-
         <p id="member-status" role="status" aria-live="polite"></p>
       </div>
     </section>
@@ -113,19 +163,66 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // ใส่ค่าเดิมของโปรเจกต์ Supabase ที่ใช้งานอยู่
     const SUPABASE_URL = "https://sjlmwicteshsabzlkvab.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_tqvsVPcYKq-QC6LtA3oVeg_NsR7wchz";
 
     const db = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_ANON_KEY
+      SUPABASE_URL, SUPABASE_ANON_KEY
     );
 
-    // โหลดของรางวัล: คงการทำงานเดิมไว้
+    const $ = id => document.getElementById(id);
+
+    const memberStatus = $("member-status");
+    const menuStatus = $("menu-status");
+    const memberPanel = $("member-panel");
+    const signupBtn = $("signup-btn");
+    const loginBtn = $("login-btn");
+    const logoutBtn = $("logout-btn");
+    const emailInput = $("member-email");
+    const passwordInput = $("member-password");
+    const pointsDisplay = $("points-display");
+    const menuBtn = $("menu-btn");
+    const menuPanel = $("menu-panel");
+
+    let currentUserId = null;
+
+    function closeMenu() {
+      menuPanel.hidden = true;
+      menuBtn.setAttribute("aria-expanded", "false");
+    }
+
+    function showMember(message, user = null) {
+      const loggedIn = !!user;
+      currentUserId = loggedIn ? user.id : null;
+
+      memberStatus.textContent = message;
+      memberPanel.hidden = loggedIn;
+      menuBtn.hidden = !loggedIn;
+
+      if (loggedIn) {
+        $("menu-email").textContent = user.email || "สมาชิก Green Cup Box";
+      } else {
+        closeMenu();
+        $("menu-email").textContent = "";
+        menuStatus.textContent = "";
+        pointsDisplay.textContent = "กรุณาเข้าสู่ระบบเพื่อดูคะแนน";
+      }
+    }
+
+    menuBtn.addEventListener("click", () => {
+      const opening = menuPanel.hidden;
+      menuPanel.hidden = !opening;
+      menuBtn.setAttribute("aria-expanded", String(opening));
+    });
+
+    $("menu-points-btn").addEventListener("click", () => {
+      closeMenu();
+      $("points-box").scrollIntoView({ behavior: "smooth" });
+    });
+
     async function loadRewards() {
-      const status = document.getElementById("status");
-      const list = document.getElementById("reward-list");
+      const status = $("status");
+      const list = $("reward-list");
 
       try {
         const { data, error } = await db
@@ -133,7 +230,6 @@
           .select("*");
 
         if (error) throw error;
-
         list.replaceChildren();
 
         if (!data || data.length === 0) {
@@ -141,7 +237,7 @@
           return;
         }
 
-        data.forEach((reward) => {
+        data.forEach(reward => {
           const item = document.createElement("div");
           item.className = "reward";
 
@@ -156,8 +252,7 @@
               `${key}: ${typeof value === "object"
                 ? JSON.stringify(value)
                 : String(value ?? "-")}`
-            )
-            .join(" · ");
+            ).join(" · ");
 
           if (detail) {
             const info = document.createElement("p");
@@ -175,28 +270,6 @@
       }
     }
 
-    const memberStatus = document.getElementById("member-status");
-    const memberFields = document.getElementById("member-fields");
-    const signupBtn = document.getElementById("signup-btn");
-    const loginBtn = document.getElementById("login-btn");
-    const logoutBtn = document.getElementById("logout-btn");
-    const emailInput = document.getElementById("member-email");
-    const passwordInput = document.getElementById("member-password");
-    const pointsDisplay = document.getElementById("points-display");
-
-    function showMember(message, loggedIn) {
-      memberStatus.textContent = message;
-      memberFields.hidden = loggedIn;
-      signupBtn.hidden = loggedIn;
-      loginBtn.hidden = loggedIn;
-      logoutBtn.hidden = !loggedIn;
-
-      if (!loggedIn) {
-        pointsDisplay.textContent = "กรุณาเข้าสู่ระบบเพื่อดูคะแนน";
-      }
-    }
-
-    // อ่านคะแนนของผู้ใช้ที่ล็อกอินอยู่เท่านั้น
     async function loadMemberPoints(userId) {
       pointsDisplay.textContent = "กำลังโหลดคะแนน...";
 
@@ -205,26 +278,21 @@
         .select("delta")
         .eq("user_id", userId);
 
+      if (currentUserId !== userId) return;
+
       if (error) {
         pointsDisplay.textContent =
           "อ่านคะแนนไม่ได้ กรุณาตรวจสอบสิทธิ์ฐานข้อมูล";
         return;
       }
 
-      if (!data || data.length === 0) {
-        pointsDisplay.textContent =
-          "ยังไม่มีรายการคะแนนในระบบ";
-        return;
-      }
-
       let total = 0;
 
-      for (const row of data) {
+      for (const row of (data || [])) {
         const amount = Number(row.delta);
 
         if (!Number.isFinite(amount)) {
-          pointsDisplay.textContent =
-            "ข้อมูลคะแนนไม่ใช่ตัวเลข กรุณาตรวจสอบฐานข้อมูล";
+          pointsDisplay.textContent = "ข้อมูลคะแนนไม่ถูกต้อง";
           return;
         }
 
@@ -245,10 +313,7 @@
 
       memberStatus.textContent = "กำลังสมัครสมาชิก...";
 
-      const { data, error } = await db.auth.signUp({
-        email,
-        password
-      });
+      const { data, error } = await db.auth.signUp({ email, password });
 
       if (error) {
         memberStatus.textContent = "สมัครไม่สำเร็จ: " + error.message;
@@ -256,7 +321,7 @@
       }
 
       if (data.session && data.user) {
-        showMember("เข้าสู่ระบบแล้ว: " + data.user.email, true);
+        showMember("เข้าสู่ระบบแล้ว", data.user);
         await loadMemberPoints(data.user.id);
       } else {
         memberStatus.textContent =
@@ -276,8 +341,7 @@
       memberStatus.textContent = "กำลังเข้าสู่ระบบ...";
 
       const { data, error } = await db.auth.signInWithPassword({
-        email,
-        password
+        email, password
       });
 
       if (error) {
@@ -286,22 +350,27 @@
         return;
       }
 
-      showMember("เข้าสู่ระบบแล้ว: " + data.user.email, true);
+      showMember("เข้าสู่ระบบแล้ว", data.user);
       await loadMemberPoints(data.user.id);
     });
 
     logoutBtn.addEventListener("click", async () => {
-      const { error } = await db.auth.signOut();
+      logoutBtn.disabled = true;
+      menuStatus.textContent = "กำลังออกจากระบบ...";
 
-      if (error) {
-        memberStatus.textContent = "ออกจากระบบไม่สำเร็จ: " + error.message;
-        return;
+      try {
+        const { error } = await db.auth.signOut();
+        if (error) throw error;
+
+        showMember("ออกจากระบบแล้ว");
+      } catch (error) {
+        menuStatus.textContent =
+          "ออกจากระบบไม่สำเร็จ: " + error.message;
+      } finally {
+        logoutBtn.disabled = false;
       }
-
-      showMember("ออกจากระบบแล้ว", false);
     });
 
-    // คืนสถานะสมาชิกเมื่อเปิดหรือรีเฟรชเว็บไซต์
     async function restoreSession() {
       const { data, error } = await db.auth.getSession();
 
@@ -311,16 +380,16 @@
       }
 
       if (data.session) {
-        showMember("เข้าสู่ระบบแล้ว: " + data.session.user.email, true);
+        showMember("เข้าสู่ระบบแล้ว", data.session.user);
         await loadMemberPoints(data.session.user.id);
       } else {
-        showMember("กรุณาเข้าสู่ระบบสมาชิก", false);
+        showMember("กรุณาเข้าสู่ระบบสมาชิก");
       }
     }
 
     db.auth.onAuthStateChange((event, session) => {
       if (event === "SIGNED_OUT") {
-        showMember("ออกจากระบบแล้ว", false);
+        showMember("ออกจากระบบแล้ว");
       }
     });
 
