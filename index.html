@@ -119,7 +119,7 @@ body {
 <button class="menu-item" data-target="historyCard">📜 ประวัติการแลก</button>
 <button class="menu-item" data-target="adminCard">🛡️ ตรวจรูป (แอดมิน)</button>
 <button class="menu-item" data-target="adminMembersCard">👥 จัดการแอดมิน</button>
-<button id="logoutBtn" class="menu-item danger hidden">🚪 ออกจากระบบ</button>
+<button id="menuLogoutBtn" class="menu-item danger hidden">🚪 ออกจากระบบ</button>
 </nav></div></div></header>
 <main>
 <section class="card" id="memberCard"><h2>👤 สมาชิก / เข้าสู่ระบบ</h2>
@@ -128,7 +128,12 @@ body {
 <div class="row"><button id="loginBtn">เข้าสู่ระบบ</button><button id="signupBtn" class="secondary">สมัครสมาชิก</button></div></div>
 <div id="memberArea" class="hidden"><p>ยินดีต้อนรับ <strong id="memberName">สมาชิก</strong></p><p class="muted" id="memberEmail"></p>
 <label for="displayName">ตั้งชื่อสมาชิก (ตั้งได้ครั้งเดียว)</label><input id="displayName" maxlength="40" placeholder="พิมพ์ชื่อที่ต้องการ">
-<button id="saveNameBtn" class="full">💾 บันทึกชื่อ</button><p id="nameMessage" class="message"></p></div>
+<button id="saveNameBtn" class="full">💾 บันทึกชื่อ</button>
+<p id="nameMessage" class="message"></p>
+
+<button id="logoutBtn" class="secondary full" type="button">
+  🚪 ออกจากระบบ
+</button></div>
 <p id="authMessage" class="message" aria-live="polite"></p></section>
 <section class="card" id="memberCountCard"><h2>👥 สมาชิก Green Cup Box</h2><div class="points"><span>จำนวนบัญชีสมาชิกทั้งหมด</span><strong id="memberCount">—</strong><span>บัญชี</span></div><p id="memberCountMessage" class="message muted">กำลังโหลดจำนวนสมาชิก...</p></section>
 <section class="card" id="pointsCard"><h2>⭐ คะแนนสะสมของคุณ</h2><div class="points"><span>คะแนนปัจจุบัน</span><strong id="pointsValue">—</strong><span>คะแนน</span></div><p id="pointsMessage" class="message muted">เข้าสู่ระบบเพื่อดูคะแนน</p><button id="refreshBtn" class="secondary full">🔄 รีเฟรชข้อมูล</button></section>
@@ -310,7 +315,15 @@ document.querySelectorAll("[data-target]").forEach(b => {
 showMainTab("pointsCard");
 
 function updateMenu() {
-  $("logoutBtn").classList.toggle("hidden", !currentUser);
+  const logoutButton = $("logoutBtn");
+  if (logoutButton) {
+    logoutButton.classList.toggle("hidden", !currentUser);
+  }
+
+  const menuLogoutButton = $("menuLogoutBtn");
+  if (menuLogoutButton) {
+    menuLogoutButton.classList.toggle("hidden", !currentUser);
+  }
 
   if (!currentUser) {
     currentProfileRole = null;
@@ -495,6 +508,9 @@ async function signIn(){
   }
 }
 
+
+
+                                  
 async function saveName(){
  if(!currentUser)return msg("nameMessage","กรุณาเข้าสู่ระบบก่อน","error");
  const name=$("displayName").value.trim();if(!name)return msg("nameMessage","กรุณาพิมพ์ชื่อก่อนบันทึก","error");if(name.length>40)return msg("nameMessage","ชื่อต้องไม่เกิน 40 ตัวอักษร","error");
