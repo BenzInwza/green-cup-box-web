@@ -291,6 +291,8 @@ function startActiveHeartbeat(){
     clearInterval(activeHeartbeatTimer);
   }
 
+  heartbeatActiveSession();
+
   activeHeartbeatTimer = setInterval(
     heartbeatActiveSession,
     60000
