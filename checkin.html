@@ -131,14 +131,14 @@
         selectedPhoto = null;
         $("checkinPhoto").value = "";
         $("photoPreview").classList.add("hidden");
-        return msg("checkinMessage", "กรุณาเลือกไฟล์รูปภาพ", "error");
+        return msg("checkinMessage", "ถ่ายรูปภาพก่อนสมาชิก", "error");
       }
 
       if (f.size > 8 * 1024 * 1024) {
         selectedPhoto = null;
         $("checkinPhoto").value = "";
         $("photoPreview").classList.add("hidden");
-        return msg("checkinMessage", "รูปต้องมีขนาดไม่เกิน 8 MB", "error");
+        return msg("checkinMessage", "ถ่ายรูปก่อนนะสมาชิก", "error");
       }
 
       $("photoPreview").src = URL.createObjectURL(f);
@@ -237,7 +237,7 @@
 
       if (busy) return;
       if (!selectedPhoto) {
-        return msg("checkinMessage", "เลือกรูปก่อนส่งนะ", "error");
+        return msg("checkinMessage", "ถ่ายรูปก่อนส่ง", "error");
       }
 
       if (!confirm("ยืนยันส่งรูปนี้ให้แอดมินตรวจหรือไม่? ส่งได้วันละ 1 รูปเท่านั้น")) {
