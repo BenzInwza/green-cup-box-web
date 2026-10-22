@@ -68,6 +68,32 @@
 <section class="card" id="memberCountCard"><h2>👥 สมาชิก Green Cup Box</h2><div class="points"><span>จำนวนบัญชีสมาชิกทั้งหมด</span><strong id="memberCount">—</strong><span>บัญชี</span></div><p id="memberCountMessage" class="message muted">กำลังโหลดจำนวนสมาชิก...</p></section>
 <section class="card" id="pointsCard"><h2>⭐ คะแนนสะสมของคุณ</h2><div class="points"><span>คะแนนปัจจุบัน</span><strong id="pointsValue">—</strong><span>คะแนน</span></div><p id="pointsMessage" class="message muted">เข้าสู่ระบบเพื่อดูคะแนน</p><button id="refreshBtn" class="secondary full">🔄 รีเฟรชข้อมูล</button></section>
 
+<section class="card" id="photoStatsCard">
+  <h2>📊 สถิติรักษ์โลก</h2>
+  <button id="photoStatsToggle" class="secondary full"
+    aria-expanded="false" aria-controls="photoStatsDetails">
+    📈 เปิดดูสถิติ
+  </button>
+  <div id="photoStatsDetails" class="hidden">
+    <div class="points" style="margin-top:12px">
+      <span>👥 บัญชีที่เช็กอินผ่านวันนี้</span>
+      <strong id="photoTodayTotal">—</strong>
+      <span>บัญชี</span>
+    </div>
+    <div class="points" style="margin-top:12px">
+      <span>🔥 เช็กอินผ่านติดต่อกัน</span>
+      <strong id="photoStreakDays">—</strong>
+      <span>วัน</span>
+    </div>
+    <p id="photoStatsMessage" class="message muted">
+      เข้าสู่ระบบเพื่อดูสถิติ
+    </p>
+    <button id="photoStatsRefresh" class="secondary full">
+      🔄 รีเฟรชสถิติ
+    </button>
+  </div>
+</section>
+
 <section class="card" id="checkinCard">
 <h2>📸 พกแก้ว พกกล่อง รับคะแนน</h2>
 <p>ส่งรูปได้วันละ <b>1 รูปต่อบัญชี</b> ตามเวลาไทย ให้นายแอดมินตรวจจากรูปจริง</p>
@@ -412,8 +438,53 @@ async function loadAdminMembers(){
   }
  }catch(e){list.textContent="โหลดรายชื่อไม่สำเร็จ: "+e.message;msg("adminMembersMessage","ตรวจสอบว่าได้รัน SQL สำหรับระบบจัดการแอดมินแล้ว","error");}
 }
+
+
+async function loadPhotoStats() {
+  if (!$("photoTodayTotal") || !$("photoStreakDays") || !$("photoStatsMessage")) return;
+
+  $("photoTodayTotal").textContent = "…";
+  $("photoStreakDays").textContent = "…";
+
+  if (!currentUser) {
+    $("photoTodayTotal").textContent = "—";
+    $("photoStreakDays").textContent = "—";
+    $("photoStatsMessage").textContent = "เข้าสู่ระบบเพื่อดูสถิติ";
+    return;
+  }
+
+  try {
+    const { data, error } = await db.rpc("get_my_photo_stats");
+    if (error) throw error;
+
+    $("photoTodayTotal").textContent =
+      Number(data?.today_total ?? 0).toLocaleString("th-TH");
+    $("photoStreakDays").textContent =
+      Number(data?.streak_days ?? 0).toLocaleString("th-TH");
+    $("photoStatsMessage").textContent =
+      "นับเฉพาะรูปที่แอดมินอนุมัติแล้ว";
+  } catch (e) {
+    $("photoTodayTotal").textContent = "—";
+    $("photoStreakDays").textContent = "—";
+    $("photoStatsMessage").textContent =
+      "โหลดสถิติไม่สำเร็จ: " + e.message;
+  }
+}
+
+$("photoStatsToggle").addEventListener("click", () => {
+  const details = $("photoStatsDetails");
+  const opening = details.classList.contains("hidden");
+  details.classList.toggle("hidden", !opening);
+  $("photoStatsToggle").setAttribute("aria-expanded", String(opening));
+  $("photoStatsToggle").textContent =
+    opening ? "📉 ปิดสถิติ" : "📈 เปิดดูสถิติ";
+});
+
+$("photoStatsRefresh").addEventListener("click", loadPhotoStats);
+
+  
 async function refreshAll(){
- const results=await Promise.allSettled([loadMember(),loadRewards(),loadHistory(),loadMemberCount(),loadMyCheckins()]);
+ const results=await Promise.allSettled([loadMember(),loadRewards(),loadHistory(),loadMemberCount(),loadMyCheckins(),loadPhotoStats()]);
  const failed=results.find(r=>r.status==="rejected");if(failed){console.error("refreshAll",failed.reason);msg("authMessage","ข้อมูลบางส่วนโหลดไม่สำเร็จ กรุณาลองรีเฟรช","error");}
  if(currentUser){const p=await getProfile().catch(()=>null);if(p?.role==="admin"){await loadAdminCheckins();await loadAdminMembers();}}
 }
