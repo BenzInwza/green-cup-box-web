@@ -119,6 +119,18 @@
 const SUPABASE_URL = "https://sjlmwicteshsabzlkvab.supabase.co";
 const SUPABASE_KEY = "sb_publishable_tqvsVPcYKq-QC6LtA3oVeg_NsR7wchz";
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  
+function getActiveSessionId(){
+  let id = sessionStorage.getItem("gcb_active_session_id");
+
+  if(!id){
+    id = crypto.randomUUID();
+    sessionStorage.setItem("gcb_active_session_id", id);
+  }
+
+  return id;
+}
+
 const $ = id => document.getElementById(id);
 let currentUser = null, busy = false, selectedPhoto = null;
 let currentProfileRole = null;
@@ -240,11 +252,99 @@ async function signUp() {
     btn.disabled = false;
   }
 }
-async function signIn(){
- const email=$("email").value.trim(),password=$("password").value;if(!email||!password)return msg("authMessage","กรอกอีเมลและรหัสผ่านก่อน","error");
- $("loginBtn").disabled=true;try{const {error}=await db.auth.signInWithPassword({email,password});if(error)throw error;await refreshAll();msg("authMessage","เข้าสู่ระบบสำเร็จ","success");}
- catch(e){msg("authMessage",e.message,"error");}finally{$("loginBtn").disabled=false;}
+
+  
+let activeHeartbeatTimer = null;
+
+async function heartbeatActiveSession(){
+  if(!currentUser) return;
+
+  try{
+    const {data, error} = await db.rpc(
+      "heartbeat_active_user",
+      {p_session_id: getActiveSessionId()}
+    );
+
+    if(error) throw error;
+
+    if(!data?.ok){
+      if(activeHeartbeatTimer){
+        clearInterval(activeHeartbeatTimer);
+        activeHeartbeatTimer = null;
+      }
+
+      await db.auth.signOut();
+
+      msg(
+        "authMessage",
+        data?.message || "เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่",
+        "error"
+      );
+    }
+  }catch(e){
+    console.error("Heartbeat error:", e);
+  }
 }
+
+function startActiveHeartbeat(){
+  if(activeHeartbeatTimer){
+    clearInterval(activeHeartbeatTimer);
+  }
+
+  activeHeartbeatTimer = setInterval(
+    heartbeatActiveSession,
+    60000
+  );
+}
+
+  
+async function signIn(){
+  const email = $("email").value.trim();
+  const password = $("password").value;
+
+  if(!email || !password){
+    return msg("authMessage","กรอกอีเมลและรหัสผ่านก่อน","error");
+  }
+
+  $("loginBtn").disabled = true;
+
+  try{
+    const {error} = await db.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if(error) throw error;
+
+    const {data, error: claimError} = await db.rpc(
+      "claim_active_user",
+      {p_session_id: getActiveSessionId()}
+    );
+
+    if(claimError) throw claimError;
+
+    if(!data?.ok){
+      await db.auth.signOut();
+      throw new Error(
+        data?.message || "ไม่สามารถเข้าใช้งานได้ กรุณาลองใหม่"
+      );
+    }
+
+    
+    await refreshAll();
+
+    startActiveHeartbeat();
+
+    msg("authMessage","เข้าสู่ระบบสำเร็จ","success");
+
+
+  }catch(e){
+    msg("authMessage",e.message,"error");
+  }finally{
+    $("loginBtn").disabled = false;
+  }
+}
+
 async function saveName(){
  if(!currentUser)return msg("nameMessage","กรุณาเข้าสู่ระบบก่อน","error");
  const name=$("displayName").value.trim();if(!name)return msg("nameMessage","กรุณาพิมพ์ชื่อก่อนบันทึก","error");if(name.length>40)return msg("nameMessage","ชื่อต้องไม่เกิน 40 ตัวอักษร","error");
@@ -254,12 +354,59 @@ async function saveName(){
  $("memberName").textContent=name;$("displayName").value=name;$("displayName").disabled=true;msg("nameMessage","🔒 บันทึกชื่อสำเร็จ ตั้งชื่อได้ครั้งเดียว","success");
  }catch(e){msg("nameMessage","บันทึกชื่อไม่สำเร็จ: "+e.message,"error");$("saveNameBtn").disabled=false;}
 }
-async function signOut(){if(!confirm("ต้องการออกจากระบบหรือไม่?"))return;try{const {error}=await db.auth.signOut();if(error)throw error;currentUser=null;await refreshAll();toggleMenu(false);msg("authMessage","ออกจากระบบแล้ว","success");}catch(e){msg("authMessage",e.message,"error");}}
-async function loadMemberCount(){
- $("memberCount").textContent="…";$("memberCountMessage").textContent="กำลังโหลดจำนวนสมาชิก...";
- try{const {data,error}=await db.rpc("get_member_count");if(error)throw error;const n=Number(data);if(!Number.isFinite(n))throw new Error("รูปแบบจำนวนสมาชิกไม่ถูกต้อง");$("memberCount").textContent=n.toLocaleString("th-TH");$("memberCountMessage").textContent="อัปเดตจำนวนสมาชิกแล้ว";}
- catch(e){$("memberCount").textContent="—";$("memberCountMessage").textContent="โหลดจำนวนสมาชิกไม่สำเร็จ: "+e.message;}
+
+async function signOut(){
+  if(!confirm("ต้องการออกจากระบบหรือไม่?")) return;
+
+  if(activeHeartbeatTimer){
+    clearInterval(activeHeartbeatTimer);
+    activeHeartbeatTimer = null;
+  }
+
+  try{
+    const {error} = await db.auth.signOut();
+
+    if(error) throw error;
+
+    currentUser = null;
+
+    await refreshAll();
+
+    toggleMenu(false);
+
+    msg("authMessage","ออกจากระบบแล้ว","success");
+
+  }catch(e){
+    msg("authMessage",e.message,"error");
+  }
 }
+
+
+async function loadMemberCount(){
+  $("memberCount").textContent = "…";
+  $("memberCountMessage").textContent = "กำลังโหลดจำนวนสมาชิก...";
+
+  try{
+    const {data, error} = await db.rpc("get_member_count");
+
+    if(error) throw error;
+
+    const n = Number(data);
+
+    if(!Number.isFinite(n)){
+      throw new Error("รูปแบบจำนวนสมาชิกไม่ถูกต้อง");
+    }
+
+    $("memberCount").textContent = n.toLocaleString("th-TH");
+    $("memberCountMessage").textContent = "อัปเดตจำนวนสมาชิกแล้ว";
+
+  }catch(e){
+    $("memberCount").textContent = "—";
+    $("memberCountMessage").textContent =
+      "โหลดจำนวนสมาชิกไม่สำเร็จ: " + e.message;
+  }
+}
+
 function nameOf(r){return r.name||r.title||r.reward_name||r.label||"ของรางวัล";}
 function costOf(r){for(const k of ["cost","points_cost","point_cost","points_required","required_points"])if(r[k]!=null)return Number(r[k]);return null;}
 function quantityOf(r){for(const k of ["stock","quantity","remaining","stock_quantity","available_quantity","qty"])if(r[k]!==undefined&&r[k]!==null&&r[k]!==""){const v=Number(r[k]);return Number.isFinite(v)?v:null;}return null;}
