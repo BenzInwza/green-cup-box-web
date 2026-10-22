@@ -38,6 +38,10 @@
     body.page-admin #memberArea{display:none!important}
     @media(max-width:520px){.header-inner{flex-wrap:wrap}.page-links{order:3;width:100%;margin-left:0}.page-link{flex:1;text-align:center}}
 
+.tab-hidden {
+  display: none !important;
+}
+
 /* Green Cup Box: bottom navigation */
 body {
   padding-bottom: 90px;
@@ -251,22 +255,60 @@ $("menuToggle").addEventListener("click",e=>{e.stopPropagation();toggleMenu();})
 $("mainMenu").addEventListener("click",e=>e.stopPropagation());
 document.addEventListener("click",()=>toggleMenu(false));
 document.addEventListener("keydown",e=>{if(e.key==="Escape")toggleMenu(false);});
+
+const mainTabGroups = {
+  pointsCard: [
+    "memberCountCard",
+    "pointsCard",
+    "photoStatsCard"
+  ],
+  rewardsCard: ["rewardsCard"],
+  checkinCard: ["checkinCard"],
+  historyCard: ["historyCard"],
+  memberCard: ["memberCard"]
+};
+
+function showMainTab(targetId) {
+  const allowedIds = mainTabGroups[targetId];
+  if (!allowedIds) return;
+
+  Object.values(mainTabGroups).flat().forEach(id => {
+    const section = $(id);
+    if (section) {
+      section.classList.toggle(
+        "tab-hidden",
+        !allowedIds.includes(id)
+      );
+    }
+  });
+
+  document.querySelectorAll(".bottom-nav button").forEach(button => {
+    button.classList.toggle(
+      "active",
+      button.dataset.target === targetId
+    );
+  });
+}
+
 document.querySelectorAll("[data-target]").forEach(b => {
   b.addEventListener("click", () => {
     toggleMenu(false);
+
+    if (b.closest(".bottom-nav")) {
+      showMainTab(b.dataset.target);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
 
     const target = $(b.dataset.target);
     if (!target) return;
 
     target.scrollIntoView({ behavior: "smooth" });
-
-    if (b.closest(".bottom-nav")) {
-      document.querySelectorAll(".bottom-nav button").forEach(button => {
-        button.classList.toggle("active", button === b);
-      });
-    }
   });
 });
+
+showMainTab("pointsCard");
+
 function updateMenu() {
   $("logoutBtn").classList.toggle("hidden", !currentUser);
 
