@@ -1,1 +1,326 @@
 
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#16834a">
+  <title>Green Cup Box | เช็กอิน</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 18px 14px 90px;
+      font-family: Arial, sans-serif;
+      background: #f0f8f2; color: #183b27;
+    }
+    header {
+      background: #16834a; color: white;
+      padding: 20px; border-radius: 16px;
+    }
+    h1 { margin: 0 0 8px; font-size: 23px; }
+    .card {
+      background: white; padding: 18px; margin-top: 16px;
+      border-radius: 14px; box-shadow: 0 2px 8px #0000000c;
+    }
+    input[type="file"] {
+      display: block; width: 100%; margin: 12px 0;
+    }
+    button {
+      border: 0; border-radius: 10px; padding: 12px 16px;
+      background: #16834a; color: white; font-size: 15px;
+    }
+    button:disabled { background: #9ba99f; }
+    .hidden { display: none !important; }
+    .message { margin-top: 12px; overflow-wrap: anywhere; }
+    .error { color: #b42318; }
+    .success { color: #16834a; }
+    .muted { color: #65756a; font-size: 13px; }
+    .photo-preview {
+      display: block; max-width: 100%; max-height: 320px;
+      object-fit: contain; border-radius: 12px; margin: 12px 0;
+    }
+    .checkin {
+      border: 1px solid #dce9df; border-radius: 12px;
+      padding: 14px; margin-top: 12px; overflow-wrap: anywhere;
+    }
+    .status {
+      display: inline-block; padding: 5px 9px;
+      background: #fff0c2; border-radius: 8px; font-size: 13px;
+    }
+    .status.approved { background: #d9f7e3; color: #126534; }
+    .status.rejected { background: #ffe0e0; color: #a21d1d; }
+    .nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      display: flex; justify-content: space-around; gap: 4px;
+      padding: 10px 4px; background: white;
+      border-top: 1px solid #dce9df;
+    }
+    .nav a {
+      color: #16834a; text-decoration: none;
+      font-size: 12px; text-align: center; padding: 5px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🌱 Green Cup Box</h1>
+    <div>📷 ส่งรูปเช็กอินรักษ์โลก</div>
+  </header>
+
+  <section class="card">
+    <h2>📸 ส่งรูปเช็กอิน</h2>
+    <p id="loginStatus" class="muted">กำลังตรวจสอบบัญชี...</p>
+
+    <label for="checkinPhoto">เลือกรูปภาพ (ไม่เกิน 8 MB)</label>
+    <input id="checkinPhoto" type="file" accept="image/*">
+
+    <img id="photoPreview" class="photo-preview hidden" alt="ตัวอย่างรูปที่เลือก">
+
+    <button id="submitCheckinBtn" type="button" disabled>ส่งรูปให้แอดมินตรวจ</button>
+    <p id="checkinMessage" class="message"></p>
+    <p class="muted">ส่งได้วันละ 1 รูป ตามเงื่อนไขของระบบเดิม</p>
+  </section>
+
+  <section class="card">
+    <h2>📋 ประวัติเช็กอิน</h2>
+    <div id="myCheckins">กำลังโหลด...</div>
+  </section>
+
+  <nav class="nav">
+    <a href="index.html">🏠<br>หน้าแรก</a>
+    <a href="rewards.html">🎁<br>ของรางวัล</a>
+    <a href="checkin.html">📷<br>เช็กอิน</a>
+    <a href="history.html">📋<br>ประวัติ</a>
+    <a href="account.html">👤<br>บัญชี</a>
+  </nav>
+
+  <script>
+    const SUPABASE_URL = "https://sjlmwicteshsabzlkvab.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_tqvsVPcYKq-QC6LtA3oVeg_NsR7wchz";
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let currentUser = null;
+    let selectedPhoto = null;
+    let busy = false;
+
+    const $ = id => document.getElementById(id);
+
+    function msg(id, text, type = "") {
+      $(id).textContent = text || "";
+      $(id).className = "message " + type;
+    }
+
+    $("checkinPhoto").addEventListener("change", () => {
+      const f = $("checkinPhoto").files?.[0];
+      selectedPhoto = f || null;
+      msg("checkinMessage", "");
+
+      if (!f) {
+        $("photoPreview").classList.add("hidden");
+        $("photoPreview").removeAttribute("src");
+        return;
+      }
+
+      if (!f.type.startsWith("image/")) {
+        selectedPhoto = null;
+        $("checkinPhoto").value = "";
+        $("photoPreview").classList.add("hidden");
+        return msg("checkinMessage", "กรุณาเลือกไฟล์รูปภาพ", "error");
+      }
+
+      if (f.size > 8 * 1024 * 1024) {
+        selectedPhoto = null;
+        $("checkinPhoto").value = "";
+        $("photoPreview").classList.add("hidden");
+        return msg("checkinMessage", "รูปต้องมีขนาดไม่เกิน 8 MB", "error");
+      }
+
+      $("photoPreview").src = URL.createObjectURL(f);
+      $("photoPreview").classList.remove("hidden");
+    });
+
+    async function loadMyCheckins() {
+      const box = $("myCheckins");
+      box.replaceChildren();
+
+      if (!currentUser) {
+        box.textContent = "เข้าสู่ระบบผ่านหน้าแรกเพื่อดูประวัติเช็กอิน";
+        return;
+      }
+
+      box.textContent = "กำลังโหลด...";
+
+      try {
+        const { data, error } = await db
+          .from("checkins")
+          .select("id,checkin_type,photo_path,status,points_awarded,created_at,review_note")
+          .eq("user_id", currentUser.id)
+          .order("created_at", { ascending: false })
+          .limit(30);
+
+        if (error) throw error;
+
+        if (!data?.length) {
+          box.textContent = "ยังไม่มีรายการเช็กอิน";
+          return;
+        }
+
+        box.replaceChildren();
+
+        for (const item of data) {
+          const c = document.createElement("div");
+          c.className = "checkin";
+
+          const h = document.createElement("h3");
+          h.textContent = "📸 เช็กอิน #" + item.id;
+          c.appendChild(h);
+
+          const s = document.createElement("span");
+          s.className = "status " +
+            (item.status === "approved" ? "approved" :
+             item.status === "rejected" ? "rejected" : "");
+          s.textContent = item.status === "approved" ? "อนุมัติแล้ว" :
+            item.status === "rejected" ? "ปฏิเสธ" : "รอตรวจ";
+          c.appendChild(s);
+
+          const p = document.createElement("p");
+          p.textContent = "คะแนนที่ได้รับ: " +
+            Number(item.points_awarded || 0) + " คะแนน";
+          c.appendChild(p);
+
+          const dt = new Date(item.created_at);
+          const d = document.createElement("p");
+          d.className = "muted";
+          d.textContent = Number.isNaN(dt.getTime()) ? "" :
+            dt.toLocaleString("th-TH", {
+              dateStyle: "medium", timeStyle: "short"
+            });
+          c.appendChild(d);
+
+          if (item.review_note) {
+            const n = document.createElement("p");
+            n.textContent = "หมายเหตุ: " + item.review_note;
+            c.appendChild(n);
+          }
+
+          if (item.photo_path) {
+            const { data: signed, error: se } = await db.storage
+              .from("checkin-photos")
+              .createSignedUrl(item.photo_path, 3600);
+
+            if (!se && signed?.signedUrl) {
+              const im = document.createElement("img");
+              im.className = "photo-preview";
+              im.src = signed.signedUrl;
+              im.alt = "รูปเช็กอิน";
+              c.appendChild(im);
+            }
+          }
+
+          box.appendChild(c);
+        }
+      } catch (e) {
+        box.textContent = "โหลดประวัติเช็กอินไม่สำเร็จ: " + e.message;
+      }
+    }
+
+    async function submitCheckin() {
+      if (!currentUser) {
+        return msg("checkinMessage", "กรุณาเข้าสู่ระบบก่อนส่งรูป", "error");
+      }
+
+      if (busy) return;
+      if (!selectedPhoto) {
+        return msg("checkinMessage", "เลือกรูปก่อนส่งนะ", "error");
+      }
+
+      if (!confirm("ยืนยันส่งรูปนี้ให้แอดมินตรวจหรือไม่? ส่งได้วันละ 1 รูปเท่านั้น")) {
+        return;
+      }
+
+      busy = true;
+      $("submitCheckinBtn").disabled = true;
+
+      let uploadedPath = null;
+
+      try {
+        const ext = (selectedPhoto.name.split(".").pop() || "jpg")
+          .toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
+
+        const path = currentUser.id + "/" + Date.now() + "-" +
+          Math.random().toString(36).slice(2, 9) + "." + ext;
+
+        const { error: upErr } = await db.storage
+          .from("checkin-photos")
+          .upload(path, selectedPhoto, {
+            contentType: selectedPhoto.type || "image/jpeg",
+            upsert: false
+          });
+
+        if (upErr) throw upErr;
+        uploadedPath = path;
+
+        const { data, error } = await db.rpc("submit_checkin", {
+          p_checkin_type: "photo",
+          p_photo_path: path
+        });
+
+        if (error) throw error;
+
+        const result = Array.isArray(data) ? data[0] : data;
+
+        if (result?.success === false || result?.ok === false) {
+          throw new Error(result.message || result.error || "ส่งรูปไม่สำเร็จ");
+        }
+
+        uploadedPath = null;
+        msg("checkinMessage", "ส่งรูปสำเร็จ! รอแอดมินตรวจรูปก่อนรับคะแนน", "success");
+        $("checkinPhoto").value = "";
+        selectedPhoto = null;
+        $("photoPreview").classList.add("hidden");
+        $("photoPreview").removeAttribute("src");
+        await loadMyCheckins();
+      } catch (e) {
+        if (uploadedPath) {
+          await db.storage.from("checkin-photos").remove([uploadedPath]);
+        }
+        msg("checkinMessage", "ส่งรูปไม่สำเร็จ: " + e.message, "error");
+      } finally {
+        busy = false;
+        $("submitCheckinBtn").disabled = !currentUser;
+      }
+    }
+
+    $("submitCheckinBtn").addEventListener("click", submitCheckin);
+
+    async function init() {
+      try {
+        const { data, error } = await db.auth.getUser();
+        if (error) throw error;
+
+        currentUser = data.user || null;
+
+        if (currentUser) {
+          $("loginStatus").textContent = "เข้าสู่ระบบแล้ว: " +
+            (currentUser.email || "สมาชิก");
+          $("submitCheckinBtn").disabled = false;
+        } else {
+          $("loginStatus").textContent =
+            "ยังไม่ได้เข้าสู่ระบบ กรุณาเข้าสู่ระบบจากหน้าแรกก่อน";
+          $("submitCheckinBtn").disabled = true;
+        }
+
+        await loadMyCheckins();
+      } catch (e) {
+        $("loginStatus").textContent = "ตรวจสอบบัญชีไม่สำเร็จ: " + e.message;
+        $("submitCheckinBtn").disabled = true;
+        $("myCheckins").textContent = "ไม่สามารถโหลดข้อมูลสมาชิกได้";
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
+
