@@ -1,14 +1,236 @@
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#16834a">
   <title>Green Cup Box | ของรางวัล</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 20px 16px 90px;
+      font-family: Arial, sans-serif;
+      background: #f0f8f2; color: #183b27;
+    }
+    header {
+      background: #16834a; color: white;
+      padding: 20px; border-radius: 16px;
+    }
+    h1 { margin: 0 0 8px; font-size: 23px; }
+    .card {
+      background: white; padding: 18px; margin-top: 16px;
+      border-radius: 14px; box-shadow: 0 2px 8px #0000000c;
+    }
+    .points { font-size: 25px; font-weight: bold; color: #16834a; }
+    .reward {
+      border: 1px solid #dce9df; border-radius: 12px;
+      padding: 14px; margin-top: 12px;
+    }
+    button {
+      border: 0; border-radius: 10px; padding: 11px 15px;
+      background: #16834a; color: white; font-size: 15px;
+      cursor: pointer;
+    }
+    button:disabled { background: #9ba99f; cursor: not-allowed; }
+    .muted { color: #65756a; font-size: 14px; }
+    .nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      display: flex; justify-content: space-around; gap: 4px;
+      padding: 10px 4px; background: white;
+      border-top: 1px solid #dce9df;
+    }
+    .nav a {
+      color: #16834a; text-decoration: none;
+      font-size: 12px; text-align: center; padding: 5px;
+    }
+  </style>
 </head>
 <body>
-  <h1>🌱 Green Cup Box</h1>
-  <h2>🎁 ของรางวัล</h2>
-  <p>หน้านี้กำลังเตรียมเชื่อมต่อระบบของรางวัลเดิม</p>
-  <a href="index.html">กลับหน้าแรก</a>
+  <header>
+    <h1>🌱 Green Cup Box</h1>
+    <div>🎁 ของรางวัล</div>
+  </header>
+
+  <section class="card">
+    <h2>⭐ คะแนนของฉัน</h2>
+    <div id="points" class="points">กำลังโหลด...</div>
+    <p id="memberStatus" class="muted"></p>
+  </section>
+
+  <section class="card">
+    <h2>🎁 รายการของรางวัล</h2>
+    <div id="rewardsList">กำลังโหลดของรางวัล...</div>
+  </section>
+
+  <nav class="nav">
+    <a href="index.html">🏠<br>หน้าแรก</a>
+    <a href="rewards.html">🎁<br>ของรางวัล</a>
+    <a href="checkin.html">📷<br>เช็กอิน</a>
+    <a href="history.html">📋<br>ประวัติ</a>
+    <a href="account.html">👤<br>บัญชี</a>
+  </nav>
+
+  <script>
+    const SUPABASE_URL = "https://sjlmwicteshsabzlkvab.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_tqvsVPcYKq-QC6LtA3oVeg_NsR7wchz";
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let currentUser = null;
+
+    function rewardName(r) {
+      return r.name || r.title || r.reward_name || "ของรางวัล";
+    }
+
+    function rewardCost(r) {
+      const v = r.points_cost ?? r.point_cost ?? r.cost ?? r.points;
+      return v === undefined || v === null ? null : Number(v);
+    }
+
+    function rewardStock(r) {
+      const v = r.stock ?? r.quantity ?? r.remaining;
+      return v === undefined || v === null ? null : Number(v);
+    }
+
+    async function loadPoints() {
+      const el = document.getElementById("points");
+      if (!currentUser) {
+        el.textContent = "กรุณาเข้าสู่ระบบผ่านหน้าแรก";
+        return;
+      }
+
+      const { data, error } = await db
+        .from("profiles")
+        .select("*")
+        .eq("id", currentUser.id)
+        .maybeSingle();
+
+      if (error) {
+        el.textContent = "โหลดคะแนนไม่สำเร็จ";
+        return;
+      }
+
+      const p = data || {};
+      const points = p.points ?? p.total_points ?? p.balance;
+      el.textContent = points == null
+        ? "อ่านคะแนนไม่สำเร็จ"
+        : Number(points).toLocaleString("th-TH") + " คะแนน";
+    }
+
+    async function loadRewards() {
+      const el = document.getElementById("rewardsList");
+      el.textContent = "กำลังโหลดของรางวัล...";
+
+      const { data, error } = await db
+        .from("rewards")
+        .select("*")
+        .order("id");
+
+      if (error) {
+        el.textContent = "โหลดของรางวัลไม่สำเร็จ: " + error.message;
+        return;
+      }
+
+      el.replaceChildren();
+
+      if (!data || data.length === 0) {
+        el.textContent = "ยังไม่มีของรางวัล";
+        return;
+      }
+
+      data.forEach(r => {
+        const box = document.createElement("div");
+        box.className = "reward";
+
+        const title = document.createElement("h3");
+        title.textContent = "🎁 " + rewardName(r);
+        box.appendChild(title);
+
+        if (r.description || r.detail) {
+          const desc = document.createElement("p");
+          desc.textContent = r.description || r.detail;
+          box.appendChild(desc);
+        }
+
+        const cost = rewardCost(r);
+        const costText = document.createElement("p");
+        costText.className = "muted";
+        costText.textContent = cost === null || !Number.isFinite(cost)
+          ? "ไม่พบราคาคะแนน"
+          : "⭐ ใช้ " + cost.toLocaleString("th-TH") + " คะแนน";
+        box.appendChild(costText);
+
+        const stock = rewardStock(r);
+        const stockText = document.createElement("p");
+        stockText.className = "muted";
+        stockText.textContent = stock === null
+          ? "📦 ไม่ระบุจำนวนคงเหลือ"
+          : stock <= 0 ? "📦 ของรางวัลหมด"
+          : "📦 คงเหลือ " + stock.toLocaleString("th-TH") + " ชิ้น";
+        box.appendChild(stockText);
+
+        const btn = document.createElement("button");
+        btn.textContent = "แลกของรางวัล";
+        btn.disabled = !currentUser || (stock !== null && stock <= 0);
+        btn.addEventListener("click", () => redeemReward(r.id, btn));
+        box.appendChild(btn);
+
+        el.appendChild(box);
+      });
+    }
+
+    async function redeemReward(id, btn) {
+      if (!currentUser) {
+        alert("กรุณาเข้าสู่ระบบผ่านหน้าแรกก่อนแลกของรางวัล");
+        return;
+      }
+
+      if (!confirm("ยืนยันการแลกของรางวัลนี้หรือไม่?")) return;
+
+      btn.disabled = true;
+      btn.textContent = "กำลังแลก...";
+
+      try {
+        const { data, error } = await db.rpc("redeem_reward", {
+          p_reward_id: id
+        });
+
+        if (error) throw error;
+
+        if (data && data.ok === false) {
+          throw new Error(data.message || data.error || "ไม่สามารถแลกของรางวัลได้");
+        }
+
+        alert("ส่งคำขอแลกของรางวัลแล้ว กรุณาตรวจสอบคะแนนและประวัติ");
+        await loadPoints();
+        await loadRewards();
+      } catch (e) {
+        alert("แลกของรางวัลไม่สำเร็จ: " + e.message);
+        btn.disabled = false;
+        btn.textContent = "แลกของรางวัล";
+      }
+    }
+
+    async function init() {
+      const { data, error } = await db.auth.getUser();
+
+      if (error || !data.user) {
+        document.getElementById("memberStatus").textContent =
+          "ยังไม่ได้เข้าสู่ระบบ กรุณาเข้าสู่ระบบจากหน้าแรกก่อน";
+        document.getElementById("points").textContent = "—";
+        await loadRewards();
+        return;
+      }
+
+      currentUser = data.user;
+      document.getElementById("memberStatus").textContent =
+        "เข้าสู่ระบบแล้ว";
+      await loadPoints();
+      await loadRewards();
+    }
+
+    init();
+  </script>
 </body>
 </html>
