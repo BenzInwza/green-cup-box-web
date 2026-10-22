@@ -73,7 +73,12 @@
     <p id="loginStatus" class="muted">กำลังตรวจสอบบัญชี...</p>
 
     <label for="checkinPhoto">เลือกรูปภาพ (ไม่เกิน 8 MB)</label>
-    <input id="checkinPhoto" type="file" accept="image/*">
+    <input
+  id="checkinPhoto"
+  type="file"
+  accept="image/*"
+  capture="environment"
+>
 
     <img id="photoPreview" class="photo-preview hidden" alt="ตัวอย่างรูปที่เลือก">
 
