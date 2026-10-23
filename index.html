@@ -550,15 +550,49 @@ async function signIn(){
 
 
                                   
-async function saveName(){
- if(!currentUser)return msg("nameMessage","กรุณาเข้าสู่ระบบก่อน","error");
- const name=$("displayName").value.trim();if(!name)return msg("nameMessage","กรุณาพิมพ์ชื่อก่อนบันทึก","error");if(name.length>40)return msg("nameMessage","ชื่อต้องไม่เกิน 40 ตัวอักษร","error");
- $("saveNameBtn").disabled=true;
- try{const p=await getProfile();if(p.name_locked===true){$("displayName").disabled=true;msg("nameMessage","ชื่อนี้ถูกล็อกแล้ว ไม่สามารถเปลี่ยนได้","error");return;}
- const {data,error}=await db.from("profiles").update({display_name:name,name_locked:true}).eq("id",currentUser.id).eq("name_locked",false).select("id");if(error)throw error;if(!data?.length)throw new Error("ตั้งชื่อไม่ได้ อาจมีการตั้งชื่อไปแล้ว กรุณารีเฟรชหน้าเว็บ");
- $("memberName").textContent=name;$("displayName").value=name;$("displayName").disabled=true;msg("nameMessage","🔒 บันทึกชื่อสำเร็จ ตั้งชื่อได้ครั้งเดียว","success");
- }catch(e){msg("nameMessage","บันทึกชื่อไม่สำเร็จ: "+e.message,"error");$("saveNameBtn").disabled=false;}
+
+async function saveName() {
+  if (!currentUser) {
+    return msg("nameMessage", "กรุณาเข้าสู่ระบบก่อน", "error");
+  }
+
+  const name = $("displayName").value.trim();
+
+  if (!name) {
+    return msg("nameMessage", "กรุณาพิมพ์ชื่อก่อนบันทึก", "error");
+  }
+
+  if (name.length > 40) {
+    return msg("nameMessage", "ชื่อต้องไม่เกิน 40 ตัวอักษร", "error");
+  }
+
+  $("saveNameBtn").disabled = true;
+
+  try {
+    const { data, error } = await db.rpc("save_member_name", {
+      p_name: name
+    });
+
+    if (error) throw error;
+    if (!data || data.success !== true) {
+      throw new Error("บันทึกชื่อไม่สำเร็จ");
+    }
+
+    $("memberName").textContent = name;
+    $("displayName").value = name;
+    $("displayName").disabled = true;
+
+    msg(
+      "nameMessage",
+      "🔒 บันทึกชื่อสำเร็จ ตั้งชื่อได้ครั้งเดียว",
+      "success"
+    );
+  } catch (e) {
+    msg("nameMessage", "บันทึกชื่อไม่สำเร็จ: " + e.message, "error");
+    $("saveNameBtn").disabled = false;
+  }
 }
+
 
 async function signOut(){
   if(!confirm("ต้องการออกจากระบบหรือไม่?")) return;
