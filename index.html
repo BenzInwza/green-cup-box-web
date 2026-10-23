@@ -626,12 +626,12 @@ function updateMenu() {
 
 async function getProfile(){
  if(!currentUser)return null;
- let {data,error}=await db.from("profiles").select("id,role,points,display_name,name_locked").eq("id",currentUser.id).maybeSingle();
+ let {data,error}=await db.from("profiles").select("id,role,points,total_earned_points,display_name,name_locked").eq("id",currentUser.id).maybeSingle();
  if(error)throw error;
  if(!data){
   const {error:ie}=await db.from("profiles").insert({id:currentUser.id,role:"member",points:0,display_name:"",name_locked:false});
   if(ie)throw ie;
-  ({data,error}=await db.from("profiles").select("id,role,points,display_name,name_locked").eq("id",currentUser.id).maybeSingle());
+  ({data,error}=await db.from("profiles").select("id,role,points,total_earned_points,display_name,name_locked").eq("id",currentUser.id).maybeSingle());
   if(error)throw error;
  }
  return data;
