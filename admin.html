@@ -448,13 +448,21 @@ details[open] .collapse-icon { transform: rotate(180deg); }
 </head>
 <body>
 
+
 <header>
   <button id="menuBtn" aria-label="เปิดเมนู" aria-expanded="false">☰</button>
-  <div>
+
+  <div class="header-title">
     <h1>🌱 Green Cup Box</h1>
     <p>ระบบแอดมินตรวจรูปและจัดการกิจกรรมลดขยะ</p>
   </div>
+
+  <button type="button" class="home-btn"
+    onclick="window.location.href='index.html'">
+    ← หน้าหลัก
+  </button>
 </header>
+
 
 <div id="sideMenu" class="hidden">
   <nav id="menuPanel" aria-label="เมนูหลัก">
