@@ -640,7 +640,13 @@ async function loadMember(){
  const {data,error}=await db.auth.getUser();if(error)throw error;currentUser=data.user;updateMenu();
  $("authArea").classList.toggle("hidden",!!currentUser);$("memberArea").classList.toggle("hidden",!currentUser);
  if(!currentUser){$("pointsValue").textContent="—";$("pointsMessage").textContent="เข้าสู่ระบบเพื่อดูคะแนน";$("memberName").textContent="สมาชิก";$("memberEmail").textContent="";$("displayName").value="";$("displayName").disabled=false;$("saveNameBtn").disabled=false;msg("nameMessage","");$("adminCard").classList.add("hidden");$("myCheckins").textContent="เข้าสู่ระบบเพื่อดูประวัติเช็กอิน";updateEcoLevel(0);return;}
- $("memberEmail").textContent=currentUser.email||"";const p = await getProfile();
+$("memberEmail").textContent = currentUser.email || "";
+
+console.log("Login user ID:", currentUser.id);
+
+const p = await getProfile();
+
+console.log("Profile data:", p);
 
 currentProfileRole = p.role;
 updateAdminVisibility();
