@@ -750,6 +750,10 @@ function startActiveHeartbeat(){
   );
 }
 
+  function showLoggedInArea(){
+  $("authArea").classList.add("hidden");
+  $("memberArea").classList.remove("hidden");
+  }
   
 async function signIn(){
   const email = $("email").value.trim();
@@ -797,9 +801,11 @@ if(!currentUser){
     
     await refreshAll();
 
-    startActiveHeartbeat();
+showLoggedInArea();
 
-    msg("authMessage","เข้าสู่ระบบสำเร็จ","success");
+startActiveHeartbeat();
+
+msg("authMessage","เข้าสู่ระบบสำเร็จ","success");
 
 
   }catch(e){
