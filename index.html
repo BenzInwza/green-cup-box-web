@@ -167,6 +167,41 @@ body {
   </div>
 </section>
 
+  
+<section class="card" id="leaderboardCard">
+  <h2>🏆 อันดับสมาชิก</h2>
+  <p class="muted">จัดอันดับจากคะแนนสะสมการเช็กอินรูปที่อนุมัติ</p>
+
+  <button id="leaderboardRefresh" class="secondary full">
+    🔄 รีเฟรชอันดับ
+  </button>
+
+  <p id="leaderboardMessage" class="message muted">
+    กำลังโหลดอันดับ...
+  </p>
+
+  <div style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse">
+      <thead>
+        <tr>
+          <th style="padding:10px;text-align:center">อันดับ</th>
+          <th style="padding:10px;text-align:left">สมาชิก</th>
+          <th style="padding:10px;text-align:center">คะแนนสะสม</th>
+          <th style="padding:10px;text-align:center">🔥 วันต่อเนื่อง</th>
+        </tr>
+      </thead>
+      <tbody id="leaderboardBody">
+        <tr>
+          <td colspan="4" style="padding:12px;text-align:center">
+            กำลังโหลด...
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
 <section class="card" id="checkinCard">
 <h2>📸 พกแก้ว พกกล่อง รับคะแนน</h2>
 <p>ส่งรูปได้วันละ <b>1 รูปต่อบัญชี</b> ตามเวลาไทย ให้นายแอดมินตรวจจากรูปจริง</p>
@@ -268,7 +303,8 @@ const mainTabGroups = {
   pointsCard: [
     "memberCountCard",
     "pointsCard",
-    "photoStatsCard"
+    "photoStatsCard",
+    "leaderboardCard"
   ],
   rewardsCard: ["rewardsCard"],
   checkinCard: ["checkinCard"],
@@ -755,6 +791,64 @@ async function loadAdminMembers(){
  }catch(e){list.textContent="โหลดรายชื่อไม่สำเร็จ: "+e.message;msg("adminMembersMessage","ตรวจสอบว่าได้รัน SQL สำหรับระบบจัดการแอดมินแล้ว","error");}
 }
 
+  
+async function loadLeaderboard() {
+  const body = $("leaderboardBody");
+  const message = $("leaderboardMessage");
+
+  if (!body || !message) return;
+
+  body.replaceChildren();
+  message.textContent = "กำลังโหลดอันดับ...";
+
+  try {
+    const { data, error } = await db.rpc("get_photo_leaderboard");
+
+    if (error) throw error;
+
+    if (!Array.isArray(data) || data.length === 0) {
+      message.textContent = "ยังไม่มีข้อมูลอันดับสมาชิก";
+      return;
+    }
+
+    data.forEach((member, index) => {
+      const tr = document.createElement("tr");
+      const rank = document.createElement("td");
+      const name = document.createElement("td");
+      const points = document.createElement("td");
+      const streak = document.createElement("td");
+
+      rank.style.cssText = "padding:10px;text-align:center";
+      name.style.cssText = "padding:10px";
+      points.style.cssText = "padding:10px;text-align:center";
+      streak.style.cssText = "padding:10px;text-align:center";
+
+      rank.textContent =
+        index === 0 ? "🥇 1" :
+        index === 1 ? "🥈 2" :
+        index === 2 ? "🥉 3" :
+        String(index + 1);
+
+      name.textContent = member.member_name || "สมาชิก";
+      points.textContent =
+        Number(member.total_points || 0).toLocaleString("th-TH");
+      streak.textContent =
+        "🔥 " +
+        Number(member.streak_days || 0).toLocaleString("th-TH") +
+        " วัน";
+
+      tr.append(rank, name, points, streak);
+      body.appendChild(tr);
+    });
+
+    message.textContent = "อัปเดตอันดับเรียบร้อย";
+  } catch (e) {
+    message.textContent = "โหลดอันดับไม่สำเร็จ: " + e.message;
+  }
+}
+
+$("leaderboardRefresh").addEventListener("click", loadLeaderboard);
+
 
 async function loadPhotoStats() {
   if (!$("photoTodayTotal") || !$("photoStreakDays") || !$("photoStatsMessage")) return;
@@ -799,11 +893,34 @@ $("photoStatsToggle").addEventListener("click", () => {
 $("photoStatsRefresh").addEventListener("click", loadPhotoStats);
 
   
+
 async function refreshAll(){
- const results=await Promise.allSettled([loadMember(),loadRewards(),loadHistory(),loadMemberCount(),loadMyCheckins(),loadPhotoStats()]);
- const failed=results.find(r=>r.status==="rejected");if(failed){console.error("refreshAll",failed.reason);msg("authMessage","ข้อมูลบางส่วนโหลดไม่สำเร็จ กรุณาลองรีเฟรช","error");}
- if(currentUser){const p=await getProfile().catch(()=>null);if(p?.role==="admin"){await loadAdminCheckins();await loadAdminMembers();}}
+ const results = await Promise.allSettled([
+   loadMember(),
+   loadRewards(),
+   loadHistory(),
+   loadMemberCount(),
+   loadMyCheckins(),
+   loadPhotoStats(),
+   loadLeaderboard()
+ ]);
+
+ const failed = results.find(r => r.status === "rejected");
+
+ if(failed){
+   console.error("refreshAll", failed.reason);
+   msg("authMessage","ข้อมูลบางส่วนโหลดไม่สำเร็จ กรุณาลองรีเฟรช","error");
+ }
+
+ if(currentUser){
+   const p = await getProfile().catch(() => null);
+   if(p?.role === "admin"){
+     await loadAdminCheckins();
+     await loadAdminMembers();
+   }
+ }
 }
+
 $("loginBtn").addEventListener("click",signIn);$("signupBtn").addEventListener("click",signUp);$("saveNameBtn").addEventListener("click",saveName);$("logoutBtn").addEventListener("click",signOut);
 $("refreshBtn").addEventListener("click",refreshAll);$("historyRefreshBtn").addEventListener("click",loadHistory);
 $("submitCheckinBtn").addEventListener("click",submitCheckin);$("checkinRefreshBtn").addEventListener("click",loadMyCheckins);$("adminRefreshBtn").addEventListener("click",loadAdminCheckins);$("adminMembersRefreshBtn").addEventListener("click",loadAdminMembers);$("adminMemberSearch").addEventListener("input",loadAdminMembers);
