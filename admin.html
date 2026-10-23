@@ -345,26 +345,62 @@ async function checkSession() {
   }
 }
 
+
 async function loadStats() {
   const el = $("stats");
-  const {data,error} = await db.rpc("admin_get_stats");
+  const todayEl = $("todayStats");
+  const updatedEl = $("statsUpdatedAt");
+
+  const { data, error } = await db.rpc("admin_get_dashboard_stats");
+
   if (error) {
-    el.innerHTML = '<div class="item">โหลดสถิติไม่สำเร็จ: ' +
+    el.innerHTML =
+      '<div class="item">โหลดสถิติไม่สำเร็จ: ' +
       escapeHTML(error.message) + '</div>';
+
+    if (todayEl) {
+      todayEl.innerHTML =
+        '<div class="item">โหลดสถิติวันนี้ไม่สำเร็จ</div>';
+    }
     return;
   }
+
   const r = Array.isArray(data) ? (data[0] || {}) : (data || {});
+
   const fields = [
-    ["สมาชิก",r.total_members],
-    ["รูปเช็กอิน",r.total_checkins],
-    ["ของรางวัล",r.total_rewards],
-    ["รายการแลกรางวัล",r.total_redemptions]
+    ["สมาชิกทั้งหมด", r.total_members],
+    ["รูปเช็กอินทั้งหมด", r.total_checkins],
+    ["รูปที่รอตรวจ", r.pending_checkins],
+    ["อนุมัติแล้ว", r.approved_checkins],
+    ["ปฏิเสธแล้ว", r.rejected_checkins],
+    ["คะแนนจากรูปที่อนุมัติ", r.total_points_awarded],
+    ["ของรางวัล", r.total_rewards],
+    ["รายการแลกรางวัล", r.total_redemptions]
   ];
-  el.innerHTML = fields.map(([label,value]) =>
+
+  el.innerHTML = fields.map(([label, value]) =>
     '<div class="stat">' + escapeHTML(label) +
     '<strong>' + escapeHTML(value ?? 0) + '</strong></div>'
   ).join("");
+
+  if (todayEl) {
+    const todayFields = [
+      ["ตรวจแล้ววันนี้", r.reviewed_today],
+      ["รอตรวจที่ส่งวันนี้", r.pending_today]
+    ];
+
+    todayEl.innerHTML = todayFields.map(([label, value]) =>
+      '<div class="stat">' + escapeHTML(label) +
+      '<strong>' + escapeHTML(value ?? 0) + '</strong></div>'
+    ).join("");
+  }
+
+  if (updatedEl) {
+    updatedEl.textContent =
+      "อัปเดตล่าสุด: " + new Date().toLocaleString("th-TH");
+  }
 }
+
 
 
     
