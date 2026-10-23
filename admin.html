@@ -686,8 +686,10 @@ async function loadPending() {
   }
 
   if (!data?.length) {
-    el.textContent = "ไม่มีรูปที่รอตรวจในขณะนี้";
-    return;
+  el.innerHTML = "";
+  pendingPage = 1;
+  filterPending();
+  return;
   }
 
   el.innerHTML = "";
