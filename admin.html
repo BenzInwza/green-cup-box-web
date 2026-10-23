@@ -322,78 +322,134 @@ details[open] .collapse-icon { transform: rotate(180deg); }
   color: #222;
 }
 
-/* จัดการ์ดตรวจรูปให้ใช้พื้นที่ด้านข้าง */
+
+/* จัดการ์ดตรวจรูป: ข้อมูลซ้าย ปุ่มตรวจขวา */
 #pendingList .item {
   display: grid;
-  grid-template-columns: minmax(220px, 1fr) minmax(280px, 1fr);
-  gap: 16px 24px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-areas:
+    "title title"
+    "info photo"
+    "note photo"
+    "heading photo"
+    "hint photo"
+    "actions photo"
+    "both photo"
+    "reject photo";
+  gap: 10px 24px;
   align-items: start;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
 }
 
-/* รูปเช็กอินอยู่ฝั่งซ้าย */
-#pendingList .item .photo {
-  grid-column: 1;
-  grid-row: 1 / span 5;
-  width: 100%;
-  max-width: 100%;
-  height: 260px;
-  object-fit: contain;
-  background: #f3f4f6;
-  border-radius: 12px;
+#pendingList .item > h3:first-child {
+  grid-area: title;
   margin: 0;
 }
 
-/* ช่องหมายเหตุและหัวข้ออยู่ฝั่งขวา */
-#pendingList .item .reviewNote,
+#pendingList .item > .muted:nth-of-type(1),
+#pendingList .item > .muted:nth-of-type(2),
+#pendingList .item > .muted:nth-of-type(3),
+#pendingList .item > .muted:nth-of-type(4) {
+  grid-column: 1;
+}
+
+/* รูปอยู่ฝั่งขวา */
+#pendingList .item .photo {
+  grid-area: photo;
+  width: 100%;
+  height: 300px;
+  max-width: 100%;
+  max-height: none;
+  object-fit: contain;
+  margin: 0;
+  background: #f1f5f2;
+  border-radius: 12px;
+}
+
+/* หมายเหตุและปุ่มอยู่ฝั่งซ้าย */
 #pendingList .item label,
-#pendingList .item h3,
-#pendingList .item .muted,
-#pendingList .item .actions,
-#pendingList .item .approveBoth,
-#pendingList .item .rejectBtn {
-  grid-column: 2;
-  min-width: 0;
-  box-sizing: border-box;
+#pendingList .item .reviewNote {
+  grid-column: 1;
 }
 
-/* ปุ่มสองปุ่มเรียงกัน */
+#pendingList .item label {
+  grid-area: note;
+}
+
+#pendingList .item .reviewNote {
+  grid-area: note;
+  margin-top: 28px;
+}
+
+#pendingList .item h3:not(:first-child) {
+  grid-area: heading;
+}
+
+#pendingList .item p.muted {
+  grid-area: hint;
+}
+
 #pendingList .item .actions {
-  display: flex;
+  grid-area: actions;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
-  flex-wrap: wrap;
 }
 
-#pendingList .item .actions button {
-  flex: 1 1 140px;
-  width: auto;
+#pendingList .item .approveBoth {
+  grid-area: both;
 }
 
-/* ปุ่มเต็มความกว้างฝั่งขวา */
+#pendingList .item .rejectBtn {
+  grid-area: reject;
+}
+
+#pendingList .item .actions button,
 #pendingList .item .approveBoth,
 #pendingList .item .rejectBtn {
   width: 100%;
+  min-width: 0;
+  margin: 3px 0;
+  overflow-wrap: anywhere;
 }
 
-/* มือถือให้เรียงลงมา ไม่บีบเนื้อหา */
+/* หน้าจอเล็ก: เรียงลงมาเพื่อให้อ่านง่าย */
 @media (max-width: 600px) {
   #pendingList .item {
     grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "title"
+      "info"
+      "photo"
+      "note"
+      "heading"
+      "hint"
+      "actions"
+      "both"
+      "reject";
+    gap: 8px;
   }
 
-  #pendingList .item .photo,
-  #pendingList .item .reviewNote,
+  #pendingList .item .photo {
+    height: 240px;
+  }
+
   #pendingList .item label,
-  #pendingList .item h3,
-  #pendingList .item .muted,
+  #pendingList .item .reviewNote,
+  #pendingList .item h3:not(:first-child),
   #pendingList .item .actions,
   #pendingList .item .approveBoth,
   #pendingList .item .rejectBtn {
     grid-column: 1;
-    grid-row: auto;
   }
 
-  #pendingList .item .photo {
-    height: 220px;
+  #pendingList .item .reviewNote {
+    margin-top: 0;
+  }
+
+  #pendingList .item .actions {
+    grid-template-columns: 1fr;
   }
 }
 
