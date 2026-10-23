@@ -863,19 +863,29 @@ async function loadPending() {
       <h3>เลือกสิ่งของที่ตรวจพบ</h3>
       <p class="muted">เลือกให้ตรงกับรูปก่อนอนุมัติคะแนน</p>
 
-      <div class="actions">
-        <button type="button" class="approveGlass">🥤 แก้ว +1 คะแนน</button>
-        <button type="button" class="approveBox">🍱 กล่องข้าว +1 คะแนน</button>
-      </div>
+      <div class="reviewActions">
+  <h3>เลือกสิ่งของที่ตรวจพบ</h3>
+  <p class="muted">เลือกให้ตรงกับรูปก่อนอนุมัติคะแนน</p>
 
-      <button type="button" class="approveBoth">
-        🥤🍱 แก้วและกล่องข้าว +2 คะแนน
-      </button>
+  <div class="actions">
+    <button type="button" class="approveGlass">
+      🥤 แก้ว +1 คะแนน
+    </button>
 
-      <button type="button" class="rejectBtn danger">
-        ปฏิเสธรูป
-      </button>
-    `;
+    <button type="button" class="approveBox">
+      🍱 กล่องข้าว +1 คะแนน
+    </button>
+
+    <button type="button" class="approveBoth">
+      🥤🍱 แก้วและกล่องข้าว +2 คะแนน
+    </button>
+  </div>
+</div>
+
+<button type="button" class="rejectBtn danger">
+  ปฏิเสธรูป
+</button>
+`;
 
     const noteInput = box.querySelector(".reviewNote");
 
