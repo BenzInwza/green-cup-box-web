@@ -479,6 +479,26 @@ header {
   white-space: nowrap;
 }
 
+  
+.dashboard-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.dashboard-actions button {
+  flex: 1 1 140px;
+  min-width: 0;
+}
+
+@media (max-width: 420px) {
+  .dashboard-actions button {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+}
+
 
 </style>
 
@@ -529,13 +549,23 @@ header {
     </form>
   </section>
 
-  <section id="dashboard" class="hidden">
-    <div class="card">
-      <h2>สวัสดี แอดมิน</h2>
-      <div id="accountInfo" class="muted"></div>
+  
+<section id="dashboard" class="hidden">
+  <div class="card">
+    <h2>สวัสดี แอดมิน</h2>
+    <div id="accountInfo" class="muted"></div>
+
+    <div class="dashboard-actions">
       <button id="refreshBtn">↻ โหลดข้อมูลใหม่</button>
       <button id="logoutBtn" class="secondary">ออกจากระบบ</button>
+      <button type="button" class="secondary"
+        onclick="window.location.href='index.html'">
+        ← กลับหน้าหลัก
+      </button>
     </div>
+  </div>
+</section>
+
 
     
 <section id="statsSection" class="card">
