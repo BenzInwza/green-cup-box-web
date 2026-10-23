@@ -280,6 +280,48 @@ details[open] .collapse-icon { transform: rotate(180deg); }
     transition: none !important;
   }
 }
+  
+/* รูปเล็กในรายการตรวจ */
+#pendingList .photo {
+  width: 180px;
+  height: 135px;
+  object-fit: cover;
+  margin: 10px 0;
+  cursor: zoom-in;
+}
+
+/* หน้าต่างดูรูปใหญ่ */
+#photoModal {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(0, 0, 0, .88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+#photoModal.hidden {
+  display: none !important;
+}
+
+#photoModal img {
+  max-width: 100%;
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: 12px;
+}
+
+#photoModal .modalClose {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: auto;
+  background: white;
+  color: #222;
+}
+
 </style>
 
 </head>
