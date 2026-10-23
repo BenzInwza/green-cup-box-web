@@ -1150,31 +1150,95 @@ async function reviewItem(item, status, note, box, points = 1) {
 }
 
 
+
+let historyRows = [];
+let historyPage = 1;
+const historyPageSize = 10;
+
+function renderHistory() {
+  const el = $("historyList");
+  const query = ($("historySearch")?.value || "").trim().toLowerCase();
+
+  const filtered = historyRows.filter(item =>
+    String(item.display_name || item.user_id || "").toLowerCase().includes(query) ||
+    String(item.id ?? "").toLowerCase().includes(query)
+  );
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / historyPageSize));
+  historyPage = Math.min(historyPage, totalPages);
+
+  const start = (historyPage - 1) * historyPageSize;
+  const pageRows = filtered.slice(start, start + historyPageSize);
+
+  el.innerHTML = filtered.length
+    ? pageRows.map(item => `
+      <div class="item">
+        <strong>${escapeHTML(item.display_name || item.user_id || "-")}</strong>
+        <div class="status ${statusClass(item.status)}">${escapeHTML(statusText(item.status))}</div>
+        <div class="muted">รหัสรายการ: ${escapeHTML(item.id)}</div>
+        <div class="muted">ประเภท: ${escapeHTML(item.checkin_type || "-")}</div>
+        <div class="muted">คะแนนที่ให้: ${escapeHTML(item.points_awarded ?? 0)}</div>
+        <div class="muted">ผู้ตรวจ: ${escapeHTML(item.reviewer_name || item.reviewed_by || "-")}</div>
+        <div class="muted">เวลาตรวจ: ${escapeHTML(dateText(item.reviewed_at))}</div>
+        <div>หมายเหตุ: ${escapeHTML(item.review_note || "-")}</div>
+      </div>`).join("")
+    : "ไม่พบประวัติที่ตรงกับคำค้นหา";
+
+  $("historyPageInfo").textContent =
+    `หน้า ${historyPage} / ${totalPages} · พบ ${filtered.length} รายการ`;
+  $("historyPrev").disabled = historyPage <= 1;
+  $("historyNext").disabled = historyPage >= totalPages;
+}
+
 async function loadHistory() {
   const el = $("historyList");
   el.textContent = "กำลังโหลดประวัติ...";
-  const {data,error} = await db.rpc("admin_get_review_history",{p_limit:50});
+
+  const { data, error } = await db.rpc(
+    "admin_get_review_history",
+    { p_limit: 50 }
+  );
+
   if (error) {
     el.textContent = "โหลดประวัติไม่สำเร็จ: " + error.message;
     return;
   }
-  const rows = Array.isArray(data) ? data : [];
-  if (!rows.length) {
-    el.textContent = "ยังไม่มีประวัติการตรวจรูป";
-    return;
+
+  historyRows = Array.isArray(data) ? data : [];
+  historyPage = 1;
+
+  const search = $("historySearch");
+  if (search && search.dataset.bound !== "1") {
+    search.addEventListener("input", () => {
+      historyPage = 1;
+      renderHistory();
+    });
+    search.dataset.bound = "1";
   }
-  el.innerHTML = rows.map(item => `
-    <div class="item">
-      <strong>${escapeHTML(item.display_name || item.user_id || "-")}</strong>
-      <div class="status ${statusClass(item.status)}">${escapeHTML(statusText(item.status))}</div>
-      <div class="muted">รหัสรายการ: ${escapeHTML(item.id)}</div>
-      <div class="muted">ประเภท: ${escapeHTML(item.checkin_type || "-")}</div>
-      <div class="muted">คะแนนที่ให้: ${escapeHTML(item.points_awarded ?? 0)}</div>
-      <div class="muted">ผู้ตรวจ: ${escapeHTML(item.reviewer_name || item.reviewed_by || "-")}</div>
-      <div class="muted">เวลาตรวจ: ${escapeHTML(dateText(item.reviewed_at))}</div>
-      <div>หมายเหตุ: ${escapeHTML(item.review_note || "-")}</div>
-    </div>`).join("");
+
+  const prev = $("historyPrev");
+  if (prev && prev.dataset.bound !== "1") {
+    prev.addEventListener("click", () => {
+      if (historyPage > 1) {
+        historyPage--;
+        renderHistory();
+      }
+    });
+    prev.dataset.bound = "1";
+  }
+
+  const next = $("historyNext");
+  if (next && next.dataset.bound !== "1") {
+    next.addEventListener("click", () => {
+      historyPage++;
+      renderHistory();
+    });
+    next.dataset.bound = "1";
+  }
+
+  renderHistory();
 }
+
 
 async function loadMembers() {
   const el = $("membersList");
