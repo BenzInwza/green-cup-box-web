@@ -315,131 +315,6 @@ details[open] .collapse-icon { transform: rotate(180deg); }
 }
 
 
-
-/* จัดการ์ดตรวจรูป */
-#pendingList .item {
-  display: grid;
-  grid-template-columns: 140px minmax(0, 1fr);
-  grid-template-areas:
-    "title title"
-    "info info"
-    "photo review"
-    "note review"
-    "reject reject";
-  gap: 12px;
-  align-items: start;
-  padding: 16px 0;
-  min-width: 0;
-}
-
-#pendingList .pendingTitle {
-  grid-area: title;
-  min-width: 0;
-}
-
-#pendingList .pendingTitle h3 {
-  margin: 0;
-}
-
-#pendingList .pendingInfo {
-  grid-area: info;
-  min-width: 0;
-}
-
-#pendingList .pendingInfo .muted {
-  margin: 5px 0;
-  overflow-wrap: anywhere;
-}
-
-#pendingList .pendingPhoto {
-  grid-area: photo;
-  min-width: 0;
-}
-
-#pendingList .pendingPhoto .photo {
-  display: block;
-  width: 100%;
-  height: 150px;
-  max-height: 150px;
-  object-fit: contain;
-  margin: 0;
-  cursor: pointer;
-}
-
-#pendingList .reviewNoteWrap {
-  grid-area: note;
-  min-width: 0;
-}
-
-#pendingList .reviewNoteWrap label {
-  display: block;
-  margin-bottom: 5px;
-  font-size: 13px;
-}
-
-#pendingList .reviewNote {
-  display: block;
-  width: 100%;
-  min-height: 90px;
-  box-sizing: border-box;
-  margin: 0;
-}
-
-#pendingList .item > h3 {
-  grid-area: review;
-  align-self: start;
-  margin: 0;
-}
-
-#pendingList .item > p.muted {
-  grid-area: review;
-  align-self: start;
-  margin: 30px 0 0;
-}
-
-/* ปุ่มให้คะแนนอยู่ฝั่งขวา */
-#pendingList .item .actions {
-  grid-area: review;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 65px;
-  min-width: 0;
-}
-
-#pendingList .item .actions button,
-#pendingList .item .approveBoth {
-  width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
-  margin: 0;
-  overflow-wrap: anywhere;
-}
-
-#pendingList .item .approveBoth {
-  grid-area: review;
-  align-self: end;
-  margin-top: 0;
-  transform: translateY(0);
-}
-
-/* ปุ่มปฏิเสธอยู่ด้านล่าง */
-#pendingList .item .rejectBtn {
-  grid-area: reject;
-  width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
-  margin: 0;
-}
-
-/* มือถือ */
-@media (max-width: 600px) {
-  #pendingList .item {
-    grid-template-columns: 105px minmax(0, 1fr);
-    grid-template-areas:
-      "title title"
-      "info info"
-
 /* การ์ดตรวจรูป Green Cup Box */
 #pendingList .item {
   display: grid;
@@ -448,7 +323,8 @@ details[open] .collapse-icon { transform: rotate(180deg); }
     "title title"
     "info info"
     "photo review"
-    "note note";
+    "note note"
+    "reject reject";
   gap: 12px;
   align-items: start;
   padding: 18px 0;
@@ -469,7 +345,7 @@ details[open] .collapse-icon { transform: rotate(180deg); }
   grid-area: info;
   display: flex;
   flex-wrap: wrap;
-  gap: 4px 14px;
+  gap: 5px 14px;
   min-width: 0;
 }
 
@@ -490,7 +366,7 @@ details[open] .collapse-icon { transform: rotate(180deg); }
   max-height: 170px;
   object-fit: contain;
   margin: 0;
-  cursor: pointer;
+  cursor: zoom-in;
   box-sizing: border-box;
 }
 
@@ -520,18 +396,10 @@ details[open] .collapse-icon { transform: rotate(180deg); }
   width: 100%;
   min-width: 0;
   margin: 0;
-  padding: 11px 6px;
+  padding: 11px 8px;
   box-sizing: border-box;
   overflow-wrap: anywhere;
   line-height: 1.4;
-}
-
-#pendingList .item .approveBoth {
-  grid-area: auto;
-}
-
-#pendingList .item .rejectBtn {
-  grid-area: auto;
 }
 
 #pendingList .reviewNoteWrap {
@@ -542,6 +410,7 @@ details[open] .collapse-icon { transform: rotate(180deg); }
 #pendingList .reviewNoteWrap label {
   display: block;
   margin-bottom: 6px;
+  font-size: 13px;
 }
 
 #pendingList .reviewNote {
@@ -552,6 +421,14 @@ details[open] .collapse-icon { transform: rotate(180deg); }
   margin: 0;
 }
 
+#pendingList .item .rejectBtn {
+  grid-area: reject;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
 /* มือถือ */
 @media (max-width: 600px) {
   #pendingList .item {
@@ -560,43 +437,12 @@ details[open] .collapse-icon { transform: rotate(180deg); }
       "title title"
       "info info"
       "photo review"
-      "note note";
+      "note note"
+      "reject reject";
     gap: 10px;
     padding: 14px 0;
   }
-
-  #pendingList .pendingInfo {
-    gap: 5px 10px;
-    font-size: 13px;
-  }
-
-  #pendingList .pendingPhoto .photo {
-    height: 145px;
-    max-height: 145px;
-  }
-
-  #pendingList .reviewActions h3 {
-    font-size: 14px;
-  }
-
-  #pendingList .reviewActions > .muted {
-    font-size: 12px;
-  }
-
-  #pendingList .item .actions {
-    gap: 7px;
-  }
-
-  #pendingList .item .actions button {
-    font-size: 12px;
-    padding: 10px 5px;
-  }
-
-  #pendingList .reviewNote {
-    min-height: 70px;
-  }
 }
-
 </style>
 
 </head>
