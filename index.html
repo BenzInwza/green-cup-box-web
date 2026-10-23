@@ -1196,32 +1196,62 @@ $("photoStatsRefresh").addEventListener("click", loadPhotoStats);
 
   
 
-async function refreshAll(){
- const results = await Promise.allSettled([
-   loadMember(),
-   loadRewards(),
-   loadHistory(),
-   loadMemberCount(),
-   loadMyCheckins(),
-   loadPhotoStats(),
-   loadLeaderboard()
- ]);
 
- const failed = results.find(r => r.status === "rejected");
+async function refreshAll() {
+  // ตรวจสอบเซสชันก่อนโหลดข้อมูล
+  const { data: sessionData, error: sessionError } =
+    await db.auth.getSession();
 
- if(failed){
-   console.error("refreshAll", failed.reason);
-   msg("authMessage","ข้อมูลบางส่วนโหลดไม่สำเร็จ กรุณาลองรีเฟรช","error");
- }
+  if (sessionError) {
+    throw sessionError;
+  }
 
- if(currentUser){
-   const p = await getProfile().catch(() => null);
-   if(p?.role === "admin"){
-     await loadAdminCheckins();
-     await loadAdminMembers();
-   }
- }
+  currentUser = sessionData.session?.user ?? null;
+  updateMenu();
+
+  // โหลดข้อมูลสมาชิกก่อน เพื่อให้รู้สถานะล็อกอินแน่นอน
+  await loadMember();
+
+  // โหลดส่วนอื่นแยกกัน เพื่อให้ส่วนหนึ่งพังไม่ทำให้ส่วนอื่นหาย
+  const tasks = [
+    ["ของรางวัล", loadRewards],
+    ["ประวัติการแลก", loadHistory],
+    ["จำนวนสมาชิก", loadMemberCount],
+    ["ประวัติเช็กอิน", loadMyCheckins],
+    ["สถิติรูป", loadPhotoStats],
+    ["อันดับสมาชิก", loadLeaderboard]
+  ];
+
+  const results = await Promise.allSettled(
+    tasks.map(([, fn]) => fn())
+  );
+
+  const failed = results
+    .map((result, i) => ({
+      ...result,
+      name: tasks[i][0]
+    }))
+    .filter(result => result.status === "rejected");
+
+  if (failed.length) {
+    console.error("refreshAll errors:", failed);
+
+    msg(
+      "authMessage",
+      "เข้าสู่ระบบแล้ว แต่โหลดบางส่วนไม่สำเร็จ: " +
+        failed.map(item => item.name).join(", "),
+      "error"
+    );
+  }
+
+  if (currentUser && currentProfileRole === "admin") {
+    await Promise.allSettled([
+      loadAdminCheckins(),
+      loadAdminMembers()
+    ]);
+  }
 }
+
 
 $("loginBtn").addEventListener("click",signIn);$("signupBtn").addEventListener("click",signUp);$("saveNameBtn").addEventListener("click",saveName);$("logoutBtn").addEventListener("click",signOut);
 $("refreshBtn").addEventListener("click",refreshAll);$("historyRefreshBtn").addEventListener("click",loadHistory);
