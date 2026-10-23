@@ -853,19 +853,22 @@ async function loadPending() {
   <div class="muted">ส่งเมื่อ: ${escapeHTML(dateText(item.created_at))}</div>
 </div>
       
-${photoURL
-  ? `<img
-       class="photo previewImage"
-       src="${escapeHTML(photoURL)}"
-       alt="รูปเช็กอิน"
-       data-photo="${escapeHTML(photoURL)}"
-       onclick="openPhotoModal(this.dataset.photo)"
-     >`
-  : "<p>เปิดรูปไม่ได้ ตรวจสอบ photo_path และสิทธิ์ Storage</p>"}
+<div class="pendingPhoto">
+  ${photoURL
+    ? `<img
+         class="photo previewImage"
+         src="${escapeHTML(photoURL)}"
+         alt="รูปเช็กอิน"
+         data-photo="${escapeHTML(photoURL)}"
+         onclick="openPhotoModal(this.dataset.photo)"
+       >`
+    : '<p class="muted">เปิดรูปไม่ได้ ตรวจสอบ photo_path และสิทธิ์ Storage</p>'}
+</div>
 
-
-      <label>หมายเหตุการตรวจ (ถ้ามี)</label>
-      <textarea class="reviewNote" placeholder="ใส่เหตุผลหากปฏิเสธ หรือหมายเหตุเพิ่มเติม"></textarea>
+      <div class="reviewNoteWrap">
+  <label>หมายเหตุการตรวจ (ถ้ามี)</label>
+  <textarea class="reviewNote" placeholder="ใส่เหตุผลหากปฏิเสธ หรือหมายเหตุเพิ่มเติม"></textarea>
+</div>
 
       <h3>เลือกสิ่งของที่ตรวจพบ</h3>
       <p class="muted">เลือกให้ตรงกับรูปก่อนอนุมัติคะแนน</p>
