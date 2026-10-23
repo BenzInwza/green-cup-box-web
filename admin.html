@@ -439,32 +439,161 @@ details[open] .collapse-icon { transform: rotate(180deg); }
     grid-template-areas:
       "title title"
       "info info"
+
+/* การ์ดตรวจรูป Green Cup Box */
+#pendingList .item {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  grid-template-areas:
+    "title title"
+    "info info"
+    "photo review"
+    "note note";
+  gap: 12px;
+  align-items: start;
+  padding: 18px 0;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+#pendingList .pendingTitle {
+  grid-area: title;
+  min-width: 0;
+}
+
+#pendingList .pendingTitle h3 {
+  margin: 0;
+}
+
+#pendingList .pendingInfo {
+  grid-area: info;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  min-width: 0;
+}
+
+#pendingList .pendingInfo .muted {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+#pendingList .pendingPhoto {
+  grid-area: photo;
+  min-width: 0;
+}
+
+#pendingList .pendingPhoto .photo {
+  display: block;
+  width: 100%;
+  height: 170px;
+  max-height: 170px;
+  object-fit: contain;
+  margin: 0;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+#pendingList .reviewActions {
+  grid-area: review;
+  min-width: 0;
+}
+
+#pendingList .reviewActions h3 {
+  margin: 0 0 6px;
+  font-size: 16px;
+}
+
+#pendingList .reviewActions > .muted {
+  margin: 0 0 10px;
+  font-size: 13px;
+}
+
+#pendingList .item .actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+#pendingList .item .actions button {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 11px 6px;
+  box-sizing: border-box;
+  overflow-wrap: anywhere;
+  line-height: 1.4;
+}
+
+#pendingList .item .approveBoth {
+  grid-area: auto;
+}
+
+#pendingList .item .rejectBtn {
+  grid-area: auto;
+}
+
+#pendingList .reviewNoteWrap {
+  grid-area: note;
+  min-width: 0;
+}
+
+#pendingList .reviewNoteWrap label {
+  display: block;
+  margin-bottom: 6px;
+}
+
+#pendingList .reviewNote {
+  display: block;
+  width: 100%;
+  min-height: 76px;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+/* มือถือ */
+@media (max-width: 600px) {
+  #pendingList .item {
+    grid-template-columns: 110px minmax(0, 1fr);
+    grid-template-areas:
+      "title title"
+      "info info"
       "photo review"
-      "note review"
-      "reject reject";
+      "note note";
     gap: 10px;
-    padding: 12px 0;
+    padding: 14px 0;
+  }
+
+  #pendingList .pendingInfo {
+    gap: 5px 10px;
+    font-size: 13px;
   }
 
   #pendingList .pendingPhoto .photo {
-    height: 120px;
-    max-height: 120px;
+    height: 145px;
+    max-height: 145px;
   }
 
-  #pendingList .reviewNote {
-    min-height: 75px;
+  #pendingList .reviewActions h3 {
+    font-size: 14px;
+  }
+
+  #pendingList .reviewActions > .muted {
     font-size: 12px;
   }
 
   #pendingList .item .actions {
-    margin-top: 65px;
     gap: 7px;
   }
 
-  #pendingList .item .actions button,
-  #pendingList .item .approveBoth {
+  #pendingList .item .actions button {
     font-size: 12px;
-    padding: 10px 6px;
+    padding: 10px 5px;
+  }
+
+  #pendingList .reviewNote {
+    min-height: 70px;
   }
 }
 
