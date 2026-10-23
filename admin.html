@@ -445,64 +445,38 @@ details[open] .collapse-icon { transform: rotate(180deg); }
 }
 
 
-/* ปรับหัวเว็บแอดมินให้พอดีจอมือถือ */
+
 header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
-  padding: 12px;
+  gap: 10px;
+  padding: 14px;
   width: 100%;
   box-sizing: border-box;
 }
 
 .header-title {
   flex: 1;
-  min-width: 0;
+  min-width: 180px;
 }
 
 .header-title h1 {
   margin: 0;
-  font-size: 17px;
-  overflow-wrap: anywhere;
+  font-size: 21px;
+  white-space: nowrap;
 }
 
 .header-title p {
-  margin: 4px 0 0;
-  font-size: 10px;
-  line-height: 1.4;
+  margin: 5px 0 0;
+  font-size: 12px;
 }
 
 .home-btn {
   flex-shrink: 0;
-  padding: 7px 8px;
-  font-size: 11px;
+  padding: 8px 12px;
+  font-size: 13px;
   white-space: nowrap;
-}
-
-#menuBtn {
-  flex-shrink: 0;
-  padding: 8px 10px;
-  font-size: 20px;
-}
-
-@media (max-width: 380px) {
-  header {
-    gap: 5px;
-    padding: 8px;
-  }
-
-  .header-title h1 {
-    font-size: 14px;
-  }
-
-  .header-title p {
-    font-size: 9px;
-  }
-
-  .home-btn {
-    padding: 6px;
-    font-size: 10px;
-  }
 }
 
 
