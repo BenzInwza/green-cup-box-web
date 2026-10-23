@@ -135,15 +135,39 @@ details[open] .collapse-icon {
       <button id="logoutBtn" class="secondary">ออกจากระบบ</button>
     </div>
 
-    <section id="statsSection" class="card">
-      <h2>📊 สถิติระบบ</h2>
-      <div id="stats" class="grid">
-        <div class="stat">สมาชิก<strong>—</strong></div>
-        <div class="stat">รูปเช็กอิน<strong>—</strong></div>
-        <div class="stat">ของรางวัล<strong>—</strong></div>
-        <div class="stat">รายการแลกรางวัล<strong>—</strong></div>
-      </div>
-    </section>
+    
+<section id="statsSection" class="card">
+  <div class="sectionTitle">
+    <h2>📊 แดชบอร์ดสถิติระบบ</h2>
+    <button id="refreshStatsBtn" type="button" class="secondary">
+      ↻ อัปเดตสถิติ
+    </button>
+  </div>
+
+  <p class="muted">ภาพรวมการใช้งาน Green Cup Box</p>
+
+  <div id="stats" class="grid">
+    <div class="stat">สมาชิกทั้งหมด<strong>—</strong></div>
+    <div class="stat">รูปเช็กอินทั้งหมด<strong>—</strong></div>
+    <div class="stat">รูปที่รอตรวจ<strong>—</strong></div>
+    <div class="stat">อนุมัติแล้ว<strong>—</strong></div>
+    <div class="stat">ปฏิเสธแล้ว<strong>—</strong></div>
+    <div class="stat">คะแนนจากรูปที่อนุมัติ<strong>—</strong></div>
+    <div class="stat">ของรางวัล<strong>—</strong></div>
+    <div class="stat">รายการแลกรางวัล<strong>—</strong></div>
+  </div>
+
+  <div style="margin-top:18px">
+    <h3>📅 สรุปการตรวจรูปวันนี้</h3>
+    <div id="todayStats" class="grid">
+      <div class="stat">ตรวจแล้ววันนี้<strong>—</strong></div>
+      <div class="stat">รอการตรวจ<strong>—</strong></div>
+    </div>
+  </div>
+
+  <p id="statsUpdatedAt" class="muted">ยังไม่ได้อัปเดตสถิติ</p>
+</section>
+
 
     <section id="pendingSection" class="card">
       <h2>📸 รูปที่รอตรวจ</h2>
