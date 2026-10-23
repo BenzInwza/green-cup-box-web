@@ -421,6 +421,16 @@ details[open] .collapse-icon { transform: rotate(180deg); }
       </div>
 
       <div id="pendingList">กำลังโหลดรายการ...</div>
+      
+<div id="pendingPagination"
+     style="display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:16px;">
+  <button type="button" id="prevPendingPage"
+          class="secondary" style="width:auto;">← ก่อนหน้า</button>
+  <span id="pendingPageInfo" class="muted">หน้า 1</span>
+  <button type="button" id="nextPendingPage"
+          class="secondary" style="width:auto;">ถัดไป →</button>
+</div>
+
     </section>
 
 
@@ -705,11 +715,17 @@ async function loadPending() {
       <div class="muted">ประเภทที่ส่งมา: ${escapeHTML(item.checkin_type || "-")}</div>
       <div class="muted">ส่งเมื่อ: ${escapeHTML(dateText(item.created_at))}</div>
 
-      ${photoURL
-        ? `<a href="${escapeHTML(photoURL)}" target="_blank" rel="noopener">
-             <img class="photo" src="${escapeHTML(photoURL)}" alt="รูปเช็กอิน">
-           </a>`
-        : "<p>เปิดรูปไม่ได้ ตรวจสอบ photo_path และสิทธิ์ Storage</p>"}
+      
+${photoURL
+  ? `<img
+       class="photo previewImage"
+       src="${escapeHTML(photoURL)}"
+       alt="รูปเช็กอิน"
+       data-photo="${escapeHTML(photoURL)}"
+       onclick="openPhotoModal(this.dataset.photo)"
+     >`
+  : "<p>เปิดรูปไม่ได้ ตรวจสอบ photo_path และสิทธิ์ Storage</p>"}
+
 
       <label>หมายเหตุการตรวจ (ถ้ามี)</label>
       <textarea class="reviewNote" placeholder="ใส่เหตุผลหากปฏิเสธ หรือหมายเหตุเพิ่มเติม"></textarea>
@@ -776,26 +792,46 @@ async function loadPending() {
 
   
 
+
+let pendingPage = 1;
+const pendingPageSize = 10;
+
 function filterPending() {
-  const input = document.getElementById("pendingSearch");
-  const list = document.getElementById("pendingList");
+  const input = $("pendingSearch");
+  const list = $("pendingList");
+  const info = $("pendingPageInfo");
+  const prev = $("prevPendingPage");
+  const next = $("nextPendingPage");
 
   if (!input || !list) return;
 
   const keyword = input.value.trim().toLowerCase();
-  const items = list.querySelectorAll(".item");
-  let visibleCount = 0;
+  const items = Array.from(list.querySelectorAll(".item"));
 
-  items.forEach((item) => {
-    const text = item.textContent.toLowerCase();
-    const matched = text.includes(keyword);
+  const matchedItems = items.filter(item =>
+    item.textContent.toLowerCase().includes(keyword)
+  );
 
-    item.style.display = matched ? "" : "none";
+  const totalPages = Math.max(
+    1, Math.ceil(matchedItems.length / pendingPageSize)
+  );
 
-    if (matched) visibleCount++;
+  if (pendingPage > totalPages) pendingPage = totalPages;
+  if (pendingPage < 1) pendingPage = 1;
+
+  const start = (pendingPage - 1) * pendingPageSize;
+  const end = start + pendingPageSize;
+
+  items.forEach(item => {
+    item.style.display = "none";
   });
 
-  let emptyMessage = document.getElementById("pendingSearchEmpty");
+  matchedItems.forEach((item, index) => {
+    item.style.display =
+      index >= start && index < end ? "" : "none";
+  });
+
+  let emptyMessage = $("pendingSearchEmpty");
 
   if (!emptyMessage) {
     emptyMessage = document.createElement("p");
@@ -804,14 +840,40 @@ function filterPending() {
     list.appendChild(emptyMessage);
   }
 
-  emptyMessage.textContent =
-    keyword && visibleCount === 0
+  if (matchedItems.length === 0) {
+    emptyMessage.textContent = keyword
       ? "ไม่พบรายการที่ตรงกับคำค้นหา"
-      : "";
+      : "ไม่มีรูปที่รอตรวจในขณะนี้";
+    emptyMessage.style.display = "";
+  } else {
+    emptyMessage.style.display = "none";
+  }
 
-  emptyMessage.style.display =
-    keyword && visibleCount === 0 ? "" : "none";
+  if (info) {
+    info.textContent =
+      `หน้า ${pendingPage} / ${totalPages} · พบ ${matchedItems.length} รายการ`;
+  }
+
+  if (prev) prev.disabled = pendingPage <= 1;
+  if (next) next.disabled = pendingPage >= totalPages;
 }
+
+$("prevPendingPage").addEventListener("click", () => {
+  if (pendingPage > 1) {
+    pendingPage--;
+    filterPending();
+  }
+});
+
+$("nextPendingPage").addEventListener("click", () => {
+  pendingPage++;
+  filterPending();
+});
+
+$("pendingSearch").addEventListener("input", () => {
+  pendingPage = 1;
+  filterPending();
+});
 
 
 async function reviewItem(item, status, note, box, points = 1) {
@@ -1048,6 +1110,27 @@ db.auth.onAuthStateChange((event,session) => {
 });
 
 checkSession().catch(e => message("เริ่มระบบไม่สำเร็จ: " + e.message,true));
+  
+function openPhotoModal(url) {
+  $("largePhoto").src = url;
+  $("photoModal").classList.remove("hidden");
+}
+
+function closePhotoModal() {
+  $("photoModal").classList.add("hidden");
+  $("largePhoto").src = "";
+}
+
+$("closePhotoModal").addEventListener("click", closePhotoModal);
+
+$("photoModal").addEventListener("click", event => {
+  if (event.target === $("photoModal")) closePhotoModal();
+});
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") closePhotoModal();
+});
+
   </script>
 
 <button type="button" onclick="window.location.href='index.html'"
