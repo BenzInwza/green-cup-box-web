@@ -518,6 +518,17 @@ async function signIn(){
 
     if(error) throw error;
 
+const { data: userData, error: userError } =
+  await db.auth.getUser();
+
+if(userError) throw userError;
+
+currentUser = userData.user;
+
+if(!currentUser){
+  throw new Error("เข้าสู่ระบบแล้ว แต่ไม่พบข้อมูลผู้ใช้ กรุณาลองใหม่");
+}
+    
     const {data, error: claimError} = await db.rpc(
       "claim_active_user",
       {p_session_id: getActiveSessionId()}
