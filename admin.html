@@ -1049,14 +1049,6 @@ async function loadPending() {
       );
     });
 
-    box.querySelector(".approveBox").addEventListener("click", async () => {
-      await reviewItem(
-        item, "approved",
-        noteInput.value.trim() || "ตรวจพบ: กล่องข้าว",
-        box, 1
-      );
-    });
-
     box.querySelector(".approveBoth").addEventListener("click", async () => {
       await reviewItem(
         item, "approved",
