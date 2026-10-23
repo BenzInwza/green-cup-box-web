@@ -467,34 +467,35 @@ let currentUser = null, busy = false, selectedPhoto = null;
 let currentProfileRole = null;
 
   
+
 function updateEcoLevel(points) {
   const xp = Math.max(0, Number(points) || 0);
 
   let level, name, avatar, start, next;
 
-  if (xp < 100) {
+  if (xp < 10) {
     level = 1;
     name = "นักปลูกต้นกล้า";
     avatar = "🌱";
     start = 0;
-    next = 100;
-  } else if (xp < 250) {
+    next = 10;
+  } else if (xp < 20) {
     level = 2;
     name = "นักพิทักษ์สีเขียว";
     avatar = "🌿";
-    start = 100;
-    next = 250;
-  } else if (xp < 500) {
+    start = 10;
+    next = 20;
+  } else if (xp < 30) {
     level = 3;
     name = "ฮีโร่ลดขยะ";
     avatar = "🌳";
-    start = 250;
-    next = 500;
+    start = 20;
+    next = 30;
   } else {
     level = 4;
     name = "ตำนานรักษ์โลก";
     avatar = "🌍";
-    start = 500;
+    start = 30;
     next = null;
   }
 
@@ -513,7 +514,10 @@ function updateEcoLevel(points) {
       next.toLocaleString("th-TH") + " XP";
 
   $("ecoProgressFill").style.width = progress + "%";
-  $("ecoProgressBar").setAttribute("aria-valuenow", String(Math.round(progress)));
+  $("ecoProgressBar").setAttribute(
+    "aria-valuenow",
+    String(Math.round(progress))
+  );
 
   $("ecoCurrentPoints").textContent = xp.toLocaleString("th-TH");
   $("ecoCurrentXp").textContent = xp.toLocaleString("th-TH");
@@ -524,10 +528,6 @@ function updateEcoLevel(points) {
       " XP จะถึงเลเวล " + (level + 1);
 }
 
-function isAdmin() {
-  return currentUser &&
-    (currentProfileRole === "admin" || currentProfileRole === "owner");
-}
 
 function updateAdminVisibility() {
   const allowed = Boolean(isAdmin());
