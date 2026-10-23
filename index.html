@@ -528,7 +528,9 @@ function updateEcoLevel(points) {
       " XP จะถึงเลเวล " + (level + 1);
 }
 
-
+function isAdmin() {
+  return currentProfileRole === "admin";
+}
 function updateAdminVisibility() {
   const allowed = Boolean(isAdmin());
 
