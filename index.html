@@ -646,7 +646,7 @@ updateAdminVisibility();
 const name = p.display_name || "";
 $("memberName").textContent = name || "ยังไม่ได้ตั้งชื่อ";
 $("displayName").value = name;
- $("pointsValue").textContent=Number(p.points||0).toLocaleString("th-TH");$("pointsMessage").textContent="อัปเดตคะแนนเรียบร้อย";
+ $("pointsValue").textContent=Number(p.points||0).toLocaleString("th-TH");$("pointsMessage").textContent="อัปเดตคะแนนเรียบร้อย";updateEcoLevel(p.points);
  const locked=p.name_locked===true;$("displayName").disabled=locked;$("saveNameBtn").disabled=locked;
  msg("nameMessage",locked?"🔒 ตั้งชื่อแล้ว ไม่สามารถเปลี่ยนได้อีก":"คุณสามารถตั้งชื่อได้หนึ่งครั้ง");
 }
