@@ -463,6 +463,14 @@ details[open] .collapse-icon { transform: rotate(180deg); }
   </section>
 </main>
 
+<div id="photoModal" class="hidden" role="dialog"
+     aria-modal="true" aria-label="ดูรูปเช็กอินขนาดใหญ่">
+  <button type="button" class="modalClose" id="closePhotoModal">
+    ✕ ปิดรูป
+  </button>
+  <img id="largePhoto" src="" alt="รูปเช็กอินขนาดใหญ่">
+</div>
+
 <script>
 "use strict";
 
