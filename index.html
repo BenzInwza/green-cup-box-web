@@ -102,6 +102,149 @@ body {
   }
 }
 
+    
+.eco-level-card {
+  background: linear-gradient(145deg, #ffffff, #effbf0);
+  border: 1px solid #d8efdc;
+  overflow: hidden;
+}
+
+.eco-level-heading,
+.eco-xp-row,
+.eco-level-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.eco-eyebrow {
+  margin: 0 0 5px;
+  color: #42945b;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.eco-level-heading h2 {
+  margin: 0;
+}
+
+.eco-leaf {
+  font-size: 30px;
+  background: #e0f5e3;
+  padding: 9px;
+  border-radius: 15px;
+}
+
+.eco-level-profile {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin: 20px 0;
+}
+
+.eco-avatar {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  border-radius: 20px;
+  background: #dff5e3;
+  font-size: 35px;
+}
+
+.eco-level-info {
+  min-width: 0;
+}
+
+.eco-level-info h3 {
+  margin: 0 0 5px;
+  color: #216c3a;
+  font-size: 19px;
+  overflow-wrap: anywhere;
+}
+
+.eco-level-info p {
+  margin: 0;
+  color: #54805e;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.eco-xp-row {
+  margin-bottom: 9px;
+  color: #315d3b;
+  font-size: 13px;
+}
+
+.eco-xp-row strong {
+  white-space: nowrap;
+}
+
+.eco-progress-track {
+  height: 13px;
+  border-radius: 99px;
+  background: #dcefe0;
+  overflow: hidden;
+}
+
+.eco-progress-fill {
+  width: 0%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #8ddd91, #32ad61);
+  transition: width 0.5s ease;
+}
+
+.eco-next-level {
+  color: #52785a;
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 10px 0 18px;
+}
+
+.eco-level-footer {
+  border-top: 1px solid #dcefe0;
+  padding-top: 15px;
+}
+
+.eco-level-footer > div {
+  min-width: 0;
+}
+
+.eco-level-footer > div:last-child {
+  text-align: right;
+}
+
+.eco-level-footer span {
+  color: #68816d;
+  font-size: 12px;
+}
+
+.eco-level-footer strong {
+  display: block;
+  margin-top: 5px;
+  color: #216c3a;
+  font-size: 19px;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 360px) {
+  .eco-level-card {
+    padding: 14px;
+  }
+
+  .eco-level-info h3 {
+    font-size: 16px;
+  }
+
+  .eco-level-footer strong {
+    font-size: 16px;
+  }
+}
+
   </style>
 </head>
 <body class="page-member">
@@ -125,6 +268,56 @@ body {
 <button id="menuLogoutBtn" class="menu-item danger hidden">🚪 ออกจากระบบ</button>
 </nav></div></div></header>
 <main>
+  
+<!-- การ์ดเลเวลสมาชิก Green Cup Box -->
+<section class="card eco-level-card" id="ecoLevelCard">
+  <div class="eco-level-heading">
+    <div>
+      <p class="eco-eyebrow">YOUR ECO JOURNEY 🌍</p>
+      <h2>🌱 เลเวลสมาชิก</h2>
+    </div>
+    <span class="eco-leaf">🍃</span>
+  </div>
+
+  <div class="eco-level-profile">
+    <div class="eco-avatar" id="ecoLevelAvatar">🌱</div>
+    <div class="eco-level-info">
+      <h3 id="ecoLevelName">นักปลูกต้นกล้า</h3>
+      <p id="ecoLevelLabel">LEVEL 1 · ECO MEMBER</p>
+    </div>
+  </div>
+
+  <div class="eco-xp-row">
+    <span>ความก้าวหน้า XP</span>
+    <strong id="ecoXpText">0 / 100 XP</strong>
+  </div>
+
+  <div class="eco-progress-track"
+       id="ecoProgressBar"
+       role="progressbar"
+       aria-label="ความก้าวหน้าเลเวลสมาชิก"
+       aria-valuemin="0"
+       aria-valuemax="100"
+       aria-valuenow="0">
+    <div class="eco-progress-fill" id="ecoProgressFill"></div>
+  </div>
+
+  <p class="eco-next-level" id="ecoNextLevel">
+    🌿 เริ่มสะสมคะแนนเพื่อเติบโตไปด้วยกัน!
+  </p>
+
+  <div class="eco-level-footer">
+    <div>
+      <span>คะแนนสะสม</span>
+      <strong>⭐ <span id="ecoCurrentPoints">0</span></strong>
+    </div>
+    <div>
+      <span>XP ของคุณ</span>
+      <strong>🍃 <span id="ecoCurrentXp">0</span></strong>
+    </div>
+  </div>
+</section>
+
 <section class="card" id="memberCard"><h2>👤 สมาชิก / เข้าสู่ระบบ</h2>
 <div id="authArea"><label for="email">อีเมล</label><input id="email" type="email" autocomplete="email" placeholder="กรอกอีเมล">
 <label for="password">รหัสผ่าน</label><input id="password" type="password" autocomplete="current-password" placeholder="กรอกรหัสผ่านที่จำได้">
