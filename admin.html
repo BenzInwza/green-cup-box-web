@@ -625,9 +625,25 @@ header {
       <span>⌄</span>
     </summary>
 
-    <div style="margin-top:14px">
-      <div id="historyList">กำลังโหลดประวัติ...</div>
-    </div>
+    
+<div style="margin-top:14px">
+  <input
+    id="historySearch"
+    type="search"
+    placeholder="🔎 ค้นหาชื่อสมาชิก / รหัสรายการ"
+    style="width:100%;box-sizing:border-box;padding:11px;border:1px solid #d1d5db;border-radius:10px;margin-bottom:12px"
+  >
+
+  <div id="historyList">กำลังโหลดประวัติ...</div>
+
+  <div id="historyPagination"
+       style="display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px">
+    <button id="historyPrev" type="button">← ก่อนหน้า</button>
+    <span id="historyPageInfo">หน้า 1</span>
+    <button id="historyNext" type="button">หน้าถัดไป →</button>
+  </div>
+</div>
+
   </details>
 </section>
 
