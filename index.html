@@ -1226,8 +1226,44 @@ async function refreshAll(){
 $("loginBtn").addEventListener("click",signIn);$("signupBtn").addEventListener("click",signUp);$("saveNameBtn").addEventListener("click",saveName);$("logoutBtn").addEventListener("click",signOut);
 $("refreshBtn").addEventListener("click",refreshAll);$("historyRefreshBtn").addEventListener("click",loadHistory);
 $("submitCheckinBtn").addEventListener("click",submitCheckin);$("checkinRefreshBtn").addEventListener("click",loadMyCheckins);$("adminRefreshBtn").addEventListener("click",loadAdminCheckins);$("adminMembersRefreshBtn").addEventListener("click",loadAdminMembers);$("adminMemberSearch").addEventListener("input",loadAdminMembers);
-db.auth.onAuthStateChange(event=>{if(event==="SIGNED_OUT"){currentUser=null;updateMenu();$("historyList").textContent="เข้าสู่ระบบเพื่อดูประวัติการแลก";$("myCheckins").textContent="เข้าสู่ระบบเพื่อดูประวัติเช็กอิน";$("adminCard").classList.add("hidden");$("adminMembersCard").classList.add("hidden");}});
-refreshAll();
+db.auth.onAuthStateChange((event, session) => {
+  if (event === "SIGNED_OUT") {
+    currentUser = null;
+    currentProfileRole = null;
+    updateMenu();
+
+    $("authArea").classList.remove("hidden");
+    $("memberArea").classList.add("hidden");
+
+    $("historyList").textContent = "เข้าสู่ระบบเพื่อดูประวัติการแลก";
+    $("myCheckins").textContent = "เข้าสู่ระบบเพื่อดูประวัติเช็กอิน";
+    $("adminCard").classList.add("hidden");
+    $("adminMembersCard").classList.add("hidden");
+  }
+});
+
+(async function initApp() {
+  try {
+    const { data, error } = await db.auth.getSession();
+
+    if (error) throw error;
+
+    if (data.session) {
+      currentUser = data.session.user;
+    } else {
+      currentUser = null;
+    }
+
+    await refreshAll();
+  } catch (e) {
+    console.error("initApp error:", e);
+    msg(
+      "authMessage",
+      "โหลดข้อมูลเริ่มต้นไม่สำเร็จ กรุณารีเฟรชเว็บ",
+      "error"
+    );
+  }
+})();
 </script>
 </body>
 </html>
