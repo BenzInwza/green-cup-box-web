@@ -363,11 +363,24 @@ details[open] .collapse-icon { transform: rotate(180deg); }
 </section>
 
 
+    
     <section id="pendingSection" class="card">
       <h2>📸 รูปที่รอตรวจ</h2>
       <p class="muted">อนุมัติรูปเพื่อเพิ่ม 1 คะแนนต่อรายการ หากปฏิเสธต้องใส่เหตุผล</p>
+
+      <div class="search-box" style="margin:12px 0;">
+        <input
+          type="search"
+          id="pendingSearch"
+          placeholder="🔍 ค้นหาชื่อสมาชิก..."
+          style="width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;box-sizing:border-box;"
+          oninput="filterPending()"
+        >
+      </div>
+
       <div id="pendingList">กำลังโหลดรายการ...</div>
     </section>
+
 
    
 <section id="historySection" class="card">
@@ -708,7 +721,48 @@ async function loadPending() {
 
     el.appendChild(box);
   }
+    filterPending();
 }
+
+  
+
+function filterPending() {
+  const input = document.getElementById("pendingSearch");
+  const list = document.getElementById("pendingList");
+
+  if (!input || !list) return;
+
+  const keyword = input.value.trim().toLowerCase();
+  const items = list.querySelectorAll(".item");
+  let visibleCount = 0;
+
+  items.forEach((item) => {
+    const text = item.textContent.toLowerCase();
+    const matched = text.includes(keyword);
+
+    item.style.display = matched ? "" : "none";
+
+    if (matched) visibleCount++;
+  });
+
+  let emptyMessage = document.getElementById("pendingSearchEmpty");
+
+  if (!emptyMessage) {
+    emptyMessage = document.createElement("p");
+    emptyMessage.id = "pendingSearchEmpty";
+    emptyMessage.className = "muted";
+    list.appendChild(emptyMessage);
+  }
+
+  emptyMessage.textContent =
+    keyword && visibleCount === 0
+      ? "ไม่พบรายการที่ตรงกับคำค้นหา"
+      : "";
+
+  emptyMessage.style.display =
+    keyword && visibleCount === 0 ? "" : "none";
+}
+
 
 async function reviewItem(item, status, note, box, points = 1) {
   if (busy) return;
