@@ -842,12 +842,16 @@ async function loadPending() {
     }
 
     box.innerHTML = `
-      <h3>📸 รายการเช็กอิน</h3>
-      <div class="muted">รหัส: ${escapeHTML(item.id)}</div>
-      <div class="muted">สมาชิก: ${escapeHTML(item.display_name || item.user_id)}</div>
-      <div class="muted">ประเภทที่ส่งมา: ${escapeHTML(item.checkin_type || "-")}</div>
-      <div class="muted">ส่งเมื่อ: ${escapeHTML(dateText(item.created_at))}</div>
+      <div class="pendingTitle">
+  <h3>📸 รายการเช็กอิน</h3>
+</div>
 
+<div class="pendingInfo">
+  <div class="muted">รหัส: ${escapeHTML(item.id)}</div>
+  <div class="muted">สมาชิก: ${escapeHTML(item.display_name || item.user_id)}</div>
+  <div class="muted">ประเภทที่ส่งมา: ${escapeHTML(item.checkin_type || "-")}</div>
+  <div class="muted">ส่งเมื่อ: ${escapeHTML(dateText(item.created_at))}</div>
+</div>
       
 ${photoURL
   ? `<img
