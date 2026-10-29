@@ -1269,6 +1269,103 @@ async function loadHistory() {
 }
 
 
+let redemptionRows = [];
+let redemptionPage = 1;
+const redemptionPageSize = 10;
+
+function renderRedemptions() {
+  const el = $("redemptionsList");
+  const query = ($("redemptionsSearch").value || "")
+    .trim().toLowerCase();
+
+  const filtered = redemptionRows.filter(item =>
+    [
+      item.display_name,
+      item.reward_name,
+      item.code,
+      item.user_id,
+      item.redemption_id
+    ].some(value =>
+      String(value ?? "").toLowerCase().includes(query)
+    )
+  );
+
+  const totalPages = Math.max(
+    1, Math.ceil(filtered.length / redemptionPageSize)
+  );
+
+  redemptionPage = Math.min(redemptionPage, totalPages);
+
+  const start = (redemptionPage - 1) * redemptionPageSize;
+  const rows = filtered.slice(start, start + redemptionPageSize);
+
+  el.innerHTML = filtered.length
+    ? rows.map(item => `
+      <div class="item">
+        <h3>🎁 ${escapeHTML(item.reward_name)}</h3>
+        <div><strong>สมาชิก:</strong>
+          ${escapeHTML(item.display_name)}</div>
+        <div><strong>แต้มที่ใช้:</strong>
+          ${escapeHTML(item.cost)}</div>
+        <div><strong>วันที่แลก:</strong>
+          ${escapeHTML(dateText(item.created_at))}</div>
+        <div><strong>รหัสแลก:</strong>
+          ${escapeHTML(item.code || "-")}</div>
+        <div class="muted">รหัสรายการ: ${
+          escapeHTML(item.redemption_id)
+        }</div>
+      </div>
+    `).join("")
+    : '<p class="muted">ไม่พบประวัติแลกรางวัล</p>';
+
+  $("redemptionsPageInfo").textContent =
+    `หน้า ${redemptionPage} / ${totalPages} · พบ ${filtered.length} รายการ`;
+
+  $("redemptionsPrev").disabled = redemptionPage <= 1;
+  $("redemptionsNext").disabled = redemptionPage >= totalPages;
+}
+
+async function loadRedemptions() {
+  const el = $("redemptionsList");
+  el.textContent = "กำลังโหลดประวัติแลกรางวัล...";
+
+  const { data, error } = await db.rpc(
+    "admin_get_redemptions",
+    { p_limit: 500 }
+  );
+
+  if (error) {
+    el.textContent = "โหลดประวัติไม่สำเร็จ: " + error.message;
+    return;
+  }
+
+  redemptionRows = Array.isArray(data) ? data : [];
+  redemptionPage = 1;
+  renderRedemptions();
+}
+
+$("redemptionsRefresh").addEventListener(
+  "click", loadRedemptions
+);
+
+$("redemptionsSearch").addEventListener("input", () => {
+  redemptionPage = 1;
+  renderRedemptions();
+});
+
+$("redemptionsPrev").addEventListener("click", () => {
+  if (redemptionPage > 1) {
+    redemptionPage--;
+    renderRedemptions();
+  }
+});
+
+$("redemptionsNext").addEventListener("click", () => {
+  redemptionPage++;
+  renderRedemptions();
+});
+
+  
 async function loadMembers() {
   const el = $("membersList");
   el.textContent = "กำลังโหลดสมาชิก...";
