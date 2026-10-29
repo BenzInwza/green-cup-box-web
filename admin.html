@@ -648,6 +648,35 @@ header {
 </section>
 
 
+<section id="redemptionsSection" class="card">
+  <details>
+    <summary style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px">
+      <h2 style="margin:0">🎁 ประวัติแลกรางวัล</h2>
+      <span>⌄</span>
+    </summary>
+
+    <div style="margin-top:14px">
+      <input
+        id="redemptionsSearch"
+        type="search"
+        placeholder="🔎 ค้นหาชื่อสมาชิก / ของรางวัล / รหัสแลก"
+      >
+
+      <button id="redemptionsRefresh" type="button">
+        ↻ โหลดประวัติแลกรางวัล
+      </button>
+
+      <div id="redemptionsList">กดโหลดประวัติแลกรางวัล</div>
+
+      <div style="display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap">
+        <button id="redemptionsPrev" type="button" class="secondary" style="width:auto">← ก่อนหน้า</button>
+        <span id="redemptionsPageInfo" class="muted">หน้า 1</span>
+        <button id="redemptionsNext" type="button" class="secondary" style="width:auto">ถัดไป →</button>
+      </div>
+    </div>
+  </details>
+</section>
+
    
 <section id="membersSection" class="card">
   <details>
