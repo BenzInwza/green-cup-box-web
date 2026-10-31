@@ -1484,7 +1484,13 @@ async function refreshAll() {
   if (!currentUser || !currentProfile || !isAdmin(currentProfile.role)) return;
   $("refreshBtn").disabled = true;
   try {
-    await Promise.all([loadStats(),loadPending(),loadHistory(),loadRedemptions()]);
+    await Promise.all([
+  loadStats(),
+  loadPending(),
+  loadHistory(),
+  loadRedemptions(),
+  loadHolidays()
+]);
     message("โหลดข้อมูลเสร็จแล้ว");
   } catch (e) {
     message("โหลดข้อมูลไม่สำเร็จ: " + e.message,true);
