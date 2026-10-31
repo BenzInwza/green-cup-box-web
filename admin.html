@@ -1531,6 +1531,103 @@ $("menuLogoutBtn").addEventListener("click",logout);
 $("refreshBtn").addEventListener("click",refreshAll);
 $("membersBtn").addEventListener("click",loadMembers);
 
+  // ===============================
+// จัดการวันหยุดพิเศษ
+// ===============================
+
+async function loadHolidays() {
+  const el = $("holidaysList");
+  el.textContent = "กำลังโหลดรายการวันหยุด...";
+
+  const { data, error } = await db
+    .from("school_holidays")
+    .select("id, holiday_date, holiday_name")
+    .order("holiday_date", { ascending: true });
+
+  if (error) {
+    el.textContent = "โหลดวันหยุดไม่สำเร็จ: " + error.message;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    el.innerHTML = '<p class="muted">ยังไม่มีวันหยุดพิเศษ</p>';
+    return;
+  }
+
+  el.innerHTML = data.map(item => `
+    <div class="item">
+      <strong>${escapeHTML(item.holiday_date)}</strong>
+      <div>${escapeHTML(item.holiday_name || "วันหยุดพิเศษ")}</div>
+      <button
+        type="button"
+        class="danger deleteHolidayBtn"
+        data-id="${escapeHTML(item.id)}">
+        ลบวันหยุดนี้
+      </button>
+    </div>
+  `).join("");
+
+  el.querySelectorAll(".deleteHolidayBtn").forEach(button => {
+    button.addEventListener("click", async () => {
+      const id = button.dataset.id;
+
+      if (!confirm("ยืนยันลบวันที่หยุดนี้ใช่ไหม?")) return;
+
+      button.disabled = true;
+
+      const { error } = await db
+        .from("school_holidays")
+        .delete()
+        .eq("id", id);
+
+      if (error) {
+        message("ลบวันหยุดไม่สำเร็จ: " + error.message, true);
+        button.disabled = false;
+        return;
+      }
+
+      message("ลบวันหยุดสำเร็จ");
+      await loadHolidays();
+    });
+  });
+}
+
+async function addHoliday() {
+  const date = $("holidayDate").value;
+  const name = $("holidayName").value.trim() || "วันหยุดพิเศษ";
+
+  if (!date) {
+    message("กรุณาเลือกวันที่หยุดก่อน", true);
+    return;
+  }
+
+  $("addHolidayBtn").disabled = true;
+
+  try {
+    const { error } = await db
+      .from("school_holidays")
+      .insert({
+        holiday_date: date,
+        holiday_name: name
+      });
+
+    if (error) throw error;
+
+    $("holidayDate").value = "";
+    $("holidayName").value = "";
+
+    message("เพิ่มวันหยุดสำเร็จ");
+    await loadHolidays();
+
+  } catch (e) {
+    message("เพิ่มวันหยุดไม่สำเร็จ: " + e.message, true);
+  } finally {
+    $("addHolidayBtn").disabled = false;
+  }
+}
+
+$("addHolidayBtn").addEventListener("click", addHoliday);
+$("refreshHolidaysBtn").addEventListener("click", loadHolidays);
 db.auth.onAuthStateChange((event,session) => {
   if (event === "TOKEN_REFRESHED") return;
   if (event === "SIGNED_OUT") {
