@@ -678,7 +678,36 @@ header {
   </details>
 </section>
 
-   
+<section id="holidaysSection" class="card">
+  <details>
+    <summary style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px">
+      <h2 style="margin:0">📅 จัดการวันหยุดพิเศษ</h2>
+      <span>⌄</span>
+    </summary>
+
+    <div style="margin-top:14px">
+      <p class="muted">
+        วันที่เพิ่มในรายการนี้จะถูกข้ามในการคำนวณไฟต่อเนื่อง
+      </p>
+
+      <label for="holidayDate">วันที่หยุด</label>
+      <input id="holidayDate" type="date">
+
+      <label for="holidayName">ชื่อวันหยุด</label>
+      <input id="holidayName" type="text" placeholder="เช่น วันหยุดวิทยาลัย">
+
+      <button id="addHolidayBtn" type="button">＋ เพิ่มวันหยุด</button>
+      <button id="refreshHolidaysBtn" type="button" class="secondary">
+        ↻ โหลดรายการวันหยุด
+      </button>
+
+      <div id="holidaysList" style="margin-top:14px">
+        กำลังโหลดรายการวันหยุด...
+      </div>
+    </div>
+  </details>
+</section>
+  
 <section id="membersSection" class="card">
   <details>
     <summary style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px">
