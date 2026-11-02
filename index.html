@@ -1000,6 +1000,37 @@ async function loadHistory(){
  }catch(e){list.textContent="โหลดประวัติไม่สำเร็จ: "+e.message;}
 }
 
+  // ย่อรูปจากกล้องก่อนอัปโหลด
+async function compressPhoto(file){
+  const image = await createImageBitmap(file);
+
+  const maxSize = 1600;
+  let width = image.width;
+  let height = image.height;
+
+  if(width > maxSize || height > maxSize){
+    const ratio = Math.min(maxSize / width, maxSize / height);
+    width = Math.round(width * ratio);
+    height = Math.round(height * ratio);
+  }
+
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(image, 0, 0, width, height);
+
+  const blob = await new Promise(resolve =>
+    canvas.toBlob(resolve, "image/jpeg", 0.8)
+  );
+
+  image.close();
+
+  return new File([blob], "checkin.jpg", {
+    type: "image/jpeg"
+  });
+}
 /* เลือกรูปและแสดงตัวอย่าง */
 $("checkinPhoto").addEventListener("change",()=>{
  const f=$("checkinPhoto").files?.[0];selectedPhoto=f||null;
@@ -1031,9 +1062,17 @@ async function submitCheckin(){
  if(!confirm("ยืนยันส่งรูปนี้ให้แอดมินตรวจหรือไม่? ส่งได้วันละ 1 รูปเท่านั้น"))return;
  busy=true;$("submitCheckinBtn").disabled=true;
  try{
-  const ext=(selectedPhoto.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"")||"jpg";
-  const path=currentUser.id+"/"+Date.now()+"-"+Math.random().toString(36).slice(2,9)+"."+ext;
-  const {error:upErr}=await db.storage.from("checkin-photos").upload(path,selectedPhoto,{contentType:selectedPhoto.type||"image/jpeg",upsert:false});
+  const compressedPhoto = await compressPhoto(selectedPhoto);
+
+const path = currentUser.id + "/" + Date.now() + "-" +
+  Math.random().toString(36).slice(2,9) + ".jpg";
+
+const {error:upErr} = await db.storage
+  .from("checkin-photos")
+  .upload(path, compressedPhoto, {
+    contentType: "image/jpeg",
+    upsert: false
+  });
   if(upErr)throw upErr;
   const {data,error}=await db.rpc("submit_checkin",{p_checkin_type:"photo",p_photo_path:path});
   if(error){await db.storage.from("checkin-photos").remove([path]);throw error;}
