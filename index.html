@@ -1124,8 +1124,10 @@ const {error:upErr} = await db.storage
 $("photoPreview").classList.add("hidden");
 $("photoPreview").removeAttribute("src");
 
-$("retakePhotoBtn").classList.add("hidden");
-$("openCameraBtn").classList.remove("hidden");$("photoPreview").removeAttribute("src");await loadMyCheckins();
+$("checkinPhoto").value = "";
+$("openCameraBtn").classList.remove("hidden");
+
+await loadMyCheckins();
  }catch(e){msg("checkinMessage","ส่งรูปไม่สำเร็จ: "+e.message,"error");}
  finally{busy=false;$("submitCheckinBtn").disabled=false;}
 }
