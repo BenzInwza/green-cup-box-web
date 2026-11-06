@@ -1050,105 +1050,33 @@ async function compressPhoto(file){
     type: "image/jpeg"
   });
 }
-// =================================
-// ระบบถ่ายรูปด้วยกล้องหลังโดยตรง
-// =================================
+$("openCameraBtn").addEventListener("click", () => {
+  $("checkinPhoto").click();
+});
 
-let cameraStream = null;
+$("checkinPhoto").addEventListener("change", () => {
+  const file = $("checkinPhoto").files?.[0];
+  selectedPhoto = file || null;
 
-async function openCamera() {
-  try {
-    if (!navigator.mediaDevices?.getUserMedia) {
-      throw new Error("เบราว์เซอร์ไม่รองรับการเปิดกล้อง");
-    }
+  if (!file) return;
 
-    cameraStream = await navigator.mediaDevices.getUserMedia({
-      video: {
-        facingMode: { ideal: "environment" },
-        width: { ideal: 1600 },
-        height: { ideal: 1200 }
-      },
-      audio: false
-    });
-
-    $("cameraVideo").srcObject = cameraStream;
-
-    $("cameraArea").classList.remove("hidden");
-    $("openCameraBtn").classList.add("hidden");
-    $("photoPreview").classList.add("hidden");
-    $("retakePhotoBtn").classList.add("hidden");
-
-    await $("cameraVideo").play();
-
-    msg("checkinMessage", "เปิดกล้องสำเร็จ พร้อมถ่ายภาพ", "success");
-
-  } catch (e) {
-    console.error("Camera error:", e);
-
-    msg(
-      "checkinMessage",
-      "เปิดกล้องไม่ได้: กรุณาอนุญาตให้เว็บไซต์ใช้กล้อง และตรวจสอบว่าเปิดผ่าน HTTPS",
-      "error"
-    );
-
-    stopCamera();
-    $("cameraArea").classList.add("hidden");
-    $("openCameraBtn").classList.remove("hidden");
-  }
-}
-
-function stopCamera() {
-  if (cameraStream) {
-    cameraStream.getTracks().forEach(track => track.stop());
-    cameraStream = null;
+  if (!file.type.startsWith("image/")) {
+    selectedPhoto = null;
+    $("checkinPhoto").value = "";
+    return msg("checkinMessage", "กรุณาเลือกรูปภาพ", "error");
   }
 
-  $("cameraVideo").srcObject = null;
-}
-
-function cancelCamera() {
-  stopCamera();
-
-  $("cameraArea").classList.add("hidden");
-  $("openCameraBtn").classList.remove("hidden");
-}
-
-async function capturePhoto() {
-  const video = $("cameraVideo");
-
-  if (!video.videoWidth || !video.videoHeight) {
-    return msg("checkinMessage", "กล้องยังไม่พร้อม กรุณารอสักครู่", "error");
+  if (file.size > 8 * 1024 * 1024) {
+    selectedPhoto = null;
+    $("checkinPhoto").value = "";
+    return msg("checkinMessage", "รูปต้องไม่เกิน 8 MB", "error");
   }
 
-  const canvas = $("cameraCanvas");
+  $("photoPreview").src = URL.createObjectURL(file);
+  $("photoPreview").classList.remove("hidden");
 
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-
-  const ctx = canvas.getContext("2d");
-
-  ctx.drawImage(
-    video,
-    0,
-    0,
-    canvas.width,
-    canvas.height
-  );
-
-  canvas.toBlob(async blob => {
-    if (!blob) {
-      return msg("checkinMessage", "ถ่ายภาพไม่สำเร็จ กรุณาลองใหม่", "error");
-    }
-
-    if (blob.size > 8 * 1024 * 1024) {
-      return msg("checkinMessage", "รูปมีขนาดเกิน 8 MB กรุณาถ่ายใหม่", "error");
-    }
-
-    selectedPhoto = new File(
-      [blob],
-      "checkin.jpg",
-      { type: "image/jpeg" }
-    );
+  msg("checkinMessage", "ถ่ายรูปสำเร็จ พร้อมส่งให้แอดมินตรวจ", "success");
+});
 
     $("photoPreview").src = URL.createObjectURL(selectedPhoto);
     $("photoPreview").classList.remove("hidden");
