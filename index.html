@@ -399,39 +399,27 @@ body {
 <h2>📸 พกแก้ว พกกล่อง รับคะแนน</h2>
 <p>ส่งรูปได้วันละ <b>1 รูปต่อบัญชี</b> ตามเวลาไทย ให้นายแอดมินตรวจจากรูปจริง</p>
 <ul><li>มีแก้วอย่างเดียว = 1 คะแนน</li><li>มีกล่องข้าวอย่างเดียว = 1 คะแนน</li><li>มีทั้งแก้วและกล่องข้าว = 2 คะแนน</li></ul>
-<<label>📸 ถ่ายรูปแก้วหรือกล่องข้าว (ให้เห็นคนด้วยนะ)</label>
+<label for="checkinPhoto">
+  📸 ถ่ายรูปแก้วหรือกล่องข้าว (ให้เห็นคนด้วยนะ)
+</label>
+
+<input
+  id="checkinPhoto"
+  type="file"
+  accept="image/*"
+  capture="environment"
+  style="display:none"
+>
 
 <button id="openCameraBtn" class="full" type="button">
   📷 เปิดกล้องถ่ายรูป
 </button>
 
-<div id="cameraArea" class="hidden">
-  <video id="cameraVideo"
-    autoplay
-    playsinline
-    muted
-    style="width:100%;border-radius:12px;margin-top:12px;background:#000">
-  </video>
-
-  <button id="capturePhotoBtn" class="full" type="button">
-    📸 กดถ่ายภาพ
-  </button>
-
-  <button id="closeCameraBtn" class="secondary full" type="button">
-    ยกเลิก
-  </button>
-</div>
-
-<canvas id="cameraCanvas" class="hidden"></canvas>
-
-<img id="photoPreview"
+<img
+  id="photoPreview"
   class="photo-preview hidden"
-  alt="ภาพที่ถ่าย">
-
-<button id="retakePhotoBtn"
-  class="secondary full hidden"
-  type="button">
-  🔄 ถ่ายใหม่
+  alt="ภาพที่ถ่าย"
+>
 </button>
 <button id="submitCheckinBtn" class="full">📤 ส่งรูปให้แอดมินตรวจ</button>
 <p id="checkinMessage" class="message" aria-live="polite"></p>
