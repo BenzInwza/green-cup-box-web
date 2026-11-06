@@ -1202,7 +1202,8 @@ async function loadMyCheckins(){
 }
 async function submitCheckin(){
  if(!currentUser)return msg("checkinMessage","กรุณาเข้าสู่ระบบก่อนส่งรูป","error");
- if(busy)return;if(!selectedPhoto)return msg("checkinMessage","เลือกรูปก่อนส่งนะ","error");
+if(busy)return;
+if(!selectedPhoto)return msg("checkinMessage","กรุณาถ่ายรูปก่อนส่งนะ","error");
  if(!confirm("ยืนยันส่งรูปนี้ให้แอดมินตรวจหรือไม่? ส่งได้วันละ 1 รูปเท่านั้น"))return;
  busy=true;$("submitCheckinBtn").disabled=true;
  try{
