@@ -1078,7 +1078,7 @@ $("checkinPhoto").addEventListener("change", () => {
   msg("checkinMessage", "ถ่ายรูปสำเร็จ พร้อมส่งให้แอดมินตรวจ", "success");
 });
 
-    $("photoPreview").src = URL.createObjectURL(selectedPhoto);
+  
     
 async function loadMyCheckins(){
  const box=$("myCheckins");box.replaceChildren();if(!currentUser){box.textContent="เข้าสู่ระบบเพื่อดูประวัติเช็กอิน";return;}
