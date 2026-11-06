@@ -1222,7 +1222,13 @@ const {error:upErr} = await db.storage
   const {data,error}=await db.rpc("submit_checkin",{p_checkin_type:"photo",p_photo_path:path});
   if(error){await db.storage.from("checkin-photos").remove([path]);throw error;}
   const result=Array.isArray(data)?data[0]:data;if(result?.success===false)throw new Error(result.message||"ส่งรูปไม่สำเร็จ");
-  msg("checkinMessage","ส่งรูปสำเร็จ! รอแอดมินตรวจรูปก่อนรับคะแนน","success");$("checkinPhoto").value="";selectedPhoto=null;$("photoPreview").classList.add("hidden");$("photoPreview").removeAttribute("src");await loadMyCheckins();
+  msg("checkinMessage","ส่งรูปสำเร็จ! รอแอดมินตรวจรูปก่อนรับคะแนน","success");selectedPhoto=null;
+
+$("photoPreview").classList.add("hidden");
+$("photoPreview").removeAttribute("src");
+
+$("retakePhotoBtn").classList.add("hidden");
+$("openCameraBtn").classList.remove("hidden");$("photoPreview").removeAttribute("src");await loadMyCheckins();
  }catch(e){msg("checkinMessage","ส่งรูปไม่สำเร็จ: "+e.message,"error");}
  finally{busy=false;$("submitCheckinBtn").disabled=false;}
 }
