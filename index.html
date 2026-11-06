@@ -1079,26 +1079,7 @@ $("checkinPhoto").addEventListener("change", () => {
 });
 
     $("photoPreview").src = URL.createObjectURL(selectedPhoto);
-    $("photoPreview").classList.remove("hidden");
-
-    $("cameraArea").classList.add("hidden");
-    $("openCameraBtn").classList.add("hidden");
-    $("retakePhotoBtn").classList.remove("hidden");
-
-    stopCamera();
-
-    msg("checkinMessage", "ถ่ายภาพสำเร็จ พร้อมส่งให้แอดมินตรวจ", "success");
-
-  }, "image/jpeg", 0.90);
-}
-
-$("openCameraBtn").addEventListener("click", openCamera);
-
-$("capturePhotoBtn").addEventListener("click", capturePhoto);
-
-$("closeCameraBtn").addEventListener("click", cancelCamera);
-
-$("retakePhotoBtn").addEventListener("click", openCamera);
+    
 async function loadMyCheckins(){
  const box=$("myCheckins");box.replaceChildren();if(!currentUser){box.textContent="เข้าสู่ระบบเพื่อดูประวัติเช็กอิน";return;}
  box.textContent="กำลังโหลด...";
