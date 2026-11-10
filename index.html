@@ -1019,11 +1019,26 @@ async function loadHistory(){
  }catch(e){list.textContent="โหลดประวัติไม่สำเร็จ: "+e.message;}
 }
 
-  // ย่อรูปจากกล้องก่อนอัปโหลด
-async function compressPhoto(file){
-  const image = await createImageBitmap(file);
+  async function compressPhoto(file){
+  let image;
 
-  const maxSize = 1600;
+  try {
+    image = await createImageBitmap(file);
+  } catch (e) {
+    const url = URL.createObjectURL(file);
+    try {
+      image = await new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error("เบราว์เซอร์อ่านไฟล์รูปนี้ไม่ได้"));
+        img.src = url;
+      });
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+  }
+
+  const maxSize = 1280;
   let width = image.width;
   let height = image.height;
 
@@ -1041,15 +1056,17 @@ async function compressPhoto(file){
   ctx.drawImage(image, 0, 0, width, height);
 
   const blob = await new Promise(resolve =>
-    canvas.toBlob(resolve, "image/jpeg", 0.8)
+    canvas.toBlob(resolve, "image/jpeg", 0.75)
   );
 
-  image.close();
+  if(image.close) image.close();
+
+  if(!blob) throw new Error("แปลงรูปเป็น JPEG ไม่สำเร็จ");
 
   return new File([blob], "checkin.jpg", {
     type: "image/jpeg"
   });
-}
+  }
 $("openCameraBtn").addEventListener("click", () => {
   $("checkinPhoto").click();
 });
